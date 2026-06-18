@@ -16,7 +16,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
-    "sqlite3": "^5.1.7",
+    "mysql2": "^3.22.5",
     "vue": "^3.4.27"
   },
   "devDependencies": {

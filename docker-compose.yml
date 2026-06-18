@@ -12,6 +12,13 @@ services:
           - /usr/src/app/node_modules
         environment:
           - NODE_ENV=development
+          - DB_HOST=mysql
+          - DB_USER=root
+          - DB_PASSWORD=root
+          - DB_NAME=beneficio_alimentario
+          - DB_PORT=3306
+        depends_on:
+          - mysql
 
       # Servicio 2: Frontend en Vite/Vue
       frontend:
@@ -25,3 +32,17 @@ services:
           - /usr/src/app/node_modules
         depends_on:
           - backend
+
+      # Servicio 3: Base de Datos MySQL
+      mysql:
+        image: mysql:8.0
+        ports:
+          - "3306:3306"
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: beneficio_alimentario
+        volumes:
+          - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

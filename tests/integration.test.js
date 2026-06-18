@@ -2,20 +2,21 @@ import { spawn } from 'child_process'
 import http from 'http'
 import fs from 'fs'
 import path from 'path'
+import mysql from 'mysql2/promise'
 
-// Clean database files before test execution
+// Clean database tables before test execution in MySQL
 try {
-  const dbPath = path.resolve('database.sqlite')
-  const dbBakPath = path.resolve('database.sqlite.bak')
-  if (fs.existsSync(dbPath)) {
-    fs.unlinkSync(dbPath)
-    console.log('[TEST] Database file deleted to start fresh.')
-  }
-  if (fs.existsSync(dbBakPath)) {
-    fs.unlinkSync(dbBakPath)
-  }
+  const connection = await mysql.createConnection({
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'root',
+    port: parseInt(process.env.DB_PORT || '3306', 10)
+  })
+  await connection.query('DROP DATABASE IF EXISTS `beneficio_alimentario`')
+  await connection.end()
+  console.log('[TEST] MySQL Database dropped to start fresh.')
 } catch (err) {
-  console.warn('[TEST] Could not clean database files:', err.message)
+  console.warn('[TEST] Could not clean MySQL database:', err.message)
 }
 
 const BACKEND_URL = 'http://localhost:3001'
