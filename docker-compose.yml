@@ -1,17 +1,15 @@
 version: '3.8'
 services:
-      # Servicio 1: Servidor Express
+      # Servicio 1: Laravel Backend (PHP 8.3)
       backend:
         build:
-          context: .
-          dockerfile: ./server/Dockerfile
+          context: ./backend
+          dockerfile: Dockerfile
         ports:
-          - "3001:3001"
+          - "8000:8000"
         volumes:
-          - .:/usr/src/app
-          - /usr/src/app/node_modules
+          - ./backend:/var/www/html
         environment:
-          - NODE_ENV=development
           - DB_HOST=mysql
           - DB_USER=root
           - DB_PASSWORD=root
