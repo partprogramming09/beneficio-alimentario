@@ -42,6 +42,7 @@ import { getAdminStudents } from '../services/api'
 import AlertBox from '../components/AlertBox.vue'
 import AprobacionesTab from '../components/AprobacionesTab.vue'
 import EstudiantesTab from '../components/EstudiantesTab.vue'
+import AsistenciaTab from '../components/AsistenciaTab.vue'
 import ReportesTab from '../components/ReportesTab.vue'
 import ReactivacionesTab from '../components/ReactivacionesTab.vue'
 import SimuladorTab from '../components/SimuladorTab.vue'
@@ -52,6 +53,7 @@ export default {
     AlertBox,
     AprobacionesTab,
     EstudiantesTab,
+    AsistenciaTab,
     ReportesTab,
     ReactivacionesTab,
     SimuladorTab
@@ -62,6 +64,7 @@ export default {
       tabs: [
         { id: 'pendientes', label: 'Aprobaciones' },
         { id: 'listado', label: 'Estudiantes' },
+        { id: 'asistencia', label: 'Registrar Almuerzo' },
         { id: 'reportes', label: 'Reportes Asistencia' },
         { id: 'excusas', label: 'Reactivaciones' },
         { id: 'simulador', label: 'Simulador Reglas' }
@@ -76,6 +79,7 @@ export default {
       switch (this.activeSubTab) {
         case 'pendientes': return 'AprobacionesTab'
         case 'listado': return 'EstudiantesTab'
+        case 'asistencia': return 'AsistenciaTab'
         case 'reportes': return 'ReportesTab'
         case 'excusas': return 'ReactivacionesTab'
         case 'simulador': return 'SimuladorTab'

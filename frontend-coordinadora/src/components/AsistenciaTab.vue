@@ -1,19 +1,19 @@
 <template>
   <div class="tab-content">
-    <h3>Marcar Asistencia Diaria 🍽️</h3>
-    <p class="description">Recuerda marcar tu asistencia antes de entrar al comedor escolar. Debes tener estado <strong>Activo</strong>.</p>
+    <h3>Registrar Asistencia en Fila 🍽️</h3>
+    <p class="description">Ingrese el documento del estudiante en la fila del comedor escolar para marcar su asistencia en tiempo real.</p>
 
     <div class="form-group inline-form">
-      <label for="doc-asis">Documento de Identidad:</label>
+      <label for="doc-asis">Documento del Estudiante:</label>
       <input 
         id="doc-asis" 
         type="text" 
         v-model="attendanceDoc" 
-        placeholder="Ingresa tu documento" 
+        placeholder="Ingrese el documento" 
         @keyup.enter="markAttendance"
       />
       <button class="btn btn-primary" @click="markAttendance" :disabled="loading">
-        {{ loading ? 'Marcando...' : 'Registrar Asistencia' }}
+        {{ loading ? 'Registrando...' : 'Marcar Asistencia' }}
       </button>
     </div>
 
@@ -51,7 +51,7 @@ export default {
     },
     async markAttendance() {
       if (!this.attendanceDoc.trim()) {
-        this.message = 'Por favor, ingresa tu documento.'
+        this.message = 'Por favor, ingrese el documento.'
         this.isError = true
         return
       }

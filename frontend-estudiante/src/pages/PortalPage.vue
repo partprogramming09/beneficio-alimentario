@@ -9,12 +9,7 @@
         >
           📝 Solicitar Inscripción
         </button>
-        <button 
-          :class="['tab-btn', { active: activeTab === 'asistencia' }]" 
-          @click="activeTab = 'asistencia'"
-        >
-          🍽️ Registrar Almuerzo
-        </button>
+
         <button 
           :class="['tab-btn', { active: activeTab === 'recuperar' }]" 
           @click="activeTab = 'recuperar'"
@@ -34,7 +29,6 @@
     <div class="card content-card">
       <transition name="fade" mode="out-in">
         <RegistroTab v-if="activeTab === 'registro'" />
-        <AsistenciaTab v-else-if="activeTab === 'asistencia'" />
         <RecuperarTab v-else-if="activeTab === 'recuperar'" />
         <GestionTab v-else-if="activeTab === 'gestion'" />
       </transition>
@@ -44,7 +38,6 @@
 
 <script>
 import RegistroTab from '../components/RegistroTab.vue';
-import AsistenciaTab from '../components/AsistenciaTab.vue';
 import RecuperarTab from '../components/RecuperarTab.vue';
 import GestionTab from '../components/GestionTab.vue';
 
@@ -52,13 +45,12 @@ export default {
   name: 'PortalPage',
   components: {
     RegistroTab,
-    AsistenciaTab,
     RecuperarTab,
     GestionTab
   },
   data() {
     return {
-      activeTab: 'asistencia' // Por defecto mostramos marcar asistencia
+      activeTab: 'recuperar' // Por defecto mostramos recuperar ticket
     };
   }
 }

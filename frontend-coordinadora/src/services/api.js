@@ -46,3 +46,9 @@ export async function runSimulation(simData) {
   const response = await apiClient.post('/api/admin/simular-dia', simData);
   return response.data;
 }
+
+export async function markAttendance(documento) {
+  const response = await apiClient.post('/api/asistencia', { documento });
+  return response.data;
+}
+
