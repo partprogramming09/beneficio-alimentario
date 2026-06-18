@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+      # Servicio 1: Servidor Express
+      backend:
+        build:
+          context: .
+          dockerfile: ./server/Dockerfile
+        ports:
+          - "3001:3001"
+        volumes:
+          - .:/usr/src/app
+          - /usr/src/app/node_modules
+        environment:
+          - NODE_ENV=development
+
+      # Servicio 2: Frontend en Vite/Vue
+      frontend:
+        build:
+          context: .
+          dockerfile: ./Dockerfile
+        ports:
+          - "5173:5173"
+        volumes:
+          - .:/usr/src/app
+          - /usr/src/app/node_modules
+        depends_on:
+          - backend
