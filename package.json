@@ -4,12 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev:frontend": "vite",
-    "dev:backend": "nodemon server/index.js",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "build": "vite build",
-    "preview": "vite preview",
-    "start": "node server/index.js",
+    "dev:estudiante": "pnpm --filter frontend-estudiante dev",
+    "dev:coordinadora": "pnpm --filter frontend-coordinadora dev",
+    "dev:express": "nodemon server/index.js",
+    "build": "pnpm -r build",
     "test": "node tests/integration.test.js",
     "test:webhooks": "node tests/webhooks.test.js"
   },

@@ -1,0 +1,4 @@
+packages:
+  - 'frontend-core'
+  - 'frontend-estudiante'
+  - 'frontend-coordinadora'

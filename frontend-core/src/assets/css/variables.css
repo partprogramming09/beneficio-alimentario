@@ -1,0 +1,105 @@
+/* --- Diseño de Sistema de Control de Beneficio Alimentario --- */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Fuente premium */
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Paleta de Colores Armoniosa (HSL) */
+  --primary-hue: 220;
+  --secondary-hue: 142;
+  --accent-hue: 338;
+  --danger-hue: 0;
+
+  /* Tema Claro (Defecto) */
+  --bg-primary: hsl(var(--primary-hue), 25%, 98%);
+  --bg-secondary: hsl(0, 0%, 100%);
+  --bg-tertiary: hsl(var(--primary-hue), 20%, 94%);
+  --text-primary: hsl(var(--primary-hue), 40%, 12%);
+  --text-secondary: hsl(var(--primary-hue), 20%, 45%);
+  --text-muted: hsl(var(--primary-hue), 15%, 65%);
+  
+  --primary: hsl(var(--primary-hue), 85%, 55%);
+  --primary-hover: hsl(var(--primary-hue), 85%, 48%);
+  --primary-light: hsl(var(--primary-hue), 85%, 95%);
+  
+  --success: hsl(var(--secondary-hue), 70%, 42%);
+  --success-hover: hsl(var(--secondary-hue), 70%, 35%);
+  --success-light: hsl(var(--secondary-hue), 70%, 95%);
+  
+  --accent: hsl(var(--accent-hue), 85%, 55%);
+  --danger: hsl(var(--danger-hue), 75%, 55%);
+  --danger-light: hsl(var(--danger-hue), 75%, 95%);
+  --warning: hsl(38, 92%, 50%);
+  --warning-light: hsl(38, 92%, 95%);
+
+  /* Gradientes Premium */
+  --gradient-primary: linear-gradient(135deg, hsl(var(--primary-hue), 85%, 55%) 0%, hsl(var(--primary-hue), 95%, 45%) 100%);
+  --gradient-success: linear-gradient(135deg, hsl(var(--secondary-hue), 70%, 45%) 0%, hsl(var(--secondary-hue), 80%, 38%) 100%);
+  --gradient-glass: rgba(255, 255, 255, 0.75);
+  
+  /* Bordes y Sombras */
+  --border-radius-sm: 8px;
+  --border-radius-md: 16px;
+  --border-radius-lg: 24px;
+  --border-color: hsl(var(--primary-hue), 15%, 90%);
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Transiciones y Micro-animaciones */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  --backdrop-blur: blur(12px);
+}
+
+/* Soporte para Modo Oscuro Basado en Preferencia de Sistema o Clase */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-mode) {
+    --bg-primary: hsl(var(--primary-hue), 25%, 8%);
+    --bg-secondary: hsl(var(--primary-hue), 20%, 12%);
+    --bg-tertiary: hsl(var(--primary-hue), 18%, 16%);
+    --text-primary: hsl(var(--primary-hue), 20%, 95%);
+    --text-secondary: hsl(var(--primary-hue), 15%, 75%);
+    --text-muted: hsl(var(--primary-hue), 10%, 50%);
+    
+    --primary: hsl(var(--primary-hue), 75%, 55%);
+    --primary-hover: hsl(var(--primary-hue), 75%, 62%);
+    --primary-light: rgba(var(--primary-hue), 75%, 55%, 0.1);
+    
+    --success: hsl(var(--secondary-hue), 60%, 45%);
+    --success-light: rgba(var(--secondary-hue), 60%, 45%, 0.15);
+    
+    --border-color: hsl(var(--primary-hue), 15%, 20%);
+    --gradient-glass: rgba(15, 23, 42, 0.8);
+    
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Clase explícita para modo oscuro */
+:root.dark-mode {
+  --bg-primary: hsl(var(--primary-hue), 25%, 8%);
+  --bg-secondary: hsl(var(--primary-hue), 20%, 12%);
+  --bg-tertiary: hsl(var(--primary-hue), 18%, 16%);
+  --text-primary: hsl(var(--primary-hue), 20%, 95%);
+  --text-secondary: hsl(var(--primary-hue), 15%, 75%);
+  --text-muted: hsl(var(--primary-hue), 10%, 50%);
+  
+  --primary: hsl(var(--primary-hue), 75%, 55%);
+  --primary-hover: hsl(var(--primary-hue), 75%, 62%);
+  --primary-light: rgba(100, 150, 255, 0.1);
+  
+  --success: hsl(var(--secondary-hue), 60%, 45%);
+  --success-light: rgba(50, 200, 120, 0.15);
+  
+  --border-color: hsl(var(--primary-hue), 15%, 20%);
+  --gradient-glass: rgba(15, 23, 42, 0.8);
+  
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
