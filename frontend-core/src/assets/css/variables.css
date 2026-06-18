@@ -5,37 +5,37 @@
   /* Fuente premium */
   --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  /* Paleta de Colores Armoniosa (HSL) - Estilo Institucional Formal */
-  --primary-hue: 208;   /* Azul Marino Académico (#0f4c81) */
-  --secondary-hue: 142; /* Verde Esmeralda Éxito */
-  --accent-hue: 40;     /* Oro/Dorado Académico (#c5a059) */
-  --danger-hue: 354;    /* Carmesí Advertencia/Error */
+  /* Paleta de Colores Armoniosa (HSL) - Colores de la Institución: Rojo, Verde y Blanco */
+  --primary-hue: 354;   /* Rojo / Carmesí Institucional */
+  --secondary-hue: 142; /* Verde Esmeralda Institucional */
+  --accent-hue: 142;    /* Verde para Acentos */
+  --danger-hue: 354;    /* Rojo Carmesí */
 
   /* Tema Claro (Defecto) */
-  --bg-primary: hsl(var(--primary-hue), 25%, 98%);
-  --bg-secondary: hsl(0, 0%, 100%);
-  --bg-tertiary: hsl(var(--primary-hue), 15%, 94%);
-  --text-primary: hsl(var(--primary-hue), 40%, 15%);
-  --text-secondary: hsl(var(--primary-hue), 20%, 45%);
-  --text-muted: hsl(var(--primary-hue), 15%, 65%);
+  --bg-primary: hsl(var(--primary-hue), 20%, 98%); /* Blanco con un matiz cálido muy suave */
+  --bg-secondary: #ffffff;                        /* Blanco Puro */
+  --bg-tertiary: hsl(var(--primary-hue), 10%, 94%); /* Gris-Blanco suave */
+  --text-primary: hsl(var(--primary-hue), 35%, 15%);
+  --text-secondary: hsl(var(--primary-hue), 20%, 40%);
+  --text-muted: hsl(var(--primary-hue), 15%, 60%);
   
-  --primary: hsl(var(--primary-hue), 79%, 28%); /* Deep Navy */
-  --primary-hover: hsl(var(--primary-hue), 79%, 20%);
-  --primary-light: hsl(var(--primary-hue), 79%, 94%);
+  --primary: hsl(var(--primary-hue), 75%, 38%);    /* Rojo Académico */
+  --primary-hover: hsl(var(--primary-hue), 75%, 30%);
+  --primary-light: hsl(var(--primary-hue), 75%, 95%);
   
-  --success: hsl(var(--secondary-hue), 70%, 38%);
-  --success-hover: hsl(var(--secondary-hue), 70%, 30%);
-  --success-light: hsl(var(--secondary-hue), 70%, 94%);
+  --success: hsl(var(--secondary-hue), 68%, 34%);  /* Verde Académico */
+  --success-hover: hsl(var(--secondary-hue), 68%, 26%);
+  --success-light: hsl(var(--secondary-hue), 68%, 94%);
   
-  --accent: hsl(var(--accent-hue), 55%, 48%); /* Academic Gold */
-  --danger: hsl(var(--danger-hue), 75%, 48%);
-  --danger-light: hsl(var(--danger-hue), 75%, 94%);
+  --accent: hsl(var(--accent-hue), 68%, 34%);     /* Acento Verde */
+  --danger: hsl(var(--danger-hue), 75%, 38%);
+  --danger-light: hsl(var(--danger-hue), 75%, 95%);
   --warning: hsl(38, 85%, 45%);
   --warning-light: hsl(38, 85%, 94%);
 
   /* Gradientes Premium */
-  --gradient-primary: linear-gradient(135deg, hsl(var(--primary-hue), 79%, 32%) 0%, hsl(var(--primary-hue), 79%, 18%) 100%);
-  --gradient-success: linear-gradient(135deg, hsl(var(--secondary-hue), 70%, 42%) 0%, hsl(var(--secondary-hue), 80%, 32%) 100%);
+  --gradient-primary: linear-gradient(135deg, hsl(var(--primary-hue), 75%, 40%) 0%, hsl(var(--primary-hue), 75%, 26%) 100%);
+  --gradient-success: linear-gradient(135deg, hsl(var(--secondary-hue), 68%, 38%) 0%, hsl(var(--secondary-hue), 78%, 28%) 100%);
   --gradient-glass: rgba(255, 255, 255, 0.82);
   
   /* Bordes y Sombras */
