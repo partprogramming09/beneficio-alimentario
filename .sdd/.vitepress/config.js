@@ -75,7 +75,8 @@ export default {
               { text: 'laravel-migration', link: '/specs/laravel-migration' },
               { text: 'frontend-monorepo', link: '/specs/frontend-monorepo' },
               { text: 'dockerizacion-frontends', link: '/specs/dockerizacion-frontends' },
-              { text: 'roles-asistencia', link: '/specs/roles-asistencia' }
+              { text: 'roles-asistencia', link: '/specs/roles-asistencia' },
+              { text: 'redisenio-layout', link: '/specs/redisenio-layout' }
             ]
           },
           {
@@ -85,7 +86,8 @@ export default {
               { text: 'laravel-migration', link: '/plans/laravel-migration' },
               { text: 'frontend-monorepo', link: '/plans/frontend-monorepo' },
               { text: 'dockerizacion-frontends', link: '/plans/dockerizacion-frontends' },
-              { text: 'roles-asistencia', link: '/plans/roles-asistencia' }
+              { text: 'roles-asistencia', link: '/plans/roles-asistencia' },
+              { text: 'redisenio-layout', link: '/plans/redisenio-layout' }
             ]
           },
           {
@@ -95,7 +97,8 @@ export default {
               { text: 'laravel-migration', link: '/tasks/laravel-migration' },
               { text: 'frontend-monorepo', link: '/tasks/frontend-monorepo' },
               { text: 'dockerizacion-frontends', link: '/tasks/dockerizacion-frontends' },
-              { text: 'roles-asistencia', link: '/tasks/roles-asistencia' }
+              { text: 'roles-asistencia', link: '/tasks/roles-asistencia' },
+              { text: 'redisenio-layout', link: '/tasks/redisenio-layout' }
             ]
           }
         ]

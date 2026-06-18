@@ -19,7 +19,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="student in students" :key="student.documento">
+          <tr v-for="student in students" :key="student.documento" @click="$emit('select-student', student)" class="clickable-row">
             <td><strong>{{ student.documento }}</strong></td>
             <td>{{ student.nombres }} {{ student.apellidos }}</td>
             <td><span class="badge-group">{{ student.grupo }}</span></td>
@@ -29,7 +29,7 @@
               </span>
             </td>
             <td>
-              <button class="btn btn-danger btn-sm" @click="remove(student.documento)" :disabled="loading">
+              <button class="btn btn-danger btn-sm" @click.stop="remove(student.documento)" :disabled="loading">
                 Eliminar
               </button>
             </td>
@@ -41,6 +41,16 @@
     <AlertBox :message="message" :isError="isError" />
   </div>
 </template>
+
+<style scoped>
+.clickable-row {
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+.clickable-row:hover td {
+  background-color: var(--primary-light);
+}
+</style>
 
 <script>
 import { deleteStudent } from '../services/api'

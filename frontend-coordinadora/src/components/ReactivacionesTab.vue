@@ -22,11 +22,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="student in suspendedStudents" :key="student.documento">
+              <tr v-for="student in suspendedStudents" :key="student.documento" @click="$emit('select-student', student)" class="clickable-row">
                 <td><strong>{{ student.documento }}</strong></td>
                 <td>{{ student.nombres }}</td>
                 <td>
-                  <button class="btn btn-success btn-sm" @click="reactivate(student.documento)" :disabled="loading">
+                  <button class="btn btn-success btn-sm" @click.stop="reactivate(student.documento)" :disabled="loading">
                     Reingresar
                   </button>
                 </td>
@@ -187,5 +187,13 @@ export default {
 
 .text-activo {
   color: var(--success);
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+.clickable-row:hover td {
+  background-color: var(--primary-light);
 }
 </style>

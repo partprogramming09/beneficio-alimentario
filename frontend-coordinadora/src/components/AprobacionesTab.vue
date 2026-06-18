@@ -19,15 +19,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="student in students" :key="student.documento">
+          <tr v-for="student in students" :key="student.documento" @click="$emit('select-student', student)" class="clickable-row">
             <td><strong>{{ student.documento }}</strong></td>
             <td>{{ student.nombres }} {{ student.apellidos }}</td>
             <td><span class="badge-group">{{ student.grupo }}</span></td>
             <td>{{ student.creado_en }}</td>
             <td>
               <div class="action-buttons">
-                <button class="btn btn-success btn-sm" @click="approve(student.documento)" :disabled="loading">Aprobar</button>
-                <button class="btn btn-secondary btn-sm" @click="reject(student.documento)" :disabled="loading">Rechazar</button>
+                <button class="btn btn-success btn-sm" @click.stop="approve(student.documento)" :disabled="loading">Aprobar</button>
+                <button class="btn btn-secondary btn-sm" @click.stop="reject(student.documento)" :disabled="loading">Rechazar</button>
               </div>
             </td>
           </tr>
@@ -38,6 +38,16 @@
     <AlertBox :message="message" :isError="isError" />
   </div>
 </template>
+
+<style scoped>
+.clickable-row {
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+.clickable-row:hover td {
+  background-color: var(--primary-light);
+}
+</style>
 
 <script>
 import { approveStudent, rejectStudent } from '../services/api'
