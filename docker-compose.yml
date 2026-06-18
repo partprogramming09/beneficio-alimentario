@@ -20,16 +20,33 @@ services:
         depends_on:
           - mysql
 
-      # Servicio 2: Frontend en Vite/Vue
-      frontend:
+      # Servicio 2: Portal del Estudiante (Vite/Vue 3)
+      frontend-estudiante:
         build:
           context: .
-          dockerfile: ./Dockerfile
+          dockerfile: ./frontend-estudiante/Dockerfile
         ports:
           - "5173:5173"
         volumes:
           - .:/usr/src/app
           - /usr/src/app/node_modules
+          - /usr/src/app/frontend-estudiante/node_modules
+          - /usr/src/app/frontend-core/node_modules
+        depends_on:
+          - backend
+
+      # Servicio 3: Panel de la Coordinadora (Vite/Vue 3)
+      frontend-coordinadora:
+        build:
+          context: .
+          dockerfile: ./frontend-coordinadora/Dockerfile
+        ports:
+          - "5174:5174"
+        volumes:
+          - .:/usr/src/app
+          - /usr/src/app/node_modules
+          - /usr/src/app/frontend-coordinadora/node_modules
+          - /usr/src/app/frontend-core/node_modules
         depends_on:
           - backend
 
