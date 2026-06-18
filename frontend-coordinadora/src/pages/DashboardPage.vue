@@ -65,6 +65,8 @@
       :student="selectedStudent" 
       @close="selectedStudent = null"
       @refresh="loadStudents"
+      @update-student="updateStudentState"
+      @remove-student="removeStudentState"
     />
   </div>
 </template>
@@ -206,6 +208,21 @@ export default {
         case 'excusas': return 'Revisa los justificativos de alumnos suspendidos y gestiona sus reactivaciones.'
         case 'simulador': return 'Simula la asistencia del día escolar para evaluar las reglas de suspensión automática.'
         default: return 'Gestiona el beneficio alimentario de la institución.'
+      }
+    },
+    updateStudentState(updatedStudent) {
+      const index = this.allStudents.findIndex(s => s.documento === updatedStudent.documento)
+      if (index !== -1) {
+        this.allStudents.splice(index, 1, updatedStudent)
+      }
+      if (this.selectedStudent && this.selectedStudent.documento === updatedStudent.documento) {
+        this.selectedStudent = updatedStudent
+      }
+    },
+    removeStudentState(doc) {
+      this.allStudents = this.allStudents.filter(s => s.documento !== doc)
+      if (this.selectedStudent && this.selectedStudent.documento === doc) {
+        this.selectedStudent = null
       }
     }
   }

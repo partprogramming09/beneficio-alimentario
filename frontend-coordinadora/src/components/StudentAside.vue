@@ -192,8 +192,12 @@ export default {
         const data = await approveStudent(doc)
         this.message = data.message
         this.isError = false
-        this.$emit('refresh')
-        setTimeout(() => this.$emit('close'), 1500)
+        if (data.estudiante) {
+          this.$emit('update-student', data.estudiante)
+        } else {
+          this.$emit('refresh')
+        }
+        setTimeout(() => this.$emit('close'), 1000)
       } catch (err) {
         this.message = err.message
         this.isError = true
@@ -208,8 +212,8 @@ export default {
         const data = await rejectStudent(doc)
         this.message = data.message
         this.isError = false
-        this.$emit('refresh')
-        setTimeout(() => this.$emit('close'), 1500)
+        this.$emit('remove-student', doc)
+        setTimeout(() => this.$emit('close'), 1000)
       } catch (err) {
         this.message = err.message
         this.isError = true
@@ -224,8 +228,12 @@ export default {
         const data = await reactivateStudent(doc)
         this.message = data.message
         this.isError = false
-        this.$emit('refresh')
-        setTimeout(() => this.$emit('close'), 1500)
+        if (data.estudiante) {
+          this.$emit('update-student', data.estudiante)
+        } else {
+          this.$emit('refresh')
+        }
+        setTimeout(() => this.$emit('close'), 1000)
       } catch (err) {
         this.message = err.message
         this.isError = true
@@ -244,8 +252,8 @@ export default {
         const data = await deleteStudent(doc)
         this.message = data.message
         this.isError = false
-        this.$emit('refresh')
-        setTimeout(() => this.$emit('close'), 1500)
+        this.$emit('remove-student', doc)
+        setTimeout(() => this.$emit('close'), 1000)
       } catch (err) {
         this.message = err.message
         this.isError = true
