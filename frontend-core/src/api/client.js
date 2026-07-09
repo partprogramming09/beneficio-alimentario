@@ -1,8 +1,18 @@
 import axios from 'axios';
 
+let apiURL = import.meta.env?.VITE_API_URL || 'http://localhost:8000';
+
+// Auto-detección dinámica para Dev Tunnels de Visual Studio Code
+if (typeof window !== 'undefined' && window.location.hostname.endsWith('use.devtunnels.ms')) {
+  const hostname = window.location.hostname;
+  // Reemplazar -5173 o -5174 por -8000
+  const apiHostname = hostname.replace(/-(5173|5174)/, '-8000');
+  apiURL = `https://${apiHostname}`;
+}
+
 // Instancia global de Axios configurada para consumir la API de Laravel
 const apiClient = axios.create({
-  baseURL: import.meta.env?.VITE_API_URL || 'http://localhost:8000',
+  baseURL: apiURL,
   withCredentials: true, // Requerido para Laravel Sanctum cookies de sesión
   headers: {
     'Accept': 'application/json',

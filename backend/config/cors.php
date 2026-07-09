@@ -21,7 +21,9 @@ return [
 
     'allowed_origins' => ['http://localhost:5173', 'http://localhost:5174'],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '#^https?://.*\.use\.devtunnels\.ms$#',
+    ],
 
     'allowed_headers' => ['*'],
 
