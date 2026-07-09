@@ -45,10 +45,11 @@ class StudentController extends Controller
         ]);
 
         try {
-            $estudiante = $this->studentService->registerProfile($request->all());
+            $resultado = $this->studentService->registerProfile($request->all());
             return response()->json([
-                'message' => 'Perfil de beneficiario registrado con éxito. Esperando aprobación de la coordinadora.',
-                'estudiante' => $estudiante,
+                'message' => 'Perfil registrado y asistencia diaria marcada con éxito. ¡Buen provecho!',
+                'estudiante' => $resultado['estudiante'],
+                'comprobante' => $resultado['comprobante'],
             ], 201);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);

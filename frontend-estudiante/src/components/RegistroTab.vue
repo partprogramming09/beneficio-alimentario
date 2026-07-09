@@ -1,60 +1,74 @@
 <template>
   <div class="tab-content">
-    <h3>Crear Perfil de Beneficiario</h3>
-    <p class="description">Ingresa tu número de documento para validar que estás matriculado e iniciar el registro.</p>
-    
-    <div v-if="!isValidated" class="form-group inline-form">
-      <label for="doc-val">Documento de Identidad:</label>
-      <input 
-        id="doc-val" 
-        type="text" 
-        v-model="registration.documento" 
-        placeholder="Ej: 1001" 
-        @keyup.enter="validateStudent"
-      />
-      <button class="btn btn-primary" @click="validateStudent" :disabled="loading">
-        {{ loading ? 'Validando...' : 'Verificar Matrícula' }}
-      </button>
+    <div v-if="receipt">
+      <div class="alert alert-success text-center">
+        🎉 ¡Perfil registrado y asistencia diaria marcada con éxito!
+      </div>
+      <ReceiptCard :receipt="receipt" badgeText="REGISTRADO" />
+      <div class="form-actions mt-4 text-center">
+        <button class="btn btn-secondary" @click="resetForm">Registrar Otro Estudiante</button>
+      </div>
     </div>
-
-    <div v-else class="validated-form">
-      <div class="alert alert-success">
-        ✔️ Documento verificado. Estudiante matriculado: <strong>{{ validatedName }}</strong> (Grupo: {{ validatedGroup }}).
-      </div>
+    
+    <div v-else>
+      <h3>Crear Perfil de Beneficiario</h3>
+      <p class="description">Ingresa tu número de documento para validar que estás matriculado e iniciar el registro.</p>
       
-      <div class="form-group">
-        <label>Nombres:</label>
-        <input type="text" v-model="registration.nombres" placeholder="Ingresa tus nombres" />
-      </div>
-      <div class="form-group">
-        <label>Apellidos:</label>
-        <input type="text" v-model="registration.apellidos" placeholder="Ingresa tus apellidos" />
-      </div>
-      <div class="form-group">
-        <label>Grupo:</label>
-        <input type="text" v-model="registration.grupo" readonly />
-      </div>
-
-      <div class="form-actions">
-        <button class="btn btn-secondary" @click="resetRegistration">Cancelar</button>
-        <button class="btn btn-primary" @click="registerProfile" :disabled="loading">
-          {{ loading ? 'Registrando...' : 'Confirmar Registro' }}
+      <div v-if="!isValidated" class="form-group inline-form">
+        <label for="doc-val">Documento de Identidad:</label>
+        <input 
+          id="doc-val" 
+          type="text" 
+          v-model="registration.documento" 
+          placeholder="Ej: 1001" 
+          @keyup.enter="validateStudent"
+        />
+        <button class="btn btn-primary" @click="validateStudent" :disabled="loading">
+          {{ loading ? 'Validando...' : 'Verificar Matrícula' }}
         </button>
       </div>
-    </div>
 
-    <AlertBox :message="message" :isError="isError" />
+      <div v-else class="validated-form">
+        <div class="alert alert-success">
+          ✔️ Documento verificado. Estudiante matriculado: <strong>{{ validatedName }}</strong> (Grupo: {{ validatedGroup }}).
+        </div>
+        
+        <div class="form-group">
+          <label>Nombres:</label>
+          <input type="text" v-model="registration.nombres" placeholder="Ingresa tus nombres" />
+        </div>
+        <div class="form-group">
+          <label>Apellidos:</label>
+          <input type="text" v-model="registration.apellidos" placeholder="Ingresa tus apellidos" />
+        </div>
+        <div class="form-group">
+          <label>Grupo:</label>
+          <input type="text" v-model="registration.grupo" readonly />
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-secondary" @click="resetRegistration">Cancelar</button>
+          <button class="btn btn-primary" @click="registerProfile" :disabled="loading">
+            {{ loading ? 'Registrando...' : 'Confirmar Registro' }}
+          </button>
+        </div>
+      </div>
+
+      <AlertBox :message="message" :isError="isError" />
+    </div>
   </div>
 </template>
 
 <script>
 import { validateStudent, registerProfile } from '../services/api'
 import AlertBox from './AlertBox.vue'
+import ReceiptCard from './ReceiptCard.vue'
 
 export default {
   name: 'RegistroTab',
   components: {
-    AlertBox
+    AlertBox,
+    ReceiptCard
   },
   data() {
     return {
@@ -69,7 +83,8 @@ export default {
       validatedGroup: '',
       loading: false,
       message: '',
-      isError: false
+      isError: false,
+      receipt: null
     }
   },
   methods: {
@@ -127,13 +142,21 @@ export default {
         this.message = data.message
         this.isError = false
         this.isValidated = false
+        this.receipt = data.comprobante
         this.registration = { documento: '', nombres: '', apellidos: '', grupo: '' }
+        
+        // Auto iniciar sesión del estudiante recién registrado
+        this.$emit('session-started', { documento: data.estudiante.documento, nombre: data.comprobante.nombre })
       } catch (err) {
         this.message = err.message
         this.isError = true
       } finally {
         this.loading = false
       }
+    },
+    resetForm() {
+      this.receipt = null
+      this.resetRegistration()
     }
   }
 }

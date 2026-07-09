@@ -7,10 +7,13 @@ RUN apk add --no-cache \
     libzip-dev \
     zip \
     bash \
-    && docker-php-ext-install pdo_mysql zip
+    && docker-php-ext-install pdo_mysql zip opcache
 
 # Instalar Composer desde su imagen oficial
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copiar configuración optimizada de OPcache
+COPY opcache.ini $PHP_INI_DIR/conf.d/opcache.ini
 
 WORKDIR /var/www/html
 

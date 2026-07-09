@@ -1,9 +1,26 @@
 <template>
   <div class="portal-container">
+    <!-- Header de Sesión Activa del Estudiante -->
+    <div v-if="studentDoc" class="card header-card student-session-bar">
+      <div class="session-info">
+        <span class="session-avatar">👤</span>
+        <div class="session-meta">
+          <span class="session-title">Estudiante Identificado</span>
+          <strong>{{ studentName }}</strong>
+          <span class="session-doc">Documento: {{ studentDoc }}</span>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-sm" @click="logout">
+        ✕ Salir / Cambiar Estudiante
+      </button>
+    </div>
+
     <!-- Pestañas de Navegación del Portal -->
     <div class="card tabs-card">
       <div class="tabs-nav">
+        <!-- Ocultamos la pestaña de registro si ya está identificado -->
         <button 
+          v-if="!studentDoc"
           :class="['tab-btn', { active: activeTab === 'registro' }]" 
           @click="activeTab = 'registro'"
         >
@@ -14,7 +31,7 @@
           :class="['tab-btn', { active: activeTab === 'recuperar' }]" 
           @click="activeTab = 'recuperar'"
         >
-          📄 Recuperar Ticket
+          📄 Mi Ticket Diario
         </button>
         <button 
           :class="['tab-btn', { active: activeTab === 'gestion' }]" 
@@ -28,9 +45,19 @@
     <!-- Contenido Dinámico de Pestañas -->
     <div class="card content-card">
       <transition name="fade" mode="out-in">
-        <RegistroTab v-if="activeTab === 'registro'" />
-        <RecuperarTab v-else-if="activeTab === 'recuperar'" />
-        <GestionTab v-else-if="activeTab === 'gestion'" />
+        <RegistroTab 
+          v-if="activeTab === 'registro' && !studentDoc" 
+          @session-started="onSessionStarted"
+        />
+        <RecuperarTab 
+          v-else-if="activeTab === 'recuperar'" 
+          :student-doc="studentDoc"
+          @session-started="onSessionStarted"
+        />
+        <GestionTab 
+          v-else-if="activeTab === 'gestion'" 
+          :student-doc="studentDoc"
+        />
       </transition>
     </div>
   </div>
@@ -50,8 +77,26 @@ export default {
   },
   data() {
     return {
-      activeTab: 'recuperar' // Por defecto mostramos recuperar ticket
+      activeTab: 'recuperar',
+      studentDoc: localStorage.getItem('studentDoc') || null,
+      studentName: localStorage.getItem('studentName') || null
     };
+  },
+  methods: {
+    onSessionStarted(session) {
+      this.studentDoc = session.documento;
+      this.studentName = session.nombre;
+      localStorage.setItem('studentDoc', session.documento);
+      localStorage.setItem('studentName', session.nombre);
+      this.activeTab = 'recuperar';
+    },
+    logout() {
+      this.studentDoc = null;
+      this.studentName = null;
+      localStorage.removeItem('studentDoc');
+      localStorage.removeItem('studentName');
+      this.activeTab = 'recuperar';
+    }
   }
 }
 </script>
@@ -61,6 +106,49 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.student-session-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px !important;
+  border-left: 6px solid var(--accent) !important;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.session-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.session-avatar {
+  font-size: 2rem;
+}
+
+.session-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.session-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.session-meta strong {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.session-doc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
 }
 
 .tabs-card {

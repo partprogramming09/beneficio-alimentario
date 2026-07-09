@@ -42,8 +42,9 @@ export default {
             collapsed: true,
             items: [
               { text: 'Estrategia de Dockerización Independiente de Frontends', link: '/wiki/negocio/dockerizacion-frontends' },
+              { text: 'Documento de Negocio: Control Interno y Panel Lateral (Aside) de Estudiantes', link: '/wiki/negocio/flujo-gestion-estudiantes' },
+              { text: 'Flujo de Webhooks y Procesamiento Asíncrono', link: '/wiki/negocio/flujo-webhooks' },
               { text: 'Reglas y Lógica de Negocio: Control de Beneficio Alimentario', link: '/wiki/negocio/reglas-negocio' },
-              { text: 'Control Interno y Panel Lateral (Aside) de Estudiantes', link: '/wiki/negocio/flujo-gestion-estudiantes' },
               { text: 'Arquitectura de Separación Front/Back con Laravel 13', link: '/wiki/negocio/separacion-front-back' }
             ]
           }
@@ -66,39 +67,39 @@ export default {
       },
       {
         text: 'Flujo de Trabajo SDD',
-        collapsed: false,
+        collapsed: true,
         items: [
           {
             text: 'Especificaciones (Specs)',
-            collapsed: false,
+            collapsed: true,
             items: [
-              { text: 'laravel-migration', link: '/specs/laravel-migration' },
-              { text: 'frontend-monorepo', link: '/specs/frontend-monorepo' },
-              { text: 'dockerizacion-frontends', link: '/specs/dockerizacion-frontends' },
-              { text: 'roles-asistencia', link: '/specs/roles-asistencia' },
-              { text: 'redisenio-layout', link: '/specs/redisenio-layout' }
+            { text: 'dockerizacion-frontends', link: '/specs/dockerizacion-frontends' },
+            { text: 'frontend-monorepo', link: '/specs/frontend-monorepo' },
+            { text: 'laravel-migration', link: '/specs/laravel-migration' },
+            { text: 'redisenio-layout', link: '/specs/redisenio-layout' },
+            { text: 'roles-asistencia', link: '/specs/roles-asistencia' }
             ]
           },
           {
             text: 'Planes Tecnicos (Plans)',
-            collapsed: false,
+            collapsed: true,
             items: [
-              { text: 'laravel-migration', link: '/plans/laravel-migration' },
-              { text: 'frontend-monorepo', link: '/plans/frontend-monorepo' },
-              { text: 'dockerizacion-frontends', link: '/plans/dockerizacion-frontends' },
-              { text: 'roles-asistencia', link: '/plans/roles-asistencia' },
-              { text: 'redisenio-layout', link: '/plans/redisenio-layout' }
+            { text: 'dockerizacion-frontends', link: '/plans/dockerizacion-frontends' },
+            { text: 'frontend-monorepo', link: '/plans/frontend-monorepo' },
+            { text: 'laravel-migration', link: '/plans/laravel-migration' },
+            { text: 'redisenio-layout', link: '/plans/redisenio-layout' },
+            { text: 'roles-asistencia', link: '/plans/roles-asistencia' }
             ]
           },
           {
             text: 'Tareas (Tasks)',
-            collapsed: false,
+            collapsed: true,
             items: [
-              { text: 'laravel-migration', link: '/tasks/laravel-migration' },
-              { text: 'frontend-monorepo', link: '/tasks/frontend-monorepo' },
-              { text: 'dockerizacion-frontends', link: '/tasks/dockerizacion-frontends' },
-              { text: 'roles-asistencia', link: '/tasks/roles-asistencia' },
-              { text: 'redisenio-layout', link: '/tasks/redisenio-layout' }
+            { text: 'dockerizacion-frontends', link: '/tasks/dockerizacion-frontends' },
+            { text: 'frontend-monorepo', link: '/tasks/frontend-monorepo' },
+            { text: 'laravel-migration', link: '/tasks/laravel-migration' },
+            { text: 'redisenio-layout', link: '/tasks/redisenio-layout' },
+            { text: 'roles-asistencia', link: '/tasks/roles-asistencia' }
             ]
           }
         ]

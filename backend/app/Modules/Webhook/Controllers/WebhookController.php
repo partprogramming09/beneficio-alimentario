@@ -10,7 +10,7 @@ use Exception;
 
 class WebhookController extends Controller
 {
-    protected $webhookService;
+    protected WebhookService $webhookService;
 
     public function __construct(WebhookService $webhookService)
     {

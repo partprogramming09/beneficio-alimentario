@@ -25,7 +25,7 @@ class DiningHallTest extends TestCase
     }
 
     /**
-     * Test: Flujo completo de Registro y Aprobación de Beneficiarios
+     * Test: Flujo completo de Registro Directo y Auto-Asistencia
      */
     public function test_student_registration_and_approval_flow(): void
     {
@@ -39,34 +39,30 @@ class DiningHallTest extends TestCase
         $response->assertStatus(400)
                  ->assertJsonStructure(['error']);
 
-        // 3. Registrar el perfil
+        // 3. Registrar el perfil (debe auto-activar y auto-marcar asistencia hoy)
         $response = $this->postJson('/api/estudiantes/registro', [
             'documento' => '1001',
             'nombres' => 'Juan',
             'apellidos' => 'Pérez',
         ]);
         $response->assertStatus(201)
-                 ->assertJsonPath('estudiante.estado', 'Pendiente');
+                 ->assertJsonPath('estudiante.estado', 'Activo')
+                 ->assertJsonStructure(['message', 'estudiante', 'comprobante']);
 
-        // Comprobar persistencia en DB
-        $this->assertDatabaseHas('estudiantes', [
-            'documento' => '1001',
-            'estado' => 'Pendiente'
-        ]);
-
-        // 4. Intentar marcar asistencia diaria siendo 'Pendiente'
-        $response = $this->postJson('/api/asistencia', ['documento' => '1001']);
-        $response->assertStatus(400)
-                 ->assertJsonStructure(['error']);
-
-        // 5. Aprobar estudiante mediante el módulo administrativo
-        $response = $this->postJson('/api/admin/estudiantes/aprobar', ['documento' => '1001']);
-        $response->assertStatus(200)
-                 ->assertJsonPath('estudiante.estado', 'Activo');
-
+        // Comprobar persistencia en DB de estudiante Activo, asistencia y comprobante
         $this->assertDatabaseHas('estudiantes', [
             'documento' => '1001',
             'estado' => 'Activo'
+        ]);
+
+        $this->assertDatabaseHas('asistencias', [
+            'documento' => '1001',
+            'fecha' => date('Y-m-d')
+        ]);
+
+        $this->assertDatabaseHas('comprobantes', [
+            'documento' => '1001',
+            'fecha' => date('Y-m-d')
         ]);
     }
 

@@ -98,7 +98,7 @@ export default {
     return {
       activeSubTab: 'pendientes',
       tabs: [
-        { id: 'pendientes', label: 'Aprobaciones' },
+        { id: 'pendientes', label: 'Inscritos Hoy' },
         { id: 'listado', label: 'Estudiantes' },
         { id: 'asistencia', label: 'Registrar Almuerzo' },
         { id: 'reportes', label: 'Reportes Asistencia' },
@@ -124,7 +124,8 @@ export default {
       }
     },
     pendingStudents() {
-      return this.allStudents.filter(s => s.estado === 'Pendiente')
+      const hoyStr = new Date().toISOString().split('T')[0];
+      return this.allStudents.filter(s => s.creado_en && s.creado_en.startsWith(hoyStr))
     },
     pendingCount() {
       return this.pendingStudents.length
@@ -190,7 +191,7 @@ export default {
     },
     getTabTitle(id) {
       switch (id) {
-        case 'pendientes': return 'Solicitudes de Inscripción'
+        case 'pendientes': return 'Estudiantes Inscritos Hoy'
         case 'listado': return 'Listado de Beneficiarios'
         case 'asistencia': return 'Registrar Asistencia en Fila'
         case 'reportes': return 'Reportes e Historial'
@@ -201,7 +202,7 @@ export default {
     },
     getTabDescription(id) {
       switch (id) {
-        case 'pendientes': return 'Aprueba o rechaza nuevas solicitudes de ingreso de estudiantes.'
+        case 'pendientes': return 'Visualiza los estudiantes que se han registrado al programa durante el día de hoy.'
         case 'listado': return 'Monitorea el estado y el historial de inasistencias de los alumnos registrados.'
         case 'asistencia': return 'Registra la asistencia en tiempo real de los estudiantes en la fila del almuerzo.'
         case 'reportes': return 'Genera reportes diarios y semanales de asistencia del comedor escolar.'

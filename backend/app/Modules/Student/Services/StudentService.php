@@ -7,13 +7,17 @@ use App\Modules\Student\Models\Estudiante;
 use App\Modules\Webhook\Services\WebhookService;
 use Exception;
 
+use App\Modules\Attendance\Services\AttendanceService;
+
 class StudentService
 {
     protected $webhookService;
+    protected $attendanceService;
 
-    public function __construct(WebhookService $webhookService)
+    public function __construct(WebhookService $webhookService, AttendanceService $attendanceService)
     {
         $this->webhookService = $webhookService;
+        $this->attendanceService = $attendanceService;
     }
 
     /**
@@ -43,7 +47,7 @@ class StudentService
     /**
      * Crea un perfil de beneficiario para el estudiante.
      */
-    public function registerProfile(array $data): Estudiante
+    public function registerProfile(array $data): array
     {
         $documento = $data['documento'];
         
@@ -55,7 +59,7 @@ class StudentService
             'nombres' => $data['nombres'],
             'apellidos' => $data['apellidos'],
             'grupo' => $valido['grupo'],
-            'estado' => 'Pendiente', // Inicia en espera de aprobación de la coordinadora
+            'estado' => 'Activo', // Se crea directamente en estado Activo
         ]);
 
         // Disparar Webhook
@@ -68,7 +72,13 @@ class StudentService
             'creado_en' => date('Y-m-d H:i:s'),
         ]);
 
-        return $estudiante;
+        // Registrar automáticamente la asistencia y generar el ticket para hoy
+        $comprobante = $this->attendanceService->markAttendance($documento);
+
+        return [
+            'estudiante' => $estudiante,
+            'comprobante' => $comprobante['comprobante'],
+        ];
     }
 
     /**
