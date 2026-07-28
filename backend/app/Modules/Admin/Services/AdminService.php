@@ -291,6 +291,11 @@ class AdminService
      */
     public function simulateDay(string $fecha, array $asistentes): array
     {
+        // Validar si la fecha es un día escolar hábil en Colombia
+        if (!\App\Services\ColombianCalendarService::isSchoolDay($fecha)) {
+            throw new Exception("La fecha {$fecha} cae en un fin de semana o día festivo en Colombia. El comedor escolar no opera en días no hábiles.");
+        }
+
         $horaSimulada = '12:00:00';
         $suspendidosPre = Estudiante::where('estado', 'Suspendido')->pluck('documento')->toArray();
 
@@ -298,19 +303,15 @@ class AdminService
             foreach ($asistentes as $doc) {
                 $estudiante = Estudiante::find($doc);
 
-                // Solo asisten si están registrados y no inactivos
                 if ($estudiante && $estudiante->estado !== 'Inactivo') {
-                    // Evitar duplicar asistencia si ya existiera para esta fecha
                     $existe = Asistencia::where('documento', $doc)->where('fecha', $fecha)->exists();
                     if (!$existe) {
-                        // Crear asistencia
                         Asistencia::create([
                             'documento' => $doc,
                             'fecha' => $fecha,
                             'hora' => $horaSimulada,
                         ]);
 
-                        // Crear comprobante
                         Comprobante::create([
                             'documento' => $doc,
                             'fecha' => $fecha,
@@ -321,11 +322,9 @@ class AdminService
                 }
             }
 
-            // Evaluar y sancionar suspensiones automáticamente para todos los estudiantes
             $this->ruleService->evaluateAllSuspensions();
         });
 
-        // Obtener los que fueron suspendidos en esta simulación (que no estaban suspendidos previamente)
         $suspendidosPost = Estudiante::where('estado', 'Suspendido')->pluck('documento')->toArray();
         $nuevosSuspendidosDocs = array_diff($suspendidosPost, $suspendidosPre);
 
@@ -347,7 +346,8 @@ class AdminService
     }
 
     /**
-     * Registra un estudiante individual en la institución y activa su perfil de beneficiario.
+     * Registra un estudiante individual en la lista institucional.
+     * El estudiante activará su perfil al registrarse voluntariamente en el portal.
      */
     public function createSingleStudent(array $data): array
     {
@@ -357,8 +357,7 @@ class AdminService
         $grupo = trim($data['grupo']);
         $nombreCompleto = "{$nombres} {$apellidos}";
 
-        // 1. Guardar en la tabla institucional de matriculados
-        InstitucionEstudiante::updateOrCreate(
+        $institucion = InstitucionEstudiante::updateOrCreate(
             ['documento' => $documento],
             [
                 'nombre_completo' => $nombreCompleto,
@@ -366,25 +365,15 @@ class AdminService
             ]
         );
 
-        // 2. Registrar o actualizar en la lista activa de beneficiarios
-        $estudiante = Estudiante::updateOrCreate(
-            ['documento' => $documento],
-            [
-                'nombres' => $nombres,
-                'apellidos' => $apellidos,
-                'grupo' => $grupo,
-                'estado' => 'Activo',
-            ]
-        );
-
         return [
-            'message' => "Estudiante {$nombreCompleto} (Doc: {$documento}) registrado y activado con éxito.",
-            'estudiante' => $estudiante,
+            'message' => "Estudiante {$nombreCompleto} (Doc: {$documento}) registrado en la lista oficial de la institución. El estudiante cambiará su estado al realizar su inscripción en el portal.",
+            'institucion' => $institucion,
         ];
     }
 
     /**
-     * Carga masiva de estudiantes desde Excel/CSV.
+     * Carga masiva de la lista de matriculados institucionales desde Excel/CSV.
+     * Los estudiantes cambiarán a estado 'Activo' cuando realicen su registro personal.
      */
     public function importBulkStudents(array $studentsData): array
     {
@@ -426,26 +415,47 @@ class AdminService
                         'grupo' => $grupo,
                     ]
                 );
-
-                Estudiante::updateOrCreate(
-                    ['documento' => $documento],
-                    [
-                        'nombres' => $nombres ?: $nombreCompleto,
-                        'apellidos' => $apellidos ?: '',
-                        'grupo' => $grupo,
-                        'estado' => 'Activo',
-                    ]
-                );
             }
         });
 
         return [
-            'message' => "Importación masiva completada. Procesados: " . ($insertados + $actualizados) . " ({$insertados} nuevos, {$actualizados} actualizados).",
+            'message' => "Importación masiva completada con éxito. Registros institucionales guardados: " . ($insertados + $actualizados) . " ({$insertados} nuevos, {$actualizados} actualizados). Los estudiantes podrán ingresar su documento en el portal para inscribirse.",
             'total' => $insertados + $actualizados,
             'insertados' => $insertados,
             'actualizados' => $actualizados,
         ];
     }
+
+    /**
+     * Permite a la coordinadora activar directamente a un estudiante de forma manual.
+     */
+    public function activateStudentManually(string $documento): array
+    {
+        $institucion = InstitucionEstudiante::find($documento);
+        if (!$institucion) {
+            throw new Exception("El estudiante no se encuentra en la lista institucional.");
+        }
+
+        $parts = explode(' ', trim($institucion->nombre_completo), 2);
+        $nombres = $parts[0] ?? $institucion->nombre_completo;
+        $apellidos = $parts[1] ?? '';
+
+        $estudiante = Estudiante::updateOrCreate(
+            ['documento' => $documento],
+            [
+                'nombres' => $nombres,
+                'apellidos' => $apellidos,
+                'grupo' => $institucion->grupo,
+                'estado' => 'Activo',
+            ]
+        );
+
+        return [
+            'message' => "Estudiante {$institucion->nombre_completo} activado directamente por la coordinadora.",
+            'estudiante' => $estudiante,
+        ];
+    }
+
 
     /**
      * Retorna la estructura organizada de Cursos y Grupos con detalle de inscritos / no inscritos.

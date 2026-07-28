@@ -67,5 +67,11 @@ export async function getAdminGroups() {
   return response.data;
 }
 
+export async function activateStudentManually(documento) {
+  const response = await apiClient.post('/api/admin/estudiantes/activar-manual', { documento });
+  return response.data;
+}
+
+
 
 

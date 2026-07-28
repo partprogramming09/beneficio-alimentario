@@ -1,17 +1,28 @@
 <template>
   <div class="tab-content">
-    <!-- Buscador y filtro en tiempo real -->
-    <div class="search-bar-wrapper mb-3">
-      <input 
-        type="text" 
-        v-model="searchQuery" 
-        placeholder="🔍 Buscar estudiante por nombre, documento o grupo..."
-        class="search-input"
-      />
+    <!-- Buscador y filtro por grupo en tiempo real -->
+    <div class="filter-controls-row mb-3">
+      <div class="search-bar-wrapper">
+        <input 
+          type="text" 
+          v-model="searchQuery" 
+          placeholder="🔍 Buscar por nombre o documento..."
+          class="search-input"
+        />
+      </div>
+
+      <div class="group-select-wrapper">
+        <select v-model="selectedGroupFilter" class="select-group-input">
+          <option value="ALL">🏫 Todos los Grupos ({{ availableGroups.length }})</option>
+          <option v-for="grp in availableGroups" :key="grp" :value="grp">
+            Grupo {{ grp }}
+          </option>
+        </select>
+      </div>
     </div>
 
     <div v-if="filteredStudents.length === 0" class="empty-state">
-      <p>No se encontraron estudiantes con el criterio ingresado.</p>
+      <p>No se encontraron estudiantes beneficiarios con el criterio ingresado.</p>
     </div>
 
     <div v-else>
@@ -101,6 +112,7 @@ export default {
   data() {
     return {
       searchQuery: '',
+      selectedGroupFilter: 'ALL',
       loading: false,
       message: '',
       isError: false
@@ -108,17 +120,31 @@ export default {
   },
 
   computed: {
+    availableGroups() {
+      const set = new Set(this.students.map(s => s.grupo).filter(Boolean))
+      return Array.from(set).sort()
+    },
     filteredStudents() {
-      if (!this.searchQuery.trim()) return this.students;
-      const query = this.searchQuery.toLowerCase();
-      return this.students.filter(s => 
-        (s.documento && s.documento.toLowerCase().includes(query)) ||
-        (s.nombres && s.nombres.toLowerCase().includes(query)) ||
-        (s.apellidos && s.apellidos.toLowerCase().includes(query)) ||
-        (s.grupo && s.grupo.toLowerCase().includes(query))
-      );
+      let list = this.students;
+
+      if (this.selectedGroupFilter !== 'ALL') {
+        list = list.filter(s => s.grupo === this.selectedGroupFilter)
+      }
+
+      if (this.searchQuery.trim()) {
+        const query = this.searchQuery.toLowerCase();
+        list = list.filter(s => 
+          (s.documento && s.documento.toLowerCase().includes(query)) ||
+          (s.nombres && s.nombres.toLowerCase().includes(query)) ||
+          (s.apellidos && s.apellidos.toLowerCase().includes(query)) ||
+          (s.grupo && s.grupo.toLowerCase().includes(query))
+        );
+      }
+
+      return list
     }
   },
+
   methods: {
     clearMessages() {
       this.message = ''
@@ -148,11 +174,10 @@ export default {
 </script>
 
 <style scoped>
-.action-bar-header {
+.filter-controls-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
   gap: 12px;
+  align-items: center;
   flex-wrap: wrap;
 }
 
@@ -161,13 +186,20 @@ export default {
   min-width: 240px;
 }
 
-.actions-buttons-group {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+.select-group-input {
+  padding: 10px 16px;
+  border-radius: var(--border-radius-pill);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
 }
 
 .search-input {
+
   width: 100%;
   padding: 10px 16px;
   border-radius: var(--border-radius-pill);

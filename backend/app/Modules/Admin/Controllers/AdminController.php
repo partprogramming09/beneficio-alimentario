@@ -232,6 +232,24 @@ class AdminController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
+    /**
+     * Activa directamente a un estudiante de la institución.
+     */
+    public function activarManual(Request $request)
+    {
+        $request->validate([
+            'documento' => 'required|string',
+        ]);
+
+        try {
+            $resultado = $this->adminService->activateStudentManually($request->input('documento'));
+            return response()->json($resultado, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
 }
+
 
 

@@ -47,7 +47,13 @@ class AttendanceService
         $hoy = date('Y-m-d');
         $hora = date('H:i:s');
 
+        // Validar si es día escolar hábil en Colombia (excluye fines de semana y festivos Ley Emiliani)
+        if (!\App\Services\ColombianCalendarService::isSchoolDay($hoy)) {
+            throw new Exception("Hoy es un día no hábil en Colombia (fin de semana o día festivo). El comedor escolar no presta servicio.");
+        }
+
         // Validar si ya registró asistencia hoy
+
         $asistenciaExistente = Asistencia::where('documento', $documento)
             ->where('fecha', $hoy)
             ->first();

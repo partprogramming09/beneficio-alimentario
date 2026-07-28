@@ -100,6 +100,11 @@
                   <div class="card-name">{{ st.nombre_completo }}</div>
                   <div class="card-meta">Estado Beneficio: <strong>{{ st.estado }}</strong></div>
                 </div>
+                <div v-if="!st.esta_inscrito" class="data-card-actions mt-2">
+                  <button class="btn btn-primary btn-xs" @click.stop="manualActivate(st.documento)">
+                    ⚡ Activar Directo
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -113,6 +118,7 @@
                     <th>Grupo</th>
                     <th>¿Está en Comedor?</th>
                     <th>Estado en Beneficio</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -130,10 +136,21 @@
                         {{ st.estado }}
                       </span>
                     </td>
+                    <td>
+                      <button 
+                        v-if="!st.esta_inscrito" 
+                        class="btn btn-primary btn-xs" 
+                        @click.stop="manualActivate(st.documento)"
+                      >
+                        ⚡ Activar Directo
+                      </button>
+                      <span v-else class="text-muted small">✓ Activo</span>
+                    </td>
                   </tr>
                 </tbody>
               </table>
             </div>
+
           </div>
         </div>
       </div>
@@ -157,7 +174,7 @@
 </template>
 
 <script>
-import { getAdminGroups } from '../services/api'
+import { getAdminGroups, activateStudentManually } from '../services/api'
 import AlertBox from './AlertBox.vue'
 import AgregarEstudianteModal from './AgregarEstudianteModal.vue'
 import ImportarEstudiantesModal from './ImportarEstudiantesModal.vue'
@@ -205,6 +222,18 @@ export default {
         this.loading = false
       }
     },
+    async manualActivate(doc) {
+      try {
+        const res = await activateStudentManually(doc)
+        this.message = res.message
+        this.isError = false
+        this.onDataChanged()
+      } catch (err) {
+        this.message = err.message
+        this.isError = true
+      }
+    },
+
     onDataChanged() {
       this.loadGroups()
       this.$emit('refresh-students')
