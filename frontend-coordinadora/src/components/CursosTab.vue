@@ -52,6 +52,12 @@
           </button>
         </div>
       </div>
+
+      <div class="filter-item">
+        <button class="btn btn-secondary btn-sm" @click="toggleAllGroups">
+          {{ areAllCollapsed ? '📂 Desplegar Todos' : '📁 Contraer Todos' }}
+        </button>
+      </div>
     </div>
 
     <div v-if="loading" class="empty-state">
@@ -65,8 +71,9 @@
     <!-- Contenido de Grupos Organizados -->
     <div v-else class="groups-grid">
       <div v-for="grp in filteredGroups" :key="grp.nombre_grupo" class="group-card mb-4">
-        <div class="group-card-header">
+        <div class="group-card-header clickable-header" @click="toggleGroupCollapse(grp.nombre_grupo)">
           <div class="group-title">
+            <span class="collapse-icon">{{ isGroupCollapsed(grp.nombre_grupo) ? '▶' : '▼' }}</span>
             <span class="group-icon font-weight-bold">🏫 Grupo {{ grp.nombre_grupo }}</span>
           </div>
 
@@ -77,7 +84,8 @@
           </div>
         </div>
 
-        <div class="group-card-body">
+        <div v-show="!isGroupCollapsed(grp.nombre_grupo)" class="group-card-body">
+
           <div v-if="getFilteredStudents(grp.estudiantes).length === 0" class="p-3 text-muted text-center">
             No hay estudiantes que coincidan con el filtro en este grupo.
           </div>
@@ -225,6 +233,7 @@ export default {
       groups: [],
       selectedGroupFilter: 'ALL',
       statusFilter: 'ALL',
+      collapsedGroups: {},
       isAddModalOpen: false,
       isImportModalOpen: false,
       isEditModalOpen: false,
@@ -240,12 +249,35 @@ export default {
         return this.groups
       }
       return this.groups.filter(g => g.nombre_grupo === this.selectedGroupFilter)
+    },
+    areAllCollapsed() {
+      if (this.filteredGroups.length === 0) return false
+      return this.filteredGroups.every(g => this.collapsedGroups[g.nombre_grupo])
     }
   },
   mounted() {
     this.loadGroups()
   },
   methods: {
+    isGroupCollapsed(grpName) {
+      return !!this.collapsedGroups[grpName]
+    },
+    toggleGroupCollapse(grpName) {
+      this.collapsedGroups = {
+        ...this.collapsedGroups,
+        [grpName]: !this.collapsedGroups[grpName]
+      }
+    },
+    toggleAllGroups() {
+      const shouldCollapse = !this.areAllCollapsed
+      const nextObj = {}
+      if (shouldCollapse) {
+        this.filteredGroups.forEach(g => {
+          nextObj[g.nombre_grupo] = true
+        })
+      }
+      this.collapsedGroups = nextObj
+    },
     async loadGroups() {
       this.loading = true
       try {
@@ -255,6 +287,7 @@ export default {
         this.message = err.message
         this.isError = true
       } finally {
+
         this.loading = false
       }
     },
@@ -349,7 +382,26 @@ export default {
   flex-wrap: wrap;
 }
 
+.clickable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--transition-fast);
+}
+
+.clickable-header:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.collapse-icon {
+  font-size: 0.82rem;
+  color: var(--primary);
+  margin-right: 8px;
+  display: inline-block;
+  transition: transform var(--transition-fast);
+}
+
 .courses-filter-bar {
+
 
 
   display: flex;
