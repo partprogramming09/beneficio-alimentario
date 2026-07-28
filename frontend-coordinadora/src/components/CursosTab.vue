@@ -1,5 +1,22 @@
 <template>
   <div class="tab-content">
+    <!-- Barra Superior de Carga y Gestión de Matriculados -->
+    <div class="top-actions-bar mb-3">
+      <div class="actions-title">
+        <h5 class="m-0">🏫 Gestión de Matrícula Institucional</h5>
+        <span class="text-muted small">Carga de base de datos o registro de alumnos</span>
+      </div>
+
+      <div class="actions-buttons-group">
+        <button class="btn btn-primary btn-sm" @click="isAddModalOpen = true">
+          ➕ Agregar Estudiante
+        </button>
+        <button class="btn btn-secondary btn-sm" @click="isImportModalOpen = true">
+          📁 Importar Excel / CSV
+        </button>
+      </div>
+    </div>
+
     <!-- Header de Filtros por Grupo y Estatus -->
     <div class="courses-filter-bar mb-4">
       <div class="filter-item">
@@ -123,23 +140,42 @@
     </div>
 
     <AlertBox :message="message" :isError="isError" />
+
+    <!-- Modales de Carga e Ingreso -->
+    <AgregarEstudianteModal 
+      :is-open="isAddModalOpen" 
+      @close="isAddModalOpen = false" 
+      @refresh-students="onDataChanged" 
+    />
+
+    <ImportarEstudiantesModal 
+      :is-open="isImportModalOpen" 
+      @close="isImportModalOpen = false" 
+      @refresh-students="onDataChanged" 
+    />
   </div>
 </template>
 
 <script>
 import { getAdminGroups } from '../services/api'
 import AlertBox from './AlertBox.vue'
+import AgregarEstudianteModal from './AgregarEstudianteModal.vue'
+import ImportarEstudiantesModal from './ImportarEstudiantesModal.vue'
 
 export default {
   name: 'CursosTab',
   components: {
-    AlertBox
+    AlertBox,
+    AgregarEstudianteModal,
+    ImportarEstudiantesModal
   },
   data() {
     return {
       groups: [],
       selectedGroupFilter: 'ALL',
       statusFilter: 'ALL',
+      isAddModalOpen: false,
+      isImportModalOpen: false,
       loading: false,
       message: '',
       isError: false
@@ -169,6 +205,10 @@ export default {
         this.loading = false
       }
     },
+    onDataChanged() {
+      this.loadGroups()
+      this.$emit('refresh-students')
+    },
     getFilteredStudents(students) {
       if (this.statusFilter === 'SI') {
         return students.filter(s => s.esta_inscrito && s.estado === 'Activo')
@@ -182,8 +222,33 @@ export default {
 }
 </script>
 
+
 <style scoped>
+.top-actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: var(--bg-tertiary);
+  padding: 16px 20px;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.actions-title h5 {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.actions-buttons-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .courses-filter-bar {
+
   display: flex;
   justify-content: space-between;
   align-items: center;
