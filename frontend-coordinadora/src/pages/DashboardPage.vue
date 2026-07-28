@@ -1,6 +1,6 @@
 <template>
   <div class="coordinadora-dashboard-layout">
-    <!-- Left Sidebar (Crimson Red Theme) -->
+    <!-- Left Sidebar (Crimson Modern Theme) -->
     <aside class="sidebar">
       <div class="sidebar-brand">
         <div class="brand-shield">🛡️</div>
@@ -20,6 +20,7 @@
           <span class="nav-icon">{{ getTabIcon(tab.id) }}</span>
           <span class="nav-label">{{ tab.label }}</span>
           <span v-if="tab.id === 'pendientes' && pendingCount > 0" class="badge-count">{{ pendingCount }}</span>
+          <span v-else-if="tab.id === 'excusas' && suspendedStudents.length > 0" class="badge-count warning-badge">{{ suspendedStudents.length }}</span>
         </button>
       </nav>
 
@@ -27,19 +28,37 @@
         <div class="user-profile">
           <div class="user-avatar">CO</div>
           <div class="user-meta">
-            <strong>Coordinadora</strong>
-            <span>Administrador</span>
+            <strong>Coordinación Escolar</strong>
+            <span>Administrador Activo</span>
           </div>
         </div>
+        <button v-if="toggleTheme" class="btn-theme-sidebar" @click="toggleTheme" title="Cambiar Tema (Claro/Oscuro)">
+          {{ isThemeDark ? '☀️ Claro' : '🌙 Oscuro' }}
+        </button>
       </div>
     </aside>
 
     <!-- Main Content Area -->
     <main class="main-content-area">
+      <!-- Header con KPIs Dinámicos y Título Limpio -->
       <header class="content-header">
         <div class="header-title-section">
           <h2>{{ getTabTitle(activeSubTab) }}</h2>
-          <p class="description-text">{{ getTabDescription(activeSubTab) }}</p>
+        </div>
+
+        <div class="kpi-group">
+          <div class="kpi-card">
+            <span class="kpi-val">{{ pendingCount }}</span>
+            <span class="kpi-lbl">Inscritos Hoy</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-val">{{ allStudents.length }}</span>
+            <span class="kpi-lbl">Total Beneficiarios</span>
+          </div>
+          <div class="kpi-card warning-kpi">
+            <span class="kpi-val">{{ suspendedStudents.length }}</span>
+            <span class="kpi-lbl">Suspendidos</span>
+          </div>
         </div>
       </header>
 
@@ -84,6 +103,10 @@ import StudentAside from '../components/StudentAside.vue'
 
 export default {
   name: 'DashboardPage',
+  inject: {
+    toggleTheme: { default: null },
+    isDark: { default: () => false }
+  },
   components: {
     AlertBox,
     AprobacionesTab,
@@ -112,6 +135,9 @@ export default {
     }
   },
   computed: {
+    isThemeDark() {
+      return typeof this.isDark === 'function' ? this.isDark() : false;
+    },
     activeTabComponent() {
       switch (this.activeSubTab) {
         case 'pendientes': return 'AprobacionesTab'
@@ -165,7 +191,6 @@ export default {
         const data = await getAdminStudents()
         this.allStudents = data
         
-        // Mantener actualizado el estudiante seleccionado si está abierto
         if (this.selectedStudent) {
           const updated = this.allStudents.find(s => s.documento === this.selectedStudent.documento)
           if (updated) {
@@ -184,31 +209,20 @@ export default {
         case 'listado': return '👥'
         case 'asistencia': return '🍽️'
         case 'reportes': return '📊'
-        case 'excusas': return '⚠️'
-        case 'simulador': return '⚙️'
+        case 'excusas': return '🛡️'
+        case 'simulador': return '⚡'
         default: return '📄'
       }
     },
     getTabTitle(id) {
       switch (id) {
-        case 'pendientes': return 'Estudiantes Inscritos Hoy'
-        case 'listado': return 'Listado de Beneficiarios'
-        case 'asistencia': return 'Registrar Asistencia en Fila'
+        case 'pendientes': return 'Inscritos Hoy'
+        case 'listado': return 'Beneficiarios Registrados'
+        case 'asistencia': return 'Registro de Asistencia'
         case 'reportes': return 'Reportes e Historial'
         case 'excusas': return 'Reactivaciones y Justificaciones'
         case 'simulador': return 'Simulador de Reglas'
-        default: return 'Panel Administrativo'
-      }
-    },
-    getTabDescription(id) {
-      switch (id) {
-        case 'pendientes': return 'Visualiza los estudiantes que se han registrado al programa durante el día de hoy.'
-        case 'listado': return 'Monitorea el estado y el historial de inasistencias de los alumnos registrados.'
-        case 'asistencia': return 'Registra la asistencia en tiempo real de los estudiantes en la fila del almuerzo.'
-        case 'reportes': return 'Genera reportes diarios y semanales de asistencia del comedor escolar.'
-        case 'excusas': return 'Revisa los justificativos de alumnos suspendidos y gestiona sus reactivaciones.'
-        case 'simulador': return 'Simula la asistencia del día escolar para evaluar las reglas de suspensión automática.'
-        default: return 'Gestiona el beneficio alimentario de la institución.'
+        default: return 'Panel de Gestión'
       }
     },
     updateStudentState(updatedStudent) {
@@ -231,18 +245,18 @@ export default {
 </script>
 
 <style scoped>
-/* 2-Column Dashboard Layout */
 .coordinadora-dashboard-layout {
   display: flex;
   min-height: 100vh;
-  margin: -20px -10px; /* Offset parent layout padding */
+  margin: -20px -10px;
   background-color: var(--bg-primary);
+  animation: fadeIn var(--transition-normal);
 }
 
-/* Sidebar Styling (Crimson Red Theme) */
+/* Sidebar Carmesí Moderno */
 .sidebar {
-  width: 280px;
-  background: linear-gradient(180deg, hsl(var(--primary-hue), 75%, 38%) 0%, hsl(var(--primary-hue), 75%, 28%) 100%);
+  width: 260px;
+  background: var(--gradient-primary);
   color: white;
   display: flex;
   flex-direction: column;
@@ -252,36 +266,36 @@ export default {
 }
 
 .sidebar-brand {
-  padding: 30px 24px;
+  padding: 24px 20px;
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .brand-shield {
-  font-size: 2.2rem;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  font-size: 1.8rem;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
 }
 
 .brand-text h4 {
   margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 0.98rem;
+  font-weight: 800;
   line-height: 1.2;
   color: white;
 }
 
 .brand-subtitle {
-  font-size: 0.8rem;
-  color: var(--success-light);
-  font-weight: 600;
+  font-size: 0.75rem;
+  color: hsl(var(--secondary-hue), 80%, 75%);
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .sidebar-nav {
-  padding: 24px 12px;
+  padding: 20px 12px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -292,11 +306,11 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 11px 14px;
   border-radius: var(--border-radius-sm);
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   text-align: left;
   background: none;
   border: none;
@@ -306,8 +320,9 @@ export default {
 }
 
 .nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.12);
   color: white;
+  transform: translateX(3px);
 }
 
 .nav-item.active {
@@ -317,7 +332,7 @@ export default {
 }
 
 .nav-icon {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .nav-label {
@@ -327,34 +342,41 @@ export default {
 .badge-count {
   background-color: var(--bg-secondary);
   color: var(--primary);
-  border-radius: 50%;
-  padding: 2px 7px;
+  border-radius: var(--border-radius-pill);
+  padding: 2px 8px;
   font-size: 0.75rem;
   font-weight: 800;
-  border: 1.5px solid var(--primary);
+}
+
+.warning-badge {
+  background-color: var(--warning-light);
+  color: var(--warning);
 }
 
 .nav-item.active .badge-count {
   background-color: var(--primary);
   color: white;
-  border-color: var(--primary);
 }
 
 .sidebar-footer {
-  padding: 20px 24px;
+  padding: 16px 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .user-profile {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   background-color: rgba(255, 255, 255, 0.2);
   color: white;
   border-radius: 50%;
@@ -362,24 +384,42 @@ export default {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
 
 .user-meta strong {
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: white;
 }
 
 .user-meta span {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.65);
 }
 
-/* Main Content Styling */
+.btn-theme-sidebar {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 6px 12px;
+  border-radius: var(--border-radius-pill);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-theme-sidebar:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Main Content & KPI Header */
 .main-content-area {
   flex: 1;
-  padding: 40px 30px;
+  padding: 30px 24px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -387,26 +427,69 @@ export default {
 }
 
 .content-header {
-  border-bottom: 2px solid var(--border-color);
-  padding-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .header-title-section h2 {
-  margin: 0 0 6px 0;
-  font-size: 1.6rem !important;
+  margin: 0;
+  font-size: 1.5rem !important;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
 }
 
-.description-text {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 0.98rem;
+.kpi-group {
+  display: flex;
+  gap: 12px;
+}
+
+.kpi-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  min-width: 100px;
+}
+
+.kpi-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.kpi-lbl {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.warning-kpi .kpi-val {
+  color: var(--warning);
 }
 
 .content-card {
   box-shadow: var(--shadow-sm);
   background-color: var(--bg-secondary);
+  border-radius: var(--border-radius-md);
+  padding: 24px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 992px) {
@@ -416,10 +499,6 @@ export default {
   }
   .sidebar {
     width: 100%;
-    height: auto;
-  }
-  .sidebar-brand {
-    padding: 20px;
   }
   .sidebar-nav {
     flex-direction: row;
@@ -428,15 +507,14 @@ export default {
   }
   .nav-item {
     flex: 1;
-    min-width: 140px;
-    padding: 10px;
+    min-width: 130px;
+    padding: 8px;
     justify-content: center;
   }
   .sidebar-footer {
-    display: none;
-  }
-  .main-content-area {
-    padding: 20px 15px;
+    display: flex;
   }
 }
 </style>
+
+

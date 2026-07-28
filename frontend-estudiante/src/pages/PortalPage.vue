@@ -1,45 +1,45 @@
 <template>
   <div class="portal-container">
     <!-- Header de Sesión Activa del Estudiante -->
-    <div v-if="studentDoc" class="card header-card student-session-bar">
+    <div v-if="studentDoc" class="student-session-card">
       <div class="session-info">
-        <span class="session-avatar">👤</span>
+        <div class="session-avatar">👤</div>
         <div class="session-meta">
           <span class="session-title">Estudiante Identificado</span>
           <strong>{{ studentName }}</strong>
-          <span class="session-doc">Documento: {{ studentDoc }}</span>
+          <span class="session-doc">Doc: {{ studentDoc }}</span>
         </div>
       </div>
-      <button class="btn btn-secondary btn-sm" @click="logout">
-        ✕ Salir / Cambiar Estudiante
+      <button class="btn-logout" @click="logout">
+        <span>✕ Cambiar Estudiante</span>
       </button>
     </div>
 
-    <!-- Pestañas de Navegación del Portal -->
-    <div class="card tabs-card">
-      <div class="tabs-nav">
-        <!-- Ocultamos la pestaña de registro si ya está identificado -->
+    <!-- Pestañas de Navegación del Portal (Pill Tabs) -->
+    <div class="tabs-pill-wrapper">
+      <nav class="pill-nav">
         <button 
           v-if="!studentDoc"
-          :class="['tab-btn', { active: activeTab === 'registro' }]" 
+          :class="['pill-btn', { active: activeTab === 'registro' }]" 
           @click="activeTab = 'registro'"
         >
-          📝 Solicitar Inscripción
+          <span>📝</span> Solicitar Inscripción
         </button>
 
         <button 
-          :class="['tab-btn', { active: activeTab === 'recuperar' }]" 
+          :class="['pill-btn', { active: activeTab === 'recuperar' }]" 
           @click="activeTab = 'recuperar'"
         >
-          📄 Mi Ticket Diario
+          <span>🎫</span> Mi Ticket Diario
         </button>
+
         <button 
-          :class="['tab-btn', { active: activeTab === 'gestion' }]" 
+          :class="['pill-btn', { active: activeTab === 'gestion' }]" 
           @click="activeTab = 'gestion'"
         >
-          ⚙️ Excusa / Renuncia
+          <span>⚙️</span> Excusa / Renuncia
         </button>
-      </div>
+      </nav>
     </div>
 
     <!-- Contenido Dinámico de Pestañas -->
@@ -106,14 +106,19 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  animation: fadeIn var(--transition-normal);
 }
 
-.student-session-bar {
+.student-session-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-left: 5px solid var(--success);
+  border-radius: var(--border-radius-md);
+  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 25px !important;
-  border-left: 6px solid var(--accent) !important;
+  box-shadow: var(--shadow-sm);
   flex-wrap: wrap;
   gap: 15px;
 }
@@ -121,11 +126,19 @@ export default {
 .session-info {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 14px;
 }
 
 .session-avatar {
-  font-size: 2rem;
+  width: 44px;
+  height: 44px;
+  background: var(--success-light);
+  color: var(--success);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
 }
 
 .session-meta {
@@ -136,14 +149,15 @@ export default {
 .session-title {
   font-size: 0.75rem;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-weight: 700;
   letter-spacing: 0.5px;
 }
 
 .session-meta strong {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: var(--text-primary);
+  line-height: 1.2;
 }
 
 .session-doc {
@@ -151,53 +165,90 @@ export default {
   color: var(--text-secondary);
 }
 
-.tabs-card {
-  padding: 10px;
-  border-radius: var(--border-radius-md);
-}
-
-.tabs-nav {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.tab-btn {
-  flex: 1;
-  min-width: 150px;
-  padding: 12px 20px;
-  font-size: 0.95rem;
+.btn-logout {
+  padding: 8px 16px;
+  font-size: 0.85rem;
   font-weight: 600;
-  text-align: center;
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-pill);
+  border: 1px solid var(--border-color);
   background-color: var(--bg-tertiary);
   color: var(--text-secondary);
   transition: all var(--transition-fast);
 }
 
-.tab-btn:hover {
-  background-color: var(--border-color);
+.btn-logout:hover {
+  background-color: var(--danger-light);
+  color: var(--danger);
+  border-color: var(--danger-light);
+}
+
+/* Pill Navigation */
+.tabs-pill-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.pill-nav {
+  display: flex;
+  background: var(--bg-tertiary);
+  padding: 5px;
+  border-radius: var(--border-radius-pill);
+  border: 1px solid var(--border-color);
+  gap: 4px;
+  width: 100%;
+  max-width: 600px;
+  flex-wrap: wrap;
+}
+
+.pill-btn {
+  flex: 1;
+  min-width: 130px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  border-radius: var(--border-radius-pill);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+
+.pill-btn:hover {
   color: var(--text-primary);
 }
 
-.tab-btn.active {
-  background-color: var(--primary);
-  color: white;
+.pill-btn.active {
+  background-color: var(--bg-secondary);
+  color: var(--primary);
   box-shadow: var(--shadow-sm);
 }
 
 .content-card {
   border-radius: var(--border-radius-md);
-  min-height: 300px;
+  min-height: 320px;
+  box-shadow: var(--shadow-sm);
+  background-color: var(--bg-secondary);
 }
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity var(--transition-fast) ease;
+  transition: opacity var(--transition-fast) ease, transform var(--transition-fast) ease;
 }
 
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+  transform: translateY(4px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
+

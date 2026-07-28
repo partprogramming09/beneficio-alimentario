@@ -1,15 +1,12 @@
 <template>
   <div class="tab-content">
-    <h3>Justificaciones y Control de Suspendidos</h3>
-    
     <div class="grid-2">
       <!-- Suspended Students List -->
       <div class="card sub-card">
-        <h4>Alumnos Suspendidos (3 Inasistencias) ⚠️</h4>
-        <p class="description">Estudiantes bloqueados por acumular 3 faltas. Revisa sus excusas a la derecha para reactivarlos.</p>
+        <h4 class="card-title-sm">⚠️ Alumnos Suspendidos</h4>
 
         <div v-if="suspendedStudents.length === 0" class="empty-state">
-          <p>No hay alumnos suspendidos actualmente. 🌟</p>
+          <p>🌟 No hay alumnos suspendidos actualmente.</p>
         </div>
 
         <div v-else class="table-container">
@@ -38,8 +35,7 @@
 
       <!-- Justifications List -->
       <div class="card sub-card">
-        <h4>Excusas Recibidas 📄</h4>
-        <p class="description">Justificaciones enviadas por los estudiantes por inasistencia.</p>
+        <h4 class="card-title-sm">📄 Excusas Recibidas</h4>
 
         <div v-if="justifications.length === 0" class="empty-state">
           <p>No se han recibido justificaciones.</p>
@@ -49,11 +45,11 @@
           <div v-for="excuse in justifications" :key="excuse.id" class="excuse-item">
             <div class="excuse-header">
               <strong>{{ excuse.nombres }} {{ excuse.apellidos }} ({{ excuse.grupo }})</strong>
-              <span class="excuse-date">Inasistencia: {{ excuse.fecha_inasistencia }}</span>
+              <span class="excuse-date">Falla: {{ excuse.fecha_inasistencia }}</span>
             </div>
             <p class="excuse-reason">"{{ excuse.motivo }}"</p>
             <div class="excuse-footer">
-              <span>Estado actual alumno: 
+              <span>Estado: 
                 <strong :class="'text-' + excuse.estado.toLowerCase()">{{ excuse.estado }}</strong>
               </span>
               <button 
@@ -136,49 +132,65 @@ export default {
 </script>
 
 <style scoped>
+.card-title-sm {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.sub-card {
+  padding: 18px;
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-secondary);
+}
+
 .justifications-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
   max-height: 400px;
   overflow-y: auto;
-  padding-right: 5px;
+  padding-right: 4px;
 }
 
 .excuse-item {
   background-color: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-sm);
-  padding: 15px;
+  padding: 12px 14px;
 }
 
 .excuse-header {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 5px;
-  margin-bottom: 8px;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
   flex-wrap: wrap;
   gap: 5px;
 }
 
 .excuse-date {
   color: var(--text-secondary);
+  font-size: 0.8rem;
 }
 
 .excuse-reason {
   font-style: italic;
   color: var(--text-primary);
-  margin-bottom: 10px;
-  font-size: 0.95rem;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
 }
 
 .excuse-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
 .text-suspendido {
@@ -196,4 +208,12 @@ export default {
 .clickable-row:hover td {
   background-color: var(--primary-light);
 }
+
+.empty-state {
+  text-align: center;
+  padding: 30px 15px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
 </style>
+

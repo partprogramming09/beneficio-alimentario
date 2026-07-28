@@ -1,12 +1,9 @@
 <template>
   <div class="tab-content">
-    <h3>Estudiantes Inscritos Hoy 📥</h3>
-    <p class="description">Estudiantes que se han registrado en la plataforma durante la jornada de hoy y se encuentran Activos en el beneficio.</p>
- 
     <div v-if="students.length === 0" class="empty-state">
-      <p>No se han registrado nuevos estudiantes el día de hoy. ✨</p>
+      <p>✨ No se han registrado nuevos estudiantes el día de hoy.</p>
     </div>
- 
+
     <div v-else class="table-container">
       <table>
         <thead>
@@ -31,14 +28,14 @@
         </tbody>
       </table>
     </div>
- 
+
     <AlertBox :message="message" :isError="isError" />
   </div>
 </template>
- 
+
 <script>
 import AlertBox from './AlertBox.vue'
- 
+
 export default {
   name: 'AprobacionesTab',
   components: {
@@ -58,7 +55,7 @@ export default {
   }
 }
 </script>
- 
+
 <style scoped>
 .clickable-row {
   cursor: pointer;
@@ -71,9 +68,16 @@ export default {
   background-color: var(--success-light);
   color: var(--success);
   padding: 4px 10px;
-  border-radius: 12px;
+  border-radius: var(--border-radius-pill);
   font-size: 0.8rem;
   font-weight: 700;
   display: inline-block;
 }
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 1rem;
+}
 </style>
+

@@ -1,27 +1,27 @@
 <template>
   <div class="tab-content">
-    <h3>Reportes de Asistencia</h3>
-    
-    <div class="report-selection mb-4">
-      <button 
-        :class="['btn', reportType === 'diario' ? 'btn-primary' : 'btn-secondary']"
-        @click="reportType = 'diario'"
-      >
-        Asistencia Diaria
-      </button>
-      <button 
-        :class="['btn', reportType === 'semanal' ? 'btn-primary' : 'btn-secondary', 'ml-2']"
-        @click="reportType = 'semanal'"
-      >
-        Resumen Semanal
-      </button>
+    <div class="report-header-nav mb-4">
+      <div class="report-pill-selector">
+        <button 
+          :class="['report-pill-btn', { active: reportType === 'diario' }]"
+          @click="reportType = 'diario'"
+        >
+          📅 Asistencia Diaria
+        </button>
+        <button 
+          :class="['report-pill-btn', { active: reportType === 'semanal' }]"
+          @click="reportType = 'semanal'"
+        >
+          📊 Resumen Semanal
+        </button>
+      </div>
     </div>
 
     <!-- Reporte Diario -->
     <div v-if="reportType === 'diario'">
       <div class="filter-bar mb-3">
         <label for="rep-fecha">Seleccionar Fecha: </label>
-        <input id="rep-fecha" type="date" v-model="dailyDate" @change="loadDailyReport" class="ml-2" />
+        <input id="rep-fecha" type="date" v-model="dailyDate" @change="loadDailyReport" class="date-input ml-2" />
       </div>
 
       <div v-if="dailyReport.length === 0" class="empty-state">
@@ -52,8 +52,6 @@
 
     <!-- Reporte Semanal -->
     <div v-if="reportType === 'semanal'">
-      <p class="description">Muestra el número total de almuerzos recibidos por estudiante en los últimos 7 días de servicio.</p>
-      
       <div v-if="weeklyReport.report.length === 0" class="empty-state">
         <p>No hay datos de asistencia acumulada para esta semana.</p>
       </div>
@@ -139,11 +137,48 @@ export default {
 </script>
 
 <style scoped>
+.report-header-nav {
+  display: flex;
+}
+
+.report-pill-selector {
+  display: inline-flex;
+  background: var(--bg-tertiary);
+  padding: 4px;
+  border-radius: var(--border-radius-pill);
+  border: 1px solid var(--border-color);
+  gap: 4px;
+}
+
+.report-pill-btn {
+  padding: 8px 18px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: var(--border-radius-pill);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.report-pill-btn.active {
+  background-color: var(--bg-secondary);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.date-input {
+  padding: 6px 12px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
 .badge-count-success {
   background-color: var(--success-light);
   color: var(--success);
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: 4px 10px;
+  border-radius: var(--border-radius-pill);
   font-weight: bold;
   font-size: 0.85rem;
 }
@@ -157,9 +192,5 @@ export default {
 .ml-2 {
   margin-left: 0.5rem;
 }
-
-.report-selection {
-  display: flex;
-  gap: 10px;
-}
 </style>
+

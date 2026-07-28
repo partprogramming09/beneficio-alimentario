@@ -1,10 +1,17 @@
 <template>
   <div class="tab-content">
-    <h3>Estudiantes en el Programa</h3>
-    <p class="description">Control de estudiantes inscritos y sus estados operativos actuales.</p>
+    <!-- Buscador y filtro en tiempo real -->
+    <div class="search-bar-wrapper mb-3">
+      <input 
+        type="text" 
+        v-model="searchQuery" 
+        placeholder="🔍 Buscar estudiante por nombre, documento o grupo..."
+        class="search-input"
+      />
+    </div>
 
-    <div v-if="students.length === 0" class="empty-state">
-      <p>No hay estudiantes registrados en el programa.</p>
+    <div v-if="filteredStudents.length === 0" class="empty-state">
+      <p>No se encontraron estudiantes con el criterio ingresado.</p>
     </div>
 
     <div v-else class="table-container">
@@ -19,7 +26,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="student in students" :key="student.documento" @click="$emit('select-student', student)" class="clickable-row">
+          <tr v-for="student in filteredStudents" :key="student.documento" @click="$emit('select-student', student)" class="clickable-row">
             <td><strong>{{ student.documento }}</strong></td>
             <td>{{ student.nombres }} {{ student.apellidos }}</td>
             <td><span class="badge-group">{{ student.grupo }}</span></td>
@@ -42,16 +49,6 @@
   </div>
 </template>
 
-<style scoped>
-.clickable-row {
-  cursor: pointer;
-  transition: background-color var(--transition-fast);
-}
-.clickable-row:hover td {
-  background-color: var(--primary-light);
-}
-</style>
-
 <script>
 import { deleteStudent } from '../services/api'
 import AlertBox from './AlertBox.vue'
@@ -69,9 +66,22 @@ export default {
   },
   data() {
     return {
+      searchQuery: '',
       loading: false,
       message: '',
       isError: false
+    }
+  },
+  computed: {
+    filteredStudents() {
+      if (!this.searchQuery.trim()) return this.students;
+      const query = this.searchQuery.toLowerCase();
+      return this.students.filter(s => 
+        (s.documento && s.documento.toLowerCase().includes(query)) ||
+        (s.nombres && s.nombres.toLowerCase().includes(query)) ||
+        (s.apellidos && s.apellidos.toLowerCase().includes(query)) ||
+        (s.grupo && s.grupo.toLowerCase().includes(query))
+      );
     }
   },
   methods: {
@@ -101,3 +111,33 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.search-bar-wrapper {
+  display: flex;
+}
+.search-input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: var(--border-radius-pill);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+.search-input:focus {
+  border-color: var(--primary);
+  background-color: var(--bg-secondary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+.clickable-row {
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+.clickable-row:hover td {
+  background-color: var(--primary-light);
+}
+</style>
+

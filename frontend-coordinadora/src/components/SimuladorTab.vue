@@ -1,26 +1,20 @@
 <template>
   <div class="tab-content">
-    <h3>Simulador de Fechas y Asistencias 🚀</h3>
-    <p class="description">
-      Como el sistema suspende a los estudiantes que tienen <strong>3 inasistencias consecutivas</strong>, 
-      puedes usar este simulador para registrar asistencias en días pasados y verificar que las reglas de sanción 
-      se ejecuten automáticamente.
-    </p>
-
     <div class="card sub-card simulation-box">
-      <h4>Simular un Día Escolar de Comedor</h4>
+      <div class="sim-header">
+        <h4 class="card-title-sm">⚡ Simular Día Escolar de Comedor</h4>
+      </div>
       
-      <div class="form-group inline-form">
+      <div class="form-group inline-form mt-2">
         <label for="sim-fecha">Fecha del Día Escolar:</label>
-        <input id="sim-fecha" type="date" v-model="simDate" />
+        <input id="sim-fecha" type="date" v-model="simDate" class="date-input" />
       </div>
 
       <div class="student-select-grid mt-3">
-        <h5>Selecciona los estudiantes activos que ASISTIERON en este día simulado:</h5>
-        <p class="text-muted small">Los estudiantes activos que NO selecciones contarán como inasistentes en esta fecha.</p>
+        <label class="section-label">Estudiantes que ASISTIERON en este día (los no marcados contarán como inasistentes):</label>
         
         <div v-if="activeStudents.length === 0" class="alert alert-warning">
-          No hay estudiantes en estado <strong>Activo</strong> para simular. Registra y aprueba estudiantes primero.
+          No hay estudiantes en estado <strong>Activo</strong> para simular.
         </div>
 
         <div v-else class="checkbox-list">
@@ -36,7 +30,7 @@
         @click="runSimulation" 
         :disabled="loading || activeStudents.length === 0"
       >
-        {{ loading ? 'Simulando...' : 'Ejecutar Simulación del Día' }}
+        {{ loading ? 'Simulando...' : '⚡ Ejecutar Simulación del Día' }}
       </button>
     </div>
 
@@ -93,7 +87,6 @@ export default {
         this.isError = false
         this.simAttendees = []
         
-        // Auto increment simDate by 1 day for testing convenience
         const current = new Date(this.simDate)
         current.setDate(current.getDate() + 1)
         this.simDate = current.toISOString().split('T')[0]
@@ -111,15 +104,43 @@ export default {
 </script>
 
 <style scoped>
+.card-title-sm {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.sub-card {
+  padding: 20px;
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-secondary);
+}
+
+.section-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  display: block;
+}
+
+.date-input {
+  padding: 8px 14px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
 .checkbox-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 250px;
+  gap: 8px;
+  max-height: 220px;
   overflow-y: auto;
-  margin-top: 15px;
+  margin-top: 10px;
   border: 1px solid var(--border-color);
-  padding: 15px;
+  padding: 12px;
   border-radius: var(--border-radius-sm);
   background-color: var(--bg-tertiary);
 }
@@ -129,9 +150,9 @@ export default {
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  font-size: 0.95rem;
-  padding: 6px;
-  border-radius: 4px;
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  border-radius: var(--border-radius-sm);
   transition: background-color var(--transition-fast);
 }
 
@@ -141,14 +162,9 @@ export default {
 
 .checkbox-item input {
   cursor: pointer;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   accent-color: var(--primary);
 }
-
-.student-select-grid h5 {
-  font-size: 1rem;
-  margin-bottom: 5px;
-  color: var(--text-primary);
-}
 </style>
+

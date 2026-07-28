@@ -1,105 +1,87 @@
-/* --- Diseño de Sistema de Control de Beneficio Alimentario --- */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+/* --- Sistema de Diseño de Beneficio Alimentario - Tokens HSL Modernos --- */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   /* Fuente premium */
   --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  /* Paleta de Colores Armoniosa (HSL) - Colores de la Institución: Rojo, Verde y Blanco */
-  --primary-hue: 354;   /* Rojo / Carmesí Institucional */
-  --secondary-hue: 142; /* Verde Esmeralda Institucional */
-  --accent-hue: 142;    /* Verde para Acentos */
-  --danger-hue: 354;    /* Rojo Carmesí */
+  /* Paleta HSL Institucional (Carmesí, Esmeralda, Blanco) */
+  --primary-hue: 352;   /* Carmesí Institucional */
+  --secondary-hue: 152; /* Esmeralda Institucional */
+  --accent-hue: 152;    /* Verde para Acentos */
+  --danger-hue: 352;    /* Carmesí */
 
-  /* Tema Claro (Defecto) */
-  --bg-primary: hsl(var(--primary-hue), 20%, 98%); /* Blanco con un matiz cálido muy suave */
-  --bg-secondary: #ffffff;                        /* Blanco Puro */
-  --bg-tertiary: hsl(var(--primary-hue), 10%, 94%); /* Gris-Blanco suave */
-  --text-primary: hsl(var(--primary-hue), 35%, 15%);
-  --text-secondary: hsl(var(--primary-hue), 20%, 40%);
-  --text-muted: hsl(var(--primary-hue), 15%, 60%);
+  /* Tema Claro (Por Defecto) */
+  --bg-primary: hsl(var(--primary-hue), 25%, 97%);
+  --bg-secondary: #ffffff;
+  --bg-tertiary: hsl(var(--primary-hue), 15%, 93%);
+  --text-primary: hsl(220, 30%, 12%);
+  --text-secondary: hsl(220, 15%, 42%);
+  --text-muted: hsl(220, 10%, 65%);
   
-  --primary: hsl(var(--primary-hue), 75%, 38%);    /* Rojo Académico */
-  --primary-hover: hsl(var(--primary-hue), 75%, 30%);
-  --primary-light: hsl(var(--primary-hue), 75%, 95%);
+  --primary: hsl(var(--primary-hue), 76%, 40%);
+  --primary-hover: hsl(var(--primary-hue), 76%, 32%);
+  --primary-light: hsl(var(--primary-hue), 76%, 95%);
   
-  --success: hsl(var(--secondary-hue), 68%, 34%);  /* Verde Académico */
-  --success-hover: hsl(var(--secondary-hue), 68%, 26%);
-  --success-light: hsl(var(--secondary-hue), 68%, 94%);
+  --success: hsl(var(--secondary-hue), 70%, 35%);
+  --success-hover: hsl(var(--secondary-hue), 70%, 27%);
+  --success-light: hsl(var(--secondary-hue), 70%, 94%);
   
-  --accent: hsl(var(--accent-hue), 68%, 34%);     /* Acento Verde */
-  --danger: hsl(var(--danger-hue), 75%, 38%);
-  --danger-light: hsl(var(--danger-hue), 75%, 95%);
-  --warning: hsl(38, 85%, 45%);
-  --warning-light: hsl(38, 85%, 94%);
+  --accent: hsl(var(--accent-hue), 70%, 35%);
+  --danger: hsl(var(--danger-hue), 76%, 40%);
+  --danger-light: hsl(var(--danger-hue), 76%, 95%);
+  --warning: hsl(38, 92%, 50%);
+  --warning-light: hsl(38, 92%, 94%);
 
-  /* Gradientes Premium */
-  --gradient-primary: linear-gradient(135deg, hsl(var(--primary-hue), 75%, 40%) 0%, hsl(var(--primary-hue), 75%, 26%) 100%);
-  --gradient-success: linear-gradient(135deg, hsl(var(--secondary-hue), 68%, 38%) 0%, hsl(var(--secondary-hue), 78%, 28%) 100%);
-  --gradient-glass: rgba(255, 255, 255, 0.82);
-  
-  /* Bordes y Sombras */
-  --border-radius-sm: 8px;
+  /* Gradientes Fluidos */
+  --gradient-primary: linear-gradient(135deg, hsl(var(--primary-hue), 78%, 42%) 0%, hsl(var(--primary-hue), 82%, 28%) 100%);
+  --gradient-success: linear-gradient(135deg, hsl(var(--secondary-hue), 72%, 38%) 0%, hsl(var(--secondary-hue), 80%, 26%) 100%);
+  --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 1) 100%);
+  --gradient-glass: rgba(255, 255, 255, 0.85);
+
+  /* Bordes, Transparencias y Sombras Multicapa */
+  --border-radius-xs: 6px;
+  --border-radius-sm: 10px;
   --border-radius-md: 16px;
   --border-radius-lg: 24px;
-  --border-color: hsl(var(--primary-hue), 15%, 90%);
-  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --border-radius-pill: 9999px;
+  
+  --border-color: hsl(220, 20%, 90%);
+  --border-subtle: rgba(0, 0, 0, 0.05);
+
+  --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 3px -1px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 20px 32px -8px rgba(0, 0, 0, 0.08), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
+  --shadow-glow: 0 8px 25px -5px rgba(184, 28, 44, 0.25);
   
   /* Transiciones y Micro-animaciones */
-  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  --backdrop-blur: blur(12px);
+  --transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  --backdrop-blur: blur(16px);
 }
 
-/* Soporte para Modo Oscuro Basado en Preferencia de Sistema o Clase */
-@media (prefers-color-scheme: dark) {
-  :root:not(.light-mode) {
-    --bg-primary: hsl(var(--primary-hue), 25%, 8%);
-    --bg-secondary: hsl(var(--primary-hue), 20%, 12%);
-    --bg-tertiary: hsl(var(--primary-hue), 18%, 16%);
-    --text-primary: hsl(var(--primary-hue), 20%, 95%);
-    --text-secondary: hsl(var(--primary-hue), 15%, 75%);
-    --text-muted: hsl(var(--primary-hue), 10%, 50%);
-    
-    --primary: hsl(var(--primary-hue), 75%, 55%);
-    --primary-hover: hsl(var(--primary-hue), 75%, 62%);
-    --primary-light: rgba(var(--primary-hue), 75%, 55%, 0.1);
-    
-    --success: hsl(var(--secondary-hue), 60%, 45%);
-    --success-light: rgba(var(--secondary-hue), 60%, 45%, 0.15);
-    
-    --border-color: hsl(var(--primary-hue), 15%, 20%);
-    --gradient-glass: rgba(15, 23, 42, 0.8);
-    
-    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-  }
-}
-
-/* Clase explícita para modo oscuro */
+/* Modo Oscuro */
 :root.dark-mode {
-  --bg-primary: hsl(var(--primary-hue), 25%, 8%);
-  --bg-secondary: hsl(var(--primary-hue), 20%, 12%);
-  --bg-tertiary: hsl(var(--primary-hue), 18%, 16%);
-  --text-primary: hsl(var(--primary-hue), 20%, 95%);
-  --text-secondary: hsl(var(--primary-hue), 15%, 75%);
-  --text-muted: hsl(var(--primary-hue), 10%, 50%);
+  --bg-primary: hsl(220, 25%, 9%);
+  --bg-secondary: hsl(220, 22%, 13%);
+  --bg-tertiary: hsl(220, 20%, 18%);
+  --text-primary: hsl(220, 20%, 96%);
+  --text-secondary: hsl(220, 15%, 72%);
+  --text-muted: hsl(220, 10%, 52%);
   
-  --primary: hsl(var(--primary-hue), 75%, 55%);
-  --primary-hover: hsl(var(--primary-hue), 75%, 62%);
-  --primary-light: rgba(100, 150, 255, 0.1);
+  --primary: hsl(var(--primary-hue), 76%, 58%);
+  --primary-hover: hsl(var(--primary-hue), 76%, 66%);
+  --primary-light: rgba(220, 50, 70, 0.15);
   
-  --success: hsl(var(--secondary-hue), 60%, 45%);
-  --success-light: rgba(50, 200, 120, 0.15);
+  --success: hsl(var(--secondary-hue), 65%, 48%);
+  --success-light: rgba(40, 180, 110, 0.15);
   
-  --border-color: hsl(var(--primary-hue), 15%, 20%);
-  --gradient-glass: rgba(15, 23, 42, 0.8);
+  --border-color: hsl(220, 15%, 22%);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --gradient-glass: rgba(20, 28, 40, 0.85);
   
-  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 4px 10px -2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 24px -4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 35px -6px rgba(0, 0, 0, 0.5);
 }
+
