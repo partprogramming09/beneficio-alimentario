@@ -16,6 +16,9 @@ Route::post('/estudiantes/crear-individual', [AdminController::class, 'crearEstu
 Route::post('/estudiantes/importar-masivo', [AdminController::class, 'importarEstudiantesMasivo']);
 Route::get('/grupos', [AdminController::class, 'grupos']);
 Route::post('/estudiantes/activar-manual', [AdminController::class, 'activarManual']);
+Route::post('/estudiantes/actualizar', [AdminController::class, 'actualizarEstudiante']);
+Route::post('/estudiantes/eliminar-institucional', [AdminController::class, 'eliminarEstudianteInstitucional']);
+
 
 
 

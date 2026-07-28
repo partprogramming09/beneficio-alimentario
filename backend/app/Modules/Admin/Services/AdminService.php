@@ -456,6 +456,79 @@ class AdminService
         ];
     }
 
+    /**
+     * Edita los datos de un estudiante matriculado (documento, nombre completo, grupo).
+     */
+    public function updateStudent(array $data): array
+    {
+        $docOriginal = trim($data['documento_original']);
+        $docNuevo = trim($data['documento']);
+        $nombreCompleto = trim($data['nombre_completo']);
+        $grupo = trim($data['grupo']);
+
+        $institucion = InstitucionEstudiante::find($docOriginal);
+        if (!$institucion) {
+            throw new Exception("Estudiante no encontrado en la lista de la institución.");
+        }
+
+        // Si cambió el número de documento
+        if ($docOriginal !== $docNuevo) {
+            InstitucionEstudiante::where('documento', $docOriginal)->delete();
+            InstitucionEstudiante::create([
+                'documento' => $docNuevo,
+                'nombre_completo' => $nombreCompleto,
+                'grupo' => $grupo,
+            ]);
+
+            $est = Estudiante::find($docOriginal);
+            if ($est) {
+                $estado = $est->estado;
+                $est->delete();
+                $parts = explode(' ', $nombreCompleto, 2);
+                Estudiante::create([
+                    'documento' => $docNuevo,
+                    'nombres' => $parts[0] ?? $nombreCompleto,
+                    'apellidos' => $parts[1] ?? '',
+                    'grupo' => $grupo,
+                    'estado' => $estado,
+                ]);
+            }
+        } else {
+            $institucion->update([
+                'nombre_completo' => $nombreCompleto,
+                'grupo' => $grupo,
+            ]);
+
+            $est = Estudiante::find($docOriginal);
+            if ($est) {
+                $parts = explode(' ', $nombreCompleto, 2);
+                $est->update([
+                    'nombres' => $parts[0] ?? $nombreCompleto,
+                    'apellidos' => $parts[1] ?? '',
+                    'grupo' => $grupo,
+                ]);
+            }
+        }
+
+        return [
+            'message' => "Datos del estudiante {$nombreCompleto} (Doc: {$docNuevo}) actualizados correctamente.",
+        ];
+    }
+
+    /**
+     * Elimina a un estudiante de la lista institucional y de la lista de beneficiarios.
+     */
+    public function deleteInstitutionalStudent(string $documento): array
+    {
+        InstitucionEstudiante::where('documento', $documento)->delete();
+        Estudiante::where('documento', $documento)->delete();
+
+        return [
+            'message' => "Estudiante con documento {$documento} eliminado correctamente de la institución.",
+        ];
+    }
+
+
 
     /**
      * Retorna la estructura organizada de Cursos y Grupos con detalle de inscritos / no inscritos.

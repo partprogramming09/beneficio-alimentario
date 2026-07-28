@@ -249,7 +249,45 @@ class AdminController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
+    /**
+     * Edita los datos de un estudiante matriculado.
+     */
+    public function actualizarEstudiante(Request $request)
+    {
+        $request->validate([
+            'documento_original' => 'required|string',
+            'documento' => 'required|string',
+            'nombre_completo' => 'required|string|max:100',
+            'grupo' => 'required|string|max:20',
+        ]);
+
+        try {
+            $resultado = $this->adminService->updateStudent($request->all());
+            return response()->json($resultado, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    /**
+     * Elimina a un estudiante de la institución.
+     */
+    public function eliminarEstudianteInstitucional(Request $request)
+    {
+        $request->validate([
+            'documento' => 'required|string',
+        ]);
+
+        try {
+            $resultado = $this->adminService->deleteInstitutionalStudent($request->input('documento'));
+            return response()->json($resultado, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
 }
+
 
 
 

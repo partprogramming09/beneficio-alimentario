@@ -72,6 +72,17 @@ export async function activateStudentManually(documento) {
   return response.data;
 }
 
+export async function updateStudent(data) {
+  const response = await apiClient.post('/api/admin/estudiantes/actualizar', data);
+  return response.data;
+}
+
+export async function deleteInstitutionalStudent(documento) {
+  const response = await apiClient.post('/api/admin/estudiantes/eliminar-institucional', { documento });
+  return response.data;
+}
+
+
 
 
 
