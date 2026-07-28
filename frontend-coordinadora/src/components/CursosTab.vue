@@ -91,13 +91,14 @@
                 class="data-card-item"
               >
                 <div class="data-card-header">
-                  <span class="card-doc"><strong>Doc: {{ st.documento }}</strong></span>
+                  <span class="badge-doc-highlight">🪪 Doc: {{ st.documento }}</span>
                   <span :class="st.esta_inscrito ? 'badge-status-yes' : 'badge-status-no'">
                     {{ st.esta_inscrito ? 'SÍ (En Comedor)' : 'NO (Sin Inscribir)' }}
                   </span>
                 </div>
                 <div class="data-card-body">
                   <div class="card-name">{{ st.nombre_completo }}</div>
+                  <div class="card-meta">Doc Identidad: <strong class="text-primary font-mono">🪪 {{ st.documento }}</strong></div>
                   <div class="card-meta">Estado Beneficio: <strong>{{ st.estado }}</strong></div>
                 </div>
                 <div v-if="!st.esta_inscrito" class="data-card-actions mt-2">
@@ -113,7 +114,7 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Documento</th>
+                    <th>Documento (TI / CC)</th>
                     <th>Estudiante</th>
                     <th>Grupo</th>
                     <th>¿Está en Comedor?</th>
@@ -123,8 +124,8 @@
                 </thead>
                 <tbody>
                   <tr v-for="st in getFilteredStudents(grp.estudiantes)" :key="st.documento">
-                    <td><strong>{{ st.documento }}</strong></td>
-                    <td>{{ st.nombre_completo }}</td>
+                    <td><span class="badge-doc-highlight">🪪 {{ st.documento }}</span></td>
+                    <td><strong>{{ st.nombre_completo }}</strong></td>
                     <td><span class="badge-group">{{ st.grupo }}</span></td>
                     <td>
                       <span :class="st.esta_inscrito ? 'badge-status-yes' : 'badge-status-no'">
@@ -150,6 +151,7 @@
                 </tbody>
               </table>
             </div>
+
 
           </div>
         </div>
@@ -335,6 +337,23 @@ export default {
   background-color: var(--primary);
   color: white;
 }
+
+.badge-doc-highlight {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--border-color);
+  padding: 4px 10px;
+  border-radius: var(--border-radius-pill);
+  font-weight: 700;
+  font-family: monospace, sans-serif;
+  font-size: 0.88rem;
+  display: inline-block;
+}
+
+.font-mono {
+  font-family: monospace, sans-serif;
+}
+
 
 .group-card {
   background-color: var(--bg-secondary);
