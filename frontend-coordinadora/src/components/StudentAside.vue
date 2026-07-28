@@ -13,6 +13,7 @@
           </div>
           <div class="header-info">
             <h4>{{ student.nombres }} {{ student.apellidos }}</h4>
+            <div class="header-doc-badge mb-1">🪪 Doc: <strong>{{ student.documento }}</strong></div>
             <span :class="['badge-status', 'badge-' + student.estado.toLowerCase()]">
               {{ student.estado }}
             </span>
@@ -26,9 +27,10 @@
           <div class="aside-section">
             <h5>🛡️ Información Académica</h5>
             <div class="info-row">
-              <span class="info-label">Documento:</span>
-              <strong class="info-value">{{ student.documento }}</strong>
+              <span class="info-label">Documento Identidad:</span>
+              <strong class="info-value text-primary font-mono">🪪 {{ student.documento }}</strong>
             </div>
+
             <div class="info-row">
               <span class="info-label">Grado/Grupo:</span>
               <span class="badge-group">{{ student.grupo }}</span>
@@ -330,13 +332,24 @@ export default {
 }
 
 .header-info h4 {
-  margin: 0 0 4px 0;
+  margin: 0 0 2px 0;
   font-size: 1.05rem;
   color: var(--text-primary);
   font-weight: 700;
 }
 
+.header-doc-badge {
+  font-size: 0.85rem;
+  color: var(--primary);
+  font-family: monospace, sans-serif;
+}
+
+.font-mono {
+  font-family: monospace, sans-serif;
+}
+
 .btn-close {
+
   position: absolute;
   top: 15px;
   right: 15px;

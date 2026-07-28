@@ -35,7 +35,7 @@
           @click="$emit('select-student', student)"
         >
           <div class="data-card-header">
-            <span class="card-doc"><strong>Doc: {{ student.documento }}</strong></span>
+            <span class="badge-doc-highlight">🪪 Doc: {{ student.documento }}</span>
             <span :class="['badge-status', 'badge-' + student.estado.toLowerCase()]">
               {{ student.estado }}
             </span>
@@ -62,7 +62,7 @@
         <table>
           <thead>
             <tr>
-              <th>Documento</th>
+              <th>Documento (TI / CC)</th>
               <th>Nombre Completo</th>
               <th>Grupo</th>
               <th>Estado</th>
@@ -71,8 +71,8 @@
           </thead>
           <tbody>
             <tr v-for="student in filteredStudents" :key="student.documento" @click="$emit('select-student', student)" class="clickable-row">
-              <td><strong>{{ student.documento }}</strong></td>
-              <td>{{ student.nombres }} {{ student.apellidos }}</td>
+              <td><span class="badge-doc-highlight">🪪 {{ student.documento }}</span></td>
+              <td><strong>{{ student.nombres }} {{ student.apellidos }}</strong></td>
               <td><span class="badge-group">{{ student.grupo }}</span></td>
               <td>
                 <span :class="['badge-status', 'badge-' + student.estado.toLowerCase()]">
@@ -88,6 +88,7 @@
           </tbody>
         </table>
       </div>
+
     </div>
 
     <AlertBox :message="message" :isError="isError" />
@@ -225,7 +226,20 @@ export default {
   display: block;
 }
 
+.badge-doc-highlight {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--border-color);
+  padding: 4px 10px;
+  border-radius: var(--border-radius-pill);
+  font-weight: 700;
+  font-family: monospace, sans-serif;
+  font-size: 0.88rem;
+  display: inline-block;
+}
+
 .card-name {
+
   font-size: 1rem;
   font-weight: 700;
   color: var(--text-primary);
