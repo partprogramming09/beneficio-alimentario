@@ -70,6 +70,7 @@ export default {
         this.isError = false
         this.receipt = data.comprobante
         this.attendanceDoc = ''
+        this.$emit('refresh-students')
       } catch (err) {
         this.message = err.message
         this.isError = true
@@ -79,6 +80,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style scoped>
