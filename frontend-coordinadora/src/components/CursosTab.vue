@@ -30,7 +30,7 @@
       </div>
 
       <div class="filter-item">
-        <label>Ver Estatus en Comedor:</label>
+        <label>Estado de Inscripción al Beneficio:</label>
         <div class="status-pills">
           <button 
             :class="['pill-btn', { active: statusFilter === 'ALL' }]"
@@ -42,13 +42,13 @@
             :class="['pill-btn', { active: statusFilter === 'SI' }]"
             @click="statusFilter = 'SI'"
           >
-            ✅ En Comedor (SÍ)
+            ✅ Inscritos (SÍ)
           </button>
           <button 
             :class="['pill-btn', { active: statusFilter === 'NO' }]"
             @click="statusFilter = 'NO'"
           >
-            ❌ Sin Inscribir (NO)
+            ❌ Sin Registrar (NO)
           </button>
         </div>
       </div>
@@ -63,17 +63,17 @@
     </div>
 
     <!-- Contenido de Grupos Organizados -->
-    <div v-else class="groups-stack">
+    <div v-else class="groups-grid">
       <div v-for="grp in filteredGroups" :key="grp.nombre_grupo" class="group-card mb-4">
         <div class="group-card-header">
-          <div class="group-title-info">
+          <div class="group-title">
             <span class="group-icon font-weight-bold">🏫 Grupo {{ grp.nombre_grupo }}</span>
           </div>
 
           <div class="group-stats-badges">
-            <span class="badge-stat badge-total">🎓 Total: {{ grp.total_matriculados }}</span>
-            <span class="badge-stat badge-yes">✅ Inscritos (SÍ): {{ grp.total_inscritos }}</span>
-            <span class="badge-stat badge-no">❌ Sin Inscribir (NO): {{ grp.total_sin_inscribir }}</span>
+            <span class="badge-stat badge-total">🎓 Total Matriculados: {{ grp.total_matriculados }}</span>
+            <span class="badge-stat badge-yes">✅ Inscritos: {{ grp.total_inscritos }}</span>
+            <span class="badge-stat badge-no">❌ Sin Registrar: {{ grp.total_sin_inscribir }}</span>
           </div>
         </div>
 
@@ -93,7 +93,7 @@
                 <div class="data-card-header">
                   <span class="badge-doc-highlight">🪪 Doc: {{ st.documento }}</span>
                   <span :class="st.esta_inscrito ? 'badge-status-yes' : 'badge-status-no'">
-                    {{ st.esta_inscrito ? 'SÍ (En Comedor)' : 'NO (Sin Inscribir)' }}
+                    {{ st.esta_inscrito ? 'SÍ (Inscrito)' : 'NO (Sin Registrar)' }}
                   </span>
                 </div>
                 <div class="data-card-body">
@@ -103,7 +103,7 @@
                 </div>
                 <div class="data-card-actions mt-2">
                   <button v-if="!st.esta_inscrito" class="btn btn-primary btn-xs" @click.stop="manualActivate(st.documento)">
-                    ⚡ Activar
+                    ⚡ Registrar Cupo
                   </button>
                   <button class="btn btn-secondary btn-xs" @click.stop="openEditModal(st)">
                     ✏️ Editar
@@ -123,7 +123,7 @@
                     <th>Documento (TI / CC)</th>
                     <th>Estudiante</th>
                     <th>Grupo</th>
-                    <th>¿Está en Comedor?</th>
+                    <th>¿Inscrito en Beneficio?</th>
                     <th>Estado en Beneficio</th>
                     <th>Acciones</th>
                   </tr>
@@ -149,9 +149,9 @@
                           v-if="!st.esta_inscrito" 
                           class="btn btn-primary btn-xs" 
                           @click.stop="manualActivate(st.documento)"
-                          title="Activar directamente en el comedor"
+                          title="Registrar cupo de beneficio para el estudiante"
                         >
-                          ⚡ Activar
+                          ⚡ Registrar Cupo
                         </button>
                         <button 
                           class="btn btn-secondary btn-xs" 
