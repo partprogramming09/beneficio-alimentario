@@ -283,9 +283,9 @@ export default {
   top: 0;
   right: 0;
   width: 420px;
+  max-width: 100vw;
   height: 100vh;
-  background-color: var(--gradient-glass);
-  backdrop-filter: var(--backdrop-blur);
+  background-color: var(--bg-secondary);
   border-left: 1px solid var(--border-color);
   box-shadow: var(--shadow-lg);
   z-index: 100;
@@ -305,7 +305,7 @@ export default {
 }
 
 .aside-header {
-  padding: 24px;
+  padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
@@ -314,8 +314,8 @@ export default {
 }
 
 .student-avatar {
-  width: 50px;
-  height: 50px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background-color: var(--primary);
   color: white;
@@ -323,42 +323,62 @@ export default {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   border: 2px solid var(--bg-secondary);
   box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 .header-info h4 {
   margin: 0 0 4px 0;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   color: var(--text-primary);
   font-weight: 700;
 }
 
 .btn-close {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
   font-size: 1.8rem;
   color: var(--text-secondary);
-  background: none;
-  border: none;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
   cursor: pointer;
-  line-height: 1;
-  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
 }
 
 .btn-close:hover {
   color: var(--danger);
+  background-color: var(--danger-light);
 }
 
 .aside-body {
-  padding: 24px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 20px;
   flex: 1;
 }
+
+@media (max-width: 576px) {
+  .student-aside {
+    width: 100vw;
+  }
+  .aside-header {
+    padding: 16px;
+  }
+  .aside-body {
+    padding: 16px;
+  }
+}
+
 
 .aside-section {
   background-color: var(--bg-secondary);

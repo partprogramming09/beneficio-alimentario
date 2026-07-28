@@ -1,13 +1,22 @@
 <template>
   <div class="coordinadora-dashboard-layout">
-    <!-- Left Sidebar (Crimson Modern Theme) -->
-    <aside class="sidebar">
+    <!-- Backdrop táctil para cerrar la sidebar en móvil -->
+    <div 
+      v-if="isSidebarOpenMobile" 
+      class="sidebar-backdrop" 
+      @click="isSidebarOpenMobile = false"
+    ></div>
+
+    <!-- Left Sidebar (Crimson Modern Theme - Colapsable en Móvil) -->
+    <aside :class="['sidebar', { 'sidebar-open-mobile': isSidebarOpenMobile }]">
       <div class="sidebar-brand">
         <div class="brand-shield">🛡️</div>
         <div class="brand-text">
           <h4>I.E. Enrique Vélez Escobar</h4>
           <span class="brand-subtitle">Gestión Comedor</span>
         </div>
+        <!-- Botón cerrar menú en móvil -->
+        <button class="btn-sidebar-close" @click="isSidebarOpenMobile = false" title="Cerrar menú">&times;</button>
       </div>
       
       <nav class="sidebar-nav">
@@ -15,7 +24,7 @@
           v-for="tab in tabs" 
           :key="tab.id"
           :class="['nav-item', { active: activeSubTab === tab.id }]"
-          @click="activeSubTab = tab.id"
+          @click="selectTabMobile(tab.id)"
         >
           <span class="nav-icon">{{ getTabIcon(tab.id) }}</span>
           <span class="nav-label">{{ tab.label }}</span>
@@ -28,8 +37,8 @@
         <div class="user-profile">
           <div class="user-avatar">CO</div>
           <div class="user-meta">
-            <strong>Coordinación Escolar</strong>
-            <span>Administrador Activo</span>
+            <strong>Coordinación</strong>
+            <span>Administrador</span>
           </div>
         </div>
         <button v-if="toggleTheme" class="btn-theme-sidebar" @click="toggleTheme" title="Cambiar Tema (Claro/Oscuro)">
@@ -40,9 +49,14 @@
 
     <!-- Main Content Area -->
     <main class="main-content-area">
-      <!-- Header con KPIs Dinámicos y Título Limpio -->
+      <!-- Header con KPIs Dinámicos y Menú Hamburguesa -->
       <header class="content-header">
         <div class="header-title-section">
+          <!-- Botón Hamburguesa Móvil -->
+          <button class="btn-menu-mobile" @click="isSidebarOpenMobile = !isSidebarOpenMobile" title="Abrir Menú">
+            <span class="hamburger-icon">☰</span>
+            <span class="menu-text">Menú</span>
+          </button>
           <h2>{{ getTabTitle(activeSubTab) }}</h2>
         </div>
 
@@ -120,6 +134,7 @@ export default {
   data() {
     return {
       activeSubTab: 'pendientes',
+      isSidebarOpenMobile: false,
       tabs: [
         { id: 'pendientes', label: 'Inscritos Hoy' },
         { id: 'listado', label: 'Estudiantes' },
@@ -182,6 +197,10 @@ export default {
     this.loadStudents()
   },
   methods: {
+    selectTabMobile(tabId) {
+      this.activeSubTab = tabId;
+      this.isSidebarOpenMobile = false;
+    },
     clearMessages() {
       this.message = ''
       this.isError = false
@@ -250,7 +269,19 @@ export default {
   min-height: 100vh;
   margin: -20px -10px;
   background-color: var(--bg-primary);
+  position: relative;
   animation: fadeIn var(--transition-normal);
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 90;
 }
 
 /* Sidebar Carmesí Moderno */
@@ -263,6 +294,8 @@ export default {
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
   box-shadow: var(--shadow-lg);
+  z-index: 95;
+  transition: transform var(--transition-normal) ease;
 }
 
 .sidebar-brand {
@@ -271,6 +304,7 @@ export default {
   align-items: center;
   gap: 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative;
 }
 
 .brand-shield {
@@ -292,6 +326,19 @@ export default {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.btn-sidebar-close {
+  display: none;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .sidebar-nav {
@@ -419,11 +466,12 @@ export default {
 /* Main Content & KPI Header */
 .main-content-area {
   flex: 1;
-  padding: 30px 24px;
+  padding: 24px 20px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%;
 }
 
 .content-header {
@@ -436,44 +484,73 @@ export default {
   gap: 15px;
 }
 
+.header-title-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .header-title-section h2 {
   margin: 0;
-  font-size: 1.5rem !important;
+  font-size: clamp(1.2rem, 3vw, 1.5rem) !important;
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.3px;
 }
 
+/* Botón Menú Hamburguesa Móvil */
+.btn-menu-mobile {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: var(--border-radius-pill);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.hamburger-icon {
+  font-size: 1.1rem;
+}
+
 .kpi-group {
-  display: flex;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
 }
 
 .kpi-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-sm);
-  padding: 8px 16px;
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-shadow: var(--shadow-sm);
-  min-width: 100px;
 }
 
 .kpi-val {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: var(--primary);
   line-height: 1;
 }
 
 .kpi-lbl {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
   font-weight: 600;
   text-transform: uppercase;
   margin-top: 4px;
+  text-align: center;
 }
 
 .warning-kpi .kpi-val {
@@ -484,7 +561,7 @@ export default {
   box-shadow: var(--shadow-sm);
   background-color: var(--bg-secondary);
   border-radius: var(--border-radius-md);
-  padding: 24px;
+  padding: clamp(16px, 3vw, 24px);
 }
 
 @keyframes fadeIn {
@@ -492,29 +569,37 @@ export default {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Breakpoint Móvil / Tablet < 992px */
 @media (max-width: 992px) {
-  .coordinadora-dashboard-layout {
-    flex-direction: column;
-    margin: 0;
+  .btn-menu-mobile {
+    display: inline-flex;
+  }
+  .btn-sidebar-close {
+    display: block;
   }
   .sidebar {
-    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    transform: translateX(-100%);
   }
-  .sidebar-nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 10px;
+  .sidebar.sidebar-open-mobile {
+    transform: translateX(0);
   }
-  .nav-item {
-    flex: 1;
-    min-width: 130px;
-    padding: 8px;
-    justify-content: center;
+  .main-content-area {
+    padding: 16px 12px;
   }
-  .sidebar-footer {
-    display: flex;
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .kpi-group {
+    max-width: 100%;
   }
 }
 </style>
+
 
 

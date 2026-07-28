@@ -28,25 +28,42 @@
         <p>No se registraron asistencias para la fecha: <strong>{{ dailyDate }}</strong>.</p>
       </div>
 
-      <div v-else class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Documento</th>
-              <th>Estudiante</th>
-              <th>Grupo</th>
-              <th>Hora Registro</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in dailyReport" :key="row.id">
-              <td><strong>{{ row.documento }}</strong></td>
-              <td>{{ row.nombres }} {{ row.apellidos }}</td>
-              <td><span class="badge-group">{{ row.grupo }}</span></td>
-              <td>{{ row.hora }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div v-else>
+        <!-- Vista DataCards Móvil -->
+        <div class="data-cards-grid mobile-only">
+          <div v-for="row in dailyReport" :key="'rep-d-' + row.id" class="data-card-item">
+            <div class="data-card-header">
+              <span class="card-doc"><strong>Doc: {{ row.documento }}</strong></span>
+              <span class="badge-group">{{ row.grupo }}</span>
+            </div>
+            <div class="data-card-body">
+              <div class="card-name">{{ row.nombres }} {{ row.apellidos }}</div>
+              <div class="card-time text-muted">Hora: {{ row.hora }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vista Tabla Escritorio -->
+        <div class="table-container desktop-only">
+          <table>
+            <thead>
+              <tr>
+                <th>Documento</th>
+                <th>Estudiante</th>
+                <th>Grupo</th>
+                <th>Hora Registro</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in dailyReport" :key="row.id">
+                <td><strong>{{ row.documento }}</strong></td>
+                <td>{{ row.nombres }} {{ row.apellidos }}</td>
+                <td><span class="badge-group">{{ row.grupo }}</span></td>
+                <td>{{ row.hora }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -56,27 +73,44 @@
         <p>No hay datos de asistencia acumulada para esta semana.</p>
       </div>
 
-      <div v-else class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Documento</th>
-              <th>Estudiante</th>
-              <th>Grupo</th>
-              <th>Almuerzos Recibidos</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in weeklyReport.report" :key="row.documento">
-              <td><strong>{{ row.documento }}</strong></td>
-              <td>{{ row.nombres }} {{ row.apellidos }}</td>
-              <td><span class="badge-group">{{ row.grupo }}</span></td>
-              <td>
-                <span class="badge-count-success">{{ row.total_asistencias }} / {{ weeklyReport.dateList.length }}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div v-else>
+        <!-- Vista DataCards Móvil -->
+        <div class="data-cards-grid mobile-only">
+          <div v-for="row in weeklyReport.report" :key="'rep-w-' + row.documento" class="data-card-item">
+            <div class="data-card-header">
+              <span class="card-doc"><strong>Doc: {{ row.documento }}</strong></span>
+              <span class="badge-count-success">{{ row.total_asistencias }} / {{ weeklyReport.dateList.length }}</span>
+            </div>
+            <div class="data-card-body">
+              <div class="card-name">{{ row.nombres }} {{ row.apellidos }}</div>
+              <div class="card-meta">Grupo: {{ row.grupo }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vista Tabla Escritorio -->
+        <div class="table-container desktop-only">
+          <table>
+            <thead>
+              <tr>
+                <th>Documento</th>
+                <th>Estudiante</th>
+                <th>Grupo</th>
+                <th>Almuerzos Recibidos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in weeklyReport.report" :key="row.documento">
+                <td><strong>{{ row.documento }}</strong></td>
+                <td>{{ row.nombres }} {{ row.apellidos }}</td>
+                <td><span class="badge-group">{{ row.grupo }}</span></td>
+                <td>
+                  <span class="badge-count-success">{{ row.total_asistencias }} / {{ weeklyReport.dateList.length }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -148,6 +182,7 @@ export default {
   border-radius: var(--border-radius-pill);
   border: 1px solid var(--border-color);
   gap: 4px;
+  flex-wrap: wrap;
 }
 
 .report-pill-btn {
@@ -187,10 +222,35 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
-.ml-2 {
-  margin-left: 0.5rem;
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+.card-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.card-time, .card-meta {
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: grid;
+  }
+  .desktop-only {
+    display: none;
+  }
 }
 </style>
+
 
