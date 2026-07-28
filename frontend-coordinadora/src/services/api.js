@@ -52,3 +52,14 @@ export async function markAttendance(documento) {
   return response.data;
 }
 
+export async function createSingleStudent(data) {
+  const response = await apiClient.post('/api/admin/estudiantes/crear-individual', data);
+  return response.data;
+}
+
+export async function importBulkStudents(estudiantes) {
+  const response = await apiClient.post('/api/admin/estudiantes/importar-masivo', { estudiantes });
+  return response.data;
+}
+
+

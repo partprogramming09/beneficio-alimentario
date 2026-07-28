@@ -182,4 +182,42 @@ class AdminController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
+    /**
+     * Registra un estudiante individual manualmente.
+     */
+    public function crearEstudianteIndividual(Request $request)
+    {
+        $request->validate([
+            'documento' => 'required|string',
+            'nombres' => 'required|string|max:50',
+            'apellidos' => 'required|string|max:50',
+            'grupo' => 'required|string|max:20',
+        ]);
+
+        try {
+            $resultado = $this->adminService->createSingleStudent($request->all());
+            return response()->json($resultado, 201);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    /**
+     * Importa un arreglo masivo de estudiantes leídos desde Excel/CSV.
+     */
+    public function importarEstudiantesMasivo(Request $request)
+    {
+        $request->validate([
+            'estudiantes' => 'required|array|min:1',
+        ]);
+
+        try {
+            $resultado = $this->adminService->importBulkStudents($request->input('estudiantes'));
+            return response()->json($resultado, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
 }
+

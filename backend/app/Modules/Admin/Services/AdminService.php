@@ -343,4 +343,106 @@ class AdminService
             'suspendidos' => $nuevosSuspendidosDocs,
         ];
     }
+
+    /**
+     * Registra un estudiante individual en la institución y activa su perfil de beneficiario.
+     */
+    public function createSingleStudent(array $data): array
+    {
+        $documento = trim($data['documento']);
+        $nombres = trim($data['nombres']);
+        $apellidos = trim($data['apellidos']);
+        $grupo = trim($data['grupo']);
+        $nombreCompleto = "{$nombres} {$apellidos}";
+
+        // 1. Guardar en la tabla institucional de matriculados
+        InstitucionEstudiante::updateOrCreate(
+            ['documento' => $documento],
+            [
+                'nombre_completo' => $nombreCompleto,
+                'grupo' => $grupo,
+            ]
+        );
+
+        // 2. Registrar o actualizar en la lista activa de beneficiarios
+        $estudiante = Estudiante::updateOrCreate(
+            ['documento' => $documento],
+            [
+                'nombres' => $nombres,
+                'apellidos' => $apellidos,
+                'grupo' => $grupo,
+                'estado' => 'Activo',
+            ]
+        );
+
+        return [
+            'message' => "Estudiante {$nombreCompleto} (Doc: {$documento}) registrado y activado con éxito.",
+            'estudiante' => $estudiante,
+        ];
+    }
+
+    /**
+     * Carga masiva de estudiantes desde Excel/CSV.
+     */
+    public function importBulkStudents(array $studentsData): array
+    {
+        $insertados = 0;
+        $actualizados = 0;
+
+        DB::transaction(function () use ($studentsData, &$insertados, &$actualizados) {
+            foreach ($studentsData as $item) {
+                if (empty($item['documento'])) continue;
+
+                $documento = trim((string)$item['documento']);
+                $nombres = trim($item['nombres'] ?? '');
+                $apellidos = trim($item['apellidos'] ?? '');
+                
+                if (empty($nombres) && !empty($item['nombre_completo'])) {
+                    $parts = explode(' ', trim($item['nombre_completo']), 2);
+                    $nombres = $parts[0] ?? '';
+                    $apellidos = $parts[1] ?? '';
+                }
+
+                $nombreCompleto = trim("{$nombres} {$apellidos}");
+                if (empty($nombreCompleto)) {
+                    $nombreCompleto = trim($item['nombre_completo'] ?? $documento);
+                }
+
+                $grupo = trim($item['grupo'] ?? 'Sin Grupo');
+
+                $institucion = InstitucionEstudiante::find($documento);
+                if ($institucion) {
+                    $actualizados++;
+                } else {
+                    $insertados++;
+                }
+
+                InstitucionEstudiante::updateOrCreate(
+                    ['documento' => $documento],
+                    [
+                        'nombre_completo' => $nombreCompleto,
+                        'grupo' => $grupo,
+                    ]
+                );
+
+                Estudiante::updateOrCreate(
+                    ['documento' => $documento],
+                    [
+                        'nombres' => $nombres ?: $nombreCompleto,
+                        'apellidos' => $apellidos ?: '',
+                        'grupo' => $grupo,
+                        'estado' => 'Activo',
+                    ]
+                );
+            }
+        });
+
+        return [
+            'message' => "Importación masiva completada. Procesados: " . ($insertados + $actualizados) . " ({$insertados} nuevos, {$actualizados} actualizados).",
+            'total' => $insertados + $actualizados,
+            'insertados' => $insertados,
+            'actualizados' => $actualizados,
+        ];
+    }
 }
+

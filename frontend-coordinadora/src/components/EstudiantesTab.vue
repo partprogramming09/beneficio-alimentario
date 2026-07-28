@@ -1,13 +1,24 @@
 <template>
   <div class="tab-content">
-    <!-- Buscador y filtro en tiempo real -->
-    <div class="search-bar-wrapper mb-3">
-      <input 
-        type="text" 
-        v-model="searchQuery" 
-        placeholder="🔍 Buscar estudiante por nombre, documento o grupo..."
-        class="search-input"
-      />
+    <!-- Barra Superior de Acciones y Buscador -->
+    <div class="action-bar-header mb-3">
+      <div class="search-bar-wrapper">
+        <input 
+          type="text" 
+          v-model="searchQuery" 
+          placeholder="🔍 Buscar por nombre, documento o grupo..."
+          class="search-input"
+        />
+      </div>
+
+      <div class="actions-buttons-group">
+        <button class="btn btn-primary btn-sm" @click="isAddModalOpen = true">
+          ➕ Agregar Estudiante
+        </button>
+        <button class="btn btn-secondary btn-sm" @click="isImportModalOpen = true">
+          📁 Importar Excel / CSV
+        </button>
+      </div>
     </div>
 
     <div v-if="filteredStudents.length === 0" class="empty-state">
@@ -80,17 +91,34 @@
     </div>
 
     <AlertBox :message="message" :isError="isError" />
+
+    <!-- Modales de Registro Individual e Importación Masiva -->
+    <AgregarEstudianteModal 
+      :is-open="isAddModalOpen" 
+      @close="isAddModalOpen = false" 
+      @refresh-students="$emit('refresh-students')" 
+    />
+
+    <ImportarEstudiantesModal 
+      :is-open="isImportModalOpen" 
+      @close="isImportModalOpen = false" 
+      @refresh-students="$emit('refresh-students')" 
+    />
   </div>
 </template>
 
 <script>
 import { deleteStudent } from '../services/api'
 import AlertBox from './AlertBox.vue'
+import AgregarEstudianteModal from './AgregarEstudianteModal.vue'
+import ImportarEstudiantesModal from './ImportarEstudiantesModal.vue'
 
 export default {
   name: 'EstudiantesTab',
   components: {
-    AlertBox
+    AlertBox,
+    AgregarEstudianteModal,
+    ImportarEstudiantesModal
   },
   props: {
     students: {
@@ -101,6 +129,8 @@ export default {
   data() {
     return {
       searchQuery: '',
+      isAddModalOpen: false,
+      isImportModalOpen: false,
       loading: false,
       message: '',
       isError: false
@@ -147,8 +177,23 @@ export default {
 </script>
 
 <style scoped>
-.search-bar-wrapper {
+.action-bar-header {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.search-bar-wrapper {
+  flex: 1;
+  min-width: 240px;
+}
+
+.actions-buttons-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .search-input {
@@ -203,7 +248,15 @@ export default {
   .desktop-only {
     display: none;
   }
+  .action-bar-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .actions-buttons-group {
+    justify-content: flex-start;
+  }
 }
 </style>
+
 
 
