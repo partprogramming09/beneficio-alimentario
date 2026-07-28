@@ -219,5 +219,19 @@ class AdminController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
+    /**
+     * Retorna los estudiantes agrupados por Cursos y Grupos con estatus de inscripción.
+     */
+    public function grupos()
+    {
+        try {
+            $grupos = $this->adminService->getGroupedCourses();
+            return response()->json($grupos);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
 }
+
 

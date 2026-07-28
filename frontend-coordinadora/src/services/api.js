@@ -62,4 +62,10 @@ export async function importBulkStudents(estudiantes) {
   return response.data;
 }
 
+export async function getAdminGroups() {
+  const response = await apiClient.get('/api/admin/grupos');
+  return response.data;
+}
+
+
 

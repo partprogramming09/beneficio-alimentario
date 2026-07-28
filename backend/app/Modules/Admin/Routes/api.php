@@ -14,4 +14,6 @@ Route::get('/asistencia/semanal', [AdminController::class, 'asistenciaSemanal'])
 Route::post('/simular-dia', [AdminController::class, 'simularDia']);
 Route::post('/estudiantes/crear-individual', [AdminController::class, 'crearEstudianteIndividual']);
 Route::post('/estudiantes/importar-masivo', [AdminController::class, 'importarEstudiantesMasivo']);
+Route::get('/grupos', [AdminController::class, 'grupos']);
+
 

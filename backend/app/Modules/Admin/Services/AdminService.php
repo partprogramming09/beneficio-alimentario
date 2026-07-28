@@ -444,5 +444,53 @@ class AdminService
             'actualizados' => $actualizados,
         ];
     }
+
+    /**
+     * Retorna la estructura organizada de Cursos y Grupos con detalle de inscritos / no inscritos.
+     */
+    public function getGroupedCourses(): array
+    {
+        $institucion = DB::table('institucion_estudiantes')->get();
+        $beneficiarios = DB::table('estudiantes')->get()->keyBy('documento');
+
+        $grupos = [];
+
+        foreach ($institucion as $est) {
+            $grp = $est->grupo ?: 'Sin Grupo';
+            if (!isset($grupos[$grp])) {
+                $grupos[$grp] = [
+                    'nombre_grupo' => $grp,
+                    'total_matriculados' => 0,
+                    'total_inscritos' => 0,
+                    'total_sin_inscribir' => 0,
+                    'estudiantes' => [],
+                ];
+            }
+
+            $beneficiario = $beneficiarios->get($est->documento);
+            $estaInscrito = (bool) $beneficiario;
+            $estado = $beneficiario ? $beneficiario->estado : 'Sin Registrar';
+
+            $grupos[$grp]['total_matriculados']++;
+            if ($estaInscrito && $estado === 'Activo') {
+                $grupos[$grp]['total_inscritos']++;
+            } else {
+                $grupos[$grp]['total_sin_inscribir']++;
+            }
+
+            $grupos[$grp]['estudiantes'][] = [
+                'documento' => $est->documento,
+                'nombre_completo' => $est->nombre_completo,
+                'grupo' => $grp,
+                'esta_inscrito' => $estaInscrito,
+                'estado' => $estado,
+            ];
+        }
+
+        ksort($grupos);
+
+        return array_values($grupos);
+    }
 }
+
 

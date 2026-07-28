@@ -113,6 +113,7 @@ import AsistenciaTab from '../components/AsistenciaTab.vue'
 import ReportesTab from '../components/ReportesTab.vue'
 import ReactivacionesTab from '../components/ReactivacionesTab.vue'
 import SimuladorTab from '../components/SimuladorTab.vue'
+import CursosTab from '../components/CursosTab.vue'
 import StudentAside from '../components/StudentAside.vue'
 
 export default {
@@ -129,6 +130,7 @@ export default {
     ReportesTab,
     ReactivacionesTab,
     SimuladorTab,
+    CursosTab,
     StudentAside
   },
   data() {
@@ -139,6 +141,7 @@ export default {
       tabs: [
         { id: 'pendientes', label: 'Inscritos Hoy' },
         { id: 'listado', label: 'Estudiantes' },
+        { id: 'cursos', label: 'Cursos y Grupos' },
         { id: 'asistencia', label: 'Registrar Almuerzo' },
         { id: 'reportes', label: 'Reportes Asistencia' },
         { id: 'excusas', label: 'Reactivaciones' },
@@ -158,6 +161,7 @@ export default {
       switch (this.activeSubTab) {
         case 'pendientes': return 'AprobacionesTab'
         case 'listado': return 'EstudiantesTab'
+        case 'cursos': return 'CursosTab'
         case 'asistencia': return 'AsistenciaTab'
         case 'reportes': return 'ReportesTab'
         case 'excusas': return 'ReactivacionesTab'
@@ -251,6 +255,7 @@ export default {
       switch (id) {
         case 'pendientes': return '📝'
         case 'listado': return '👥'
+        case 'cursos': return '🏫'
         case 'asistencia': return '🍽️'
         case 'reportes': return '📊'
         case 'excusas': return '🛡️'
@@ -258,6 +263,7 @@ export default {
         default: return '📄'
       }
     },
+
     getTabTitle(id) {
       switch (id) {
         case 'pendientes': return 'Inscritos Hoy'
