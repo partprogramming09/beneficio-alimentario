@@ -189,12 +189,18 @@ export default {
         startIdx = 1
         const cols = lines[0].split(delimiter).map(c => c.trim().toLowerCase().replace(/"/g, ''))
         cols.forEach((col, idx) => {
-          if (col.includes('doc') || col.includes('ced') || col.includes('id')) headerIndices.doc = idx
-          else if (col.includes('nom') || col.includes('nombre')) headerIndices.nombres = idx
-          else if (col.includes('ape') || col.includes('apellido')) headerIndices.apellidos = idx
-          else if (col.includes('grup') || col.includes('grad') || col.includes('curs')) headerIndices.grupo = idx
+          if (col.includes('ape') || col.includes('apellido')) {
+            headerIndices.apellidos = idx
+          } else if (col.includes('doc') || col.includes('cedula') || col.includes('identificac') || col === 'id') {
+            headerIndices.doc = idx
+          } else if (col.includes('nom') || col.includes('nombre')) {
+            headerIndices.nombres = idx
+          } else if (col.includes('grup') || col.includes('grad') || col.includes('curs')) {
+            headerIndices.grupo = idx
+          }
         })
       }
+
 
       const rows = []
       for (let i = startIdx; i < lines.length; i++) {
