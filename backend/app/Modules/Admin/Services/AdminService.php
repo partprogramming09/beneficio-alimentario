@@ -3,7 +3,9 @@
 namespace App\Modules\Admin\Services;
 
 use App\Modules\Student\Models\Estudiante;
+use App\Modules\Student\Models\InstitucionEstudiante;
 use App\Modules\Attendance\Models\Asistencia;
+
 use App\Modules\Attendance\Models\Comprobante;
 use App\Modules\Admin\Models\Justificacion;
 use App\Modules\Attendance\Services\AttendanceRuleService;
