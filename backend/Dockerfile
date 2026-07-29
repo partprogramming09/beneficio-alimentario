@@ -16,11 +16,9 @@ COPY backend/opcache.ini $PHP_INI_DIR/conf.d/opcache.ini
 
 WORKDIR /var/www/html
 
-COPY backend/composer.json backend/composer.lock ./
-
-RUN composer install --no-dev --no-interaction
-
 COPY backend/ .
+
+RUN composer install --no-dev --no-interaction --no-scripts
 
 EXPOSE 8000
 
