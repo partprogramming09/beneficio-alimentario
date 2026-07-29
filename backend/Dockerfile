@@ -22,4 +22,4 @@ RUN composer install --no-dev --no-interaction --no-scripts
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "cp -n .env.example .env 2>/dev/null; php artisan key:generate --force; php artisan migrate --force; php artisan serve --host=0.0.0.0 --port=$PORT"]
+CMD ["sh", "-c", "echo 'APP_KEY=' > .env && php artisan key:generate --force && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"]
