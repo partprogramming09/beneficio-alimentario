@@ -16,16 +16,12 @@ COPY backend/opcache.ini $PHP_INI_DIR/conf.d/opcache.ini
 
 WORKDIR /var/www/html
 
+COPY backend/composer.json backend/composer.lock ./
+
+RUN composer install --no-dev --no-interaction
+
 COPY backend/ .
-
-RUN cp .env.example .env && php artisan key:generate --force
-
-RUN composer install --no-dev --no-interaction --no-scripts
-
-RUN composer dump-autoload --optimize
-
-RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"]
+CMD ["sh", "-c", "cp -n .env.example .env 2>/dev/null; php artisan key:generate --force; php artisan migrate --force; php artisan serve --host=0.0.0.0 --port=$PORT"]
