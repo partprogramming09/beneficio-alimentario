@@ -137,7 +137,7 @@ export default {
     return {
       activeSubTab: 'pendientes',
       isSidebarOpenMobile: false,
-      pollingTimer: null,
+
       tabs: [
         { id: 'pendientes', label: 'Inscritos Hoy' },
         { id: 'listado', label: 'Estudiantes' },
@@ -200,15 +200,6 @@ export default {
   },
   mounted() {
     this.loadStudents()
-    // Auto-polling silencioso en vivo cada 30 segundos para actualizar DataTables en tiempo real
-    this.pollingTimer = setInterval(() => {
-      this.loadStudentsSilently()
-    }, 30000)
-  },
-  beforeUnmount() {
-    if (this.pollingTimer) {
-      clearInterval(this.pollingTimer)
-    }
   },
   methods: {
     selectTabMobile(tabId) {
@@ -218,20 +209,6 @@ export default {
     clearMessages() {
       this.message = ''
       this.isError = false
-    },
-    async loadStudentsSilently() {
-      try {
-        const data = await getAdminStudents()
-        this.allStudents = data
-        if (this.selectedStudent) {
-          const updated = this.allStudents.find(s => s.documento === this.selectedStudent.documento)
-          if (updated) {
-            this.selectedStudent = updated
-          }
-        }
-      } catch (err) {
-        // Silencioso
-      }
     },
     async loadStudents() {
       try {
