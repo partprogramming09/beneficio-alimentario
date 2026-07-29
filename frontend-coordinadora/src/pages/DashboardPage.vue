@@ -200,10 +200,10 @@ export default {
   },
   mounted() {
     this.loadStudents()
-    // Auto-polling silencioso en vivo cada 8 segundos para actualizar DataTables en tiempo real
+    // Auto-polling silencioso en vivo cada 30 segundos para actualizar DataTables en tiempo real
     this.pollingTimer = setInterval(() => {
       this.loadStudentsSilently()
-    }, 8000)
+    }, 30000)
   },
   beforeUnmount() {
     if (this.pollingTimer) {
