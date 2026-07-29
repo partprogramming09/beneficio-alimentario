@@ -22,4 +22,21 @@ RUN composer install --no-dev --no-interaction --no-scripts
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "echo 'APP_KEY=' > .env && php artisan key:generate --force && php artisan migrate --force; php artisan serve --host=0.0.0.0 --port=$PORT"]
+CMD ["sh", "-c", "\
+  echo APP_KEY= > .env && \
+  echo APP_ENV=production >> .env && \
+  echo APP_DEBUG=false >> .env && \
+  echo APP_URL=$APP_URL >> .env && \
+  echo DB_CONNECTION=mysql >> .env && \
+  echo DB_HOST=$DB_HOST >> .env && \
+  echo DB_PORT=$DB_PORT >> .env && \
+  echo DB_DATABASE=$DB_DATABASE >> .env && \
+  echo DB_USERNAME=$DB_USERNAME >> .env && \
+  echo DB_PASSWORD=$DB_PASSWORD >> .env && \
+  echo SESSION_DRIVER=cookie >> .env && \
+  echo CACHE_STORE=file >> .env && \
+  echo QUEUE_CONNECTION=sync >> .env && \
+  php artisan key:generate --force && \
+  php artisan config:clear && \
+  php artisan migrate --force; \
+  php artisan serve --host=0.0.0.0 --port=$PORT"]
