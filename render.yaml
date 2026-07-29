@@ -1,0 +1,58 @@
+services:
+  - type: web
+    name: beneficio-alimentario-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: https://beneficio-alimentario-api.onrender.com
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: gateway01.us-east-1.prod.aws.tidbcloud.com
+      - key: DB_PORT
+        value: "4000"
+      - key: DB_DATABASE
+        value: beneficio_alimentario
+      - key: DB_USERNAME
+        value: N89GzSoYBDEb6E1.root
+      - key: DB_PASSWORD
+        sync: false
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+    healthCheckPath: /
+    autoDeploy: true
+
+  - type: web
+    name: beneficio-estudiante
+    runtime: static
+    staticPublishPath: ./frontend-estudiante/dist
+    buildCommand: npm install -g pnpm && pnpm install && pnpm --filter frontend-estudiante build
+    envVars:
+      - key: VITE_API_URL
+        value: https://beneficio-alimentario-api.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  - type: web
+    name: beneficio-coordinadora
+    runtime: static
+    staticPublishPath: ./frontend-coordinadora/dist
+    buildCommand: npm install -g pnpm && pnpm install && pnpm --filter frontend-coordinadora build
+    envVars:
+      - key: VITE_API_URL
+        value: https://beneficio-alimentario-api.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

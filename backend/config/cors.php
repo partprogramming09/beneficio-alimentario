@@ -19,10 +19,16 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:5173', 'http://localhost:5174'],
+    'allowed_origins' => [
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'https://beneficio-estudiante.onrender.com',
+        'https://beneficio-coordinadora.onrender.com',
+    ],
 
     'allowed_origins_patterns' => [
         '#^https?://.*\.use\.devtunnels\.ms$#',
+        '#^https?://.*\.onrender\.com$#',
     ],
 
     'allowed_headers' => ['*'],
