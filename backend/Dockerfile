@@ -16,10 +16,11 @@ COPY backend/opcache.ini $PHP_INI_DIR/conf.d/opcache.ini
 
 WORKDIR /var/www/html
 
-COPY backend/composer.json ./
-RUN composer install --no-scripts --no-autoloader --no-interaction --no-dev
-
 COPY backend/ .
+
+RUN cp .env.example .env && php artisan key:generate --force
+
+RUN composer install --no-dev --no-interaction --no-scripts
 
 RUN composer dump-autoload --optimize
 
