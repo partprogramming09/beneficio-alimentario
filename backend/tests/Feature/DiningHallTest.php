@@ -107,14 +107,14 @@ class DiningHallTest extends TestCase
 
         // Simular Día 1: Asiste solo Juan (Gomez falta)
         $response = $this->postJson('/api/admin/simular-dia', [
-            'fecha' => '2026-06-15',
+            'fecha' => '2026-06-16',
             'asistentes' => ['1001']
         ]);
         $response->assertStatus(200);
 
         // Simular Día 2: Asiste solo Juan (Gomez falta por segunda vez)
         $response = $this->postJson('/api/admin/simular-dia', [
-            'fecha' => '2026-06-16',
+            'fecha' => '2026-06-17',
             'asistentes' => ['1001']
         ]);
         $response->assertStatus(200);
@@ -124,7 +124,7 @@ class DiningHallTest extends TestCase
 
         // Simular Día 3: Asiste solo Juan (Gomez falta por tercera vez consecutiva)
         $response = $this->postJson('/api/admin/simular-dia', [
-            'fecha' => '2026-06-17',
+            'fecha' => '2026-06-18',
             'asistentes' => ['1001']
         ]);
         $response->assertStatus(200);
