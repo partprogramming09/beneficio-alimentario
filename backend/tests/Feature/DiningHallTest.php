@@ -178,4 +178,81 @@ class DiningHallTest extends TestCase
             'estado' => 'Aprobado'
         ]);
     }
+
+    /**
+     * Test: Endpoint /api/admin/grupos con estructura agrupada
+     */
+    public function test_grouped_courses_api(): void
+    {
+        InstitucionEstudiante::create([
+            'documento' => '9901',
+            'nombre_completo' => 'Prueba Grupo',
+            'grupo' => '10-A'
+        ]);
+
+        $response = $this->getJson('/api/admin/grupos');
+        $response->assertStatus(200)
+                 ->assertJsonStructure([
+                     '*' => ['nombre_grupo', 'total_matriculados', 'total_inscritos', 'total_sin_inscribir', 'estudiantes']
+                 ]);
+    }
+
+    /**
+     * Test: Activación por Excepción de estudiante sin registrar
+     */
+    public function test_manual_exception_activation(): void
+    {
+        InstitucionEstudiante::create([
+            'documento' => '9902',
+            'nombre_completo' => 'Carlos Excepcion',
+            'grupo' => '10-A'
+        ]);
+
+        $response = $this->postJson('/api/admin/estudiantes/activar-manual', [
+            'documento' => '9902'
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('estudiantes', [
+            'documento' => '9902',
+            'estado' => 'Activo'
+        ]);
+    }
+
+    /**
+     * Test: Edición y eliminación de estudiante matriculado
+     */
+    public function test_update_and_delete_institutional_student(): void
+    {
+        InstitucionEstudiante::create([
+            'documento' => '9903',
+            'nombre_completo' => 'Estudiante Para Editar',
+            'grupo' => '10-A'
+        ]);
+
+        // Editar
+        $responseUpdate = $this->postJson('/api/admin/estudiantes/actualizar', [
+            'documento_original' => '9903',
+            'documento' => '9903',
+            'nombre_completo' => 'Estudiante Editado Exitoso',
+            'grupo' => '10-B'
+        ]);
+        $responseUpdate->assertStatus(200);
+
+        $this->assertDatabaseHas('institucion_estudiantes', [
+            'documento' => '9903',
+            'nombre_completo' => 'Estudiante Editado Exitoso',
+            'grupo' => '10-B'
+        ]);
+
+        // Eliminar
+        $responseDelete = $this->postJson('/api/admin/estudiantes/eliminar-institucional', [
+            'documento' => '9903'
+        ]);
+        $responseDelete->assertStatus(200);
+
+        $this->assertDatabaseMissing('institucion_estudiantes', [
+            'documento' => '9903'
+        ]);
+    }
 }
