@@ -32,7 +32,7 @@ services:
         value: /etc/ssl/certs/ca-certificates.crt
       - key: MYSQL_ATTR_SSL_VERIFY_SERVER_CERT
         value: "false"
-    healthCheckPath: /
+    healthCheckPath: /up
     autoDeploy: true
 
   - type: web

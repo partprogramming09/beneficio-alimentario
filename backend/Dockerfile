@@ -23,23 +23,20 @@ RUN composer install --no-dev --no-interaction --no-scripts
 EXPOSE 8000
 
 CMD ["sh", "-c", "\
-  if [ ! -f .env ]; then \
-    echo APP_KEY= > .env && \
-    echo APP_ENV=local >> .env && \
-    echo APP_DEBUG=true >> .env && \
-    echo APP_URL=http://localhost:8000 >> .env && \
-    echo DB_CONNECTION=mysql >> .env && \
-    echo DB_HOST=$DB_HOST >> .env && \
-    echo DB_PORT=$DB_PORT >> .env && \
-    echo DB_DATABASE=$DB_DATABASE >> .env && \
-    echo DB_USERNAME=$DB_USERNAME >> .env && \
-    echo DB_PASSWORD=$DB_PASSWORD >> .env && \
-    echo SESSION_DRIVER=cookie >> .env && \
-    echo CACHE_STORE=file >> .env && \
-    echo QUEUE_CONNECTION=sync >> .env && \
-    echo MYSQL_ATTR_SSL_CA=/etc/ssl/certs/ca-certificates.crt >> .env && \
-    echo MYSQL_ATTR_SSL_VERIFY_SERVER_CERT=false >> .env; \
-  fi && \
+  echo APP_ENV=production > .env && \
+  echo APP_DEBUG=false >> .env && \
+  echo APP_URL=https://beneficio-alimentario.onrender.com >> .env && \
+  echo DB_CONNECTION=mysql >> .env && \
+  echo DB_HOST=$DB_HOST >> .env && \
+  echo DB_PORT=$DB_PORT >> .env && \
+  echo DB_DATABASE=$DB_DATABASE >> .env && \
+  echo DB_USERNAME=$DB_USERNAME >> .env && \
+  echo DB_PASSWORD=$DB_PASSWORD >> .env && \
+  echo SESSION_DRIVER=cookie >> .env && \
+  echo CACHE_STORE=file >> .env && \
+  echo QUEUE_CONNECTION=sync >> .env && \
+  echo MYSQL_ATTR_SSL_CA=/etc/ssl/certs/ca-certificates.crt >> .env && \
+  echo MYSQL_ATTR_SSL_VERIFY_SERVER_CERT=false >> .env && \
   php artisan key:generate --force && \
   php artisan config:clear && \
   php artisan migrate --force; \
