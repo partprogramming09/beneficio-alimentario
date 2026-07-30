@@ -15,7 +15,7 @@
           <div class="emblem-glow-ring"></div>
           <div class="emblem-white-badge">
             <img 
-              src="/escudo.png" 
+              :src="escudoImg" 
               alt="Escudo Oficial I.E. Enrique Vélez Escobar" 
               class="hero-school-shield"
             />
@@ -174,8 +174,15 @@
 </template>
 
 <script>
+import escudoImg from '../../../frontend-core/src/assets/escudo.png'
+
 export default {
-  name: 'LandingPage'
+  name: 'LandingPage',
+  data() {
+    return {
+      escudoImg
+    }
+  }
 }
 </script>
 

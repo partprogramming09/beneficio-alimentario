@@ -11,7 +11,7 @@
     <aside :class="['sidebar', { 'sidebar-open-mobile': isSidebarOpenMobile }]">
       <div class="sidebar-brand">
         <div class="brand-shield-wrapper">
-          <img src="/escudo.png" alt="Escudo I.E. Enrique Vélez Escobar" class="brand-shield-img" />
+          <img :src="escudoImg" alt="Escudo I.E. Enrique Vélez Escobar" class="brand-shield-img" />
         </div>
         <div class="brand-text">
           <h4>I.E. Enrique Vélez Escobar</h4>
@@ -150,6 +150,7 @@ import ReactivacionesTab from '../components/ReactivacionesTab.vue'
 import SimuladorTab from '../components/SimuladorTab.vue'
 import CursosTab from '../components/CursosTab.vue'
 import StudentAside from '../components/StudentAside.vue'
+import escudoImg from '../../../frontend-core/src/assets/escudo.png'
 
 export default {
   name: 'DashboardPage',
@@ -170,6 +171,7 @@ export default {
   },
   data() {
     return {
+      escudoImg,
       activeSubTab: 'pendientes',
       isSidebarOpenMobile: false,
 

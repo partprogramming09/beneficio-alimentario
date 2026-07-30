@@ -11,7 +11,7 @@
         <div class="header-content">
           <div class="logo-title" @click="$emit('go-home')">
             <div class="school-emblem-wrapper">
-              <img src="/escudo.png" alt="Escudo I.E. Enrique Vélez Escobar" class="header-shield-img" />
+              <img :src="escudoImg" alt="Escudo I.E. Enrique Vélez Escobar" class="header-shield-img" />
             </div>
             <div>
               <h1 class="school-title">I.E. Enrique Vélez Escobar</h1>
@@ -42,10 +42,13 @@
 </template>
 
 <script>
+import escudoImg from '../../../frontend-core/src/assets/escudo.png'
+
 export default {
   name: 'StudentLayout',
   data() {
     return {
+      escudoImg,
       isDark: false
     }
   },
