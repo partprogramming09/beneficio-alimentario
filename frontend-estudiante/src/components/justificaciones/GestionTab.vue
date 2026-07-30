@@ -58,6 +58,16 @@
     </div>
 
     <AlertBox :message="message" :isError="isError" />
+
+    <ConfirmModal
+      :is-open="showRenounceModal"
+      title="Renuncia Voluntaria"
+      message="¿Estas seguro de que deseas renunciar de forma definitiva al beneficio de almuerzo? Esta accion es irreversible. Tendras que solicitar el beneficio nuevamente si deseas reingresar."
+      confirm-text="Si, renunciar"
+      type="danger"
+      @confirm="doRenounce"
+      @close="showRenounceModal = false"
+    />
   </div>
 </template>
 
@@ -65,12 +75,14 @@
 import { submitJustification, confirmRenounce } from '../../services/api'
 import { FileUpload } from '@shared/core'
 import AlertBox from '../common/AlertBox.vue'
+import ConfirmModal from '../common/ConfirmModal.vue'
 
 export default {
   name: 'GestionTab',
   components: {
     AlertBox,
-    FileUpload
+    FileUpload,
+    ConfirmModal
   },
   props: {
     studentDoc: { type: String, default: '' }
@@ -86,7 +98,8 @@ export default {
       renounceDoc: '',
       loading: false,
       message: '',
-      isError: false
+      isError: false,
+      showRenounceModal: false,
     }
   },
   mounted() {
@@ -138,10 +151,10 @@ export default {
         this.isError = true
         return
       }
-
-      if (!confirm('¿Estás seguro de que deseas renunciar de forma definitiva al beneficio de almuerzo?')) {
-        return
-      }
+      this.showRenounceModal = true
+    },
+    async doRenounce() {
+      this.showRenounceModal = false
 
       this.loading = true
       this.clearMessages()

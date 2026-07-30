@@ -268,4 +268,13 @@ class AdminController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
+    public function limpiarBaseDatos()
+    {
+        try {
+            return response()->json($this->studentService->clearAllStudents());
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
 }

@@ -440,4 +440,39 @@ class StudentManagementService
             'message' => "Estudiante con documento {$documento} eliminado correctamente de la institución.",
         ];
     }
+
+    public function clearAllStudents(): array
+    {
+        $recentAttendance = DB::table('asistencias')
+            ->where('fecha', '>=', now()->subDays(7)->toDateString())
+            ->exists();
+
+        if ($recentAttendance) {
+            throw new Exception("No se puede limpiar la base de datos porque hay asistencias registradas en los últimos 7 días. Elimina los días recientes primero o espera a que pasen.");
+        }
+
+        $counts = [];
+
+        DB::transaction(function () use (&$counts) {
+            $counts['justificaciones'] = DB::table('justificaciones')->count();
+            DB::table('justificaciones')->delete();
+
+            $counts['comprobantes'] = DB::table('comprobantes')->count();
+            DB::table('comprobantes')->delete();
+
+            $counts['asistencias'] = DB::table('asistencias')->count();
+            DB::table('asistencias')->delete();
+
+            $counts['estudiantes'] = DB::table('estudiantes')->count();
+            DB::table('estudiantes')->delete();
+
+            $counts['institucion_estudiantes'] = DB::table('institucion_estudiantes')->count();
+            DB::table('institucion_estudiantes')->delete();
+        });
+
+        return [
+            'message' => 'Base de datos limpiada exitosamente. Se eliminaron todos los registros.',
+            'eliminados' => $counts,
+        ];
+    }
 }

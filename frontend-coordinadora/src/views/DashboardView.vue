@@ -236,11 +236,25 @@ export default {
   },
   mounted() {
     this.loadStudents()
+    this.startMidnightRefresh()
+  },
+  beforeUnmount() {
+    if (this._refreshInterval) clearInterval(this._refreshInterval)
   },
   methods: {
     selectTabMobile(tabId) {
       this.activeSubTab = tabId;
       this.isSidebarOpenMobile = false;
+    },
+    startMidnightRefresh() {
+      this._lastLoadDate = new Date().toDateString()
+      this._refreshInterval = setInterval(() => {
+        const today = new Date().toDateString()
+        if (today !== this._lastLoadDate) {
+          this._lastLoadDate = today
+          this.loadStudents()
+        }
+      }, 60000)
     },
     clearMessages() {
       this.message = ''

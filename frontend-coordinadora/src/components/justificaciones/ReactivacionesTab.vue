@@ -23,7 +23,7 @@
                 <td><strong>{{ student.documento }}</strong></td>
                 <td>{{ student.nombres }}</td>
                 <td>
-                  <button class="btn btn-success btn-sm" @click.stop="reactivate(student.documento)" :disabled="loading">
+                  <button class="btn btn-success btn-sm" @click.stop="confirmReactivate(student.documento)" :disabled="loading">
                     Reingresar
                   </button>
                 </td>
@@ -49,7 +49,6 @@
             </div>
             <p class="excuse-reason">"{{ excuse.motivo }}"</p>
 
-            <!-- Botón descargar adjunto -->
             <div v-if="excuse.archivo_adjunto" class="excuse-attachment">
               <button class="btn btn-secondary btn-xs" @click="downloadFile(excuse.id, excuse.archivo_adjunto)">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -77,7 +76,7 @@
                 <button
                   v-if="excuse.estado === 'Pendiente'"
                   class="btn btn-danger btn-xs"
-                  @click="handleRejectJustification(excuse.id)"
+                  @click="confirmReject(excuse.id)"
                   :disabled="loading"
                 >
                   Rechazar
@@ -85,7 +84,7 @@
                 <button
                   v-if="excuse.estado_estudiante === 'Suspendido'"
                   class="btn btn-success btn-xs"
-                  @click="reactivate(excuse.documento)"
+                  @click="confirmReactivate(excuse.documento)"
                   :disabled="loading"
                 >
                   Reingresar Alumno
@@ -98,6 +97,26 @@
     </div>
 
     <AlertBox :message="message" :isError="isError" class="mt-3" />
+
+    <ConfirmModal
+      :is-open="showReactivateModal"
+      title="Reingresar Alumno"
+      :message="'¿Estas seguro de reactivar al estudiante con documento ' + targetDoc + '?'"
+      confirm-text="Si, reingresar"
+      type="success"
+      @confirm="doReactivate"
+      @close="showReactivateModal = false"
+    />
+
+    <ConfirmModal
+      :is-open="showRejectModal"
+      title="Rechazar Justificacion"
+      message="¿Estas seguro de rechazar esta justificacion?"
+      confirm-text="Rechazar"
+      type="danger"
+      @confirm="doReject"
+      @close="showRejectModal = false"
+    />
   </div>
 </template>
 
@@ -110,11 +129,13 @@ import {
   rejectJustification
 } from '../../services/api'
 import AlertBox from '../common/AlertBox.vue'
+import ConfirmModal from '../common/ConfirmModal.vue'
 
 export default {
   name: 'ReactivacionesTab',
   components: {
-    AlertBox
+    AlertBox,
+    ConfirmModal
   },
   props: {
     suspendedStudents: {
@@ -127,7 +148,11 @@ export default {
       justifications: [],
       loading: false,
       message: '',
-      isError: false
+      isError: false,
+      showReactivateModal: false,
+      showRejectModal: false,
+      targetDoc: null,
+      targetRejectId: null,
     }
   },
   mounted() {
@@ -165,6 +190,51 @@ export default {
         this.isError = true
       }
     },
+    confirmReactivate(doc) {
+      this.targetDoc = doc
+      this.showReactivateModal = true
+    },
+    async doReactivate() {
+      const doc = this.targetDoc
+      this.showReactivateModal = false
+      this.targetDoc = null
+      this.loading = true
+      this.clearMessages()
+      try {
+        const data = await reactivateStudent(doc)
+        this.message = data.message
+        this.isError = false
+        this.$emit('refresh-students')
+        await this.loadJustifications()
+      } catch (err) {
+        this.message = err.message
+        this.isError = true
+      } finally {
+        this.loading = false
+      }
+    },
+    confirmReject(id) {
+      this.targetRejectId = id
+      this.showRejectModal = true
+    },
+    async doReject() {
+      const id = this.targetRejectId
+      this.showRejectModal = false
+      this.targetRejectId = null
+      this.loading = true
+      this.clearMessages()
+      try {
+        const data = await rejectJustification(id)
+        this.message = data.message
+        this.isError = false
+        await this.loadJustifications()
+      } catch (err) {
+        this.message = err.message
+        this.isError = true
+      } finally {
+        this.loading = false
+      }
+    },
     async handleApproveJustification(id) {
       this.loading = true
       this.clearMessages()
@@ -180,38 +250,6 @@ export default {
         this.loading = false
       }
     },
-    async handleRejectJustification(id) {
-      if (!confirm('¿Estás seguro de rechazar esta justificación?')) return
-      this.loading = true
-      this.clearMessages()
-      try {
-        const data = await rejectJustification(id)
-        this.message = data.message
-        this.isError = false
-        await this.loadJustifications()
-      } catch (err) {
-        this.message = err.message
-        this.isError = true
-      } finally {
-        this.loading = false
-      }
-    },
-    async reactivate(doc) {
-      this.loading = true
-      this.clearMessages()
-      try {
-        const data = await reactivateStudent(doc)
-        this.message = data.message
-        this.isError = false
-        this.$emit('refresh-students')
-        await this.loadJustifications()
-      } catch (err) {
-        this.message = err.message
-        this.isError = true
-      } finally {
-        this.loading = false
-      }
-    }
   }
 }
 </script>
@@ -290,25 +328,11 @@ export default {
   flex-wrap: wrap;
 }
 
-.text-pendiente {
-  color: var(--warning);
-}
-
-.text-aprobado {
-  color: var(--success);
-}
-
-.text-rechazado {
-  color: var(--danger);
-}
-
-.text-suspendido {
-  color: var(--danger);
-}
-
-.text-activo {
-  color: var(--success);
-}
+.text-pendiente { color: var(--warning); }
+.text-aprobado { color: var(--success); }
+.text-rechazado { color: var(--danger); }
+.text-suspendido { color: var(--danger); }
+.text-activo { color: var(--success); }
 
 .clickable-row {
   cursor: pointer;

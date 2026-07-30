@@ -15,7 +15,7 @@
         >
           <div class="data-card-header">
             <span class="card-doc"><strong>Doc: {{ student.documento }}</strong></span>
-            <span class="badge-status-active">Activo</span>
+            <span :class="['badge-status', 'badge-' + student.estado.toLowerCase()]">{{ student.estado }}</span>
           </div>
           <div class="data-card-body">
             <div class="card-name">{{ student.nombres }} {{ student.apellidos }}</div>
@@ -46,7 +46,7 @@
               <td><span class="badge-group">{{ student.grupo }}</span></td>
               <td>{{ student.creado_en }}</td>
               <td>
-                <span class="badge-status-active">Activo</span>
+                <span :class="['badge-status', 'badge-' + student.estado.toLowerCase()]">{{ student.estado }}</span>
               </td>
             </tr>
           </tbody>
@@ -62,7 +62,7 @@
 import AlertBox from '../common/AlertBox.vue'
 
 export default {
-  name: 'AprobacionesTab',
+  name: 'InscritosHoyTab',
   components: {
     AlertBox
   },
@@ -91,7 +91,7 @@ export default {
   background-color: var(--primary-light);
 }
 
-.badge-status-active {
+.badge-status {
   background-color: var(--success-light);
   color: var(--success);
   padding: 4px 10px;
@@ -100,6 +100,11 @@ export default {
   font-weight: 700;
   display: inline-block;
 }
+
+.badge-status.badge-pendiente { background-color: var(--warning-light); color: var(--warning); }
+.badge-status.badge-activo { background-color: var(--success-light); color: var(--success); }
+.badge-status.badge-suspendido { background-color: var(--danger-light); color: var(--danger); }
+.badge-status.badge-inactivo { background-color: #e5e7eb; color: #6b7280; }
 
 .empty-state {
   text-align: center;

@@ -3,16 +3,19 @@
     <!-- Barra Superior de Carga y Gestión de Matriculados -->
     <div class="top-actions-bar mb-3">
       <div class="actions-title">
-        <h5 class="m-0">🏫 Gestión de Matrícula Institucional</h5>
+        <h5 class="m-0">Gestión de Matrícula Institucional</h5>
         <span class="text-muted small">Carga de base de datos o registro de alumnos</span>
       </div>
 
       <div class="actions-buttons-group">
         <button class="btn btn-primary btn-sm" @click="isAddModalOpen = true">
-          ➕ Agregar Estudiante
+          + Agregar Estudiante
         </button>
         <button class="btn btn-secondary btn-sm" @click="isImportModalOpen = true">
-          📁 Importar Excel / CSV
+          Importar Excel / CSV
+        </button>
+        <button class="btn btn-danger btn-sm" @click="showClearModal = true">
+          Limpiar Base de Datos
         </button>
       </div>
     </div>
@@ -22,7 +25,7 @@
       <div class="filter-item">
         <label for="select-grupo">Filtrar por Curso/Grupo:</label>
         <select id="select-grupo" v-model="selectedGroupFilter" class="select-input">
-          <option value="ALL">🏫 Todos los Cursos ({{ groups.length }} Grupos)</option>
+          <option value="ALL">Todos los Cursos ({{ groups.length }} Grupos)</option>
           <option v-for="g in groups" :key="g.nombre_grupo" :value="g.nombre_grupo">
             Grupo {{ g.nombre_grupo }} ({{ g.total_matriculados }} alumnos)
           </option>
@@ -36,32 +39,32 @@
             :class="['pill-btn', { active: statusFilter === 'ALL' }]"
             @click="statusFilter = 'ALL'"
           >
-            👥 Todos
+            Todos
           </button>
           <button 
             :class="['pill-btn', { active: statusFilter === 'SI' }]"
             @click="statusFilter = 'SI'"
           >
-            ✅ Inscritos (SÍ)
+            Inscritos (SÍ)
           </button>
           <button 
             :class="['pill-btn', { active: statusFilter === 'NO' }]"
             @click="statusFilter = 'NO'"
           >
-            ❌ Sin Registrar (NO)
+            Sin Registrar (NO)
           </button>
         </div>
       </div>
 
       <div class="filter-item">
         <button class="btn btn-secondary btn-sm" @click="toggleAllGroups">
-          {{ areAllCollapsed ? '📂 Desplegar Todos' : '📁 Contraer Todos' }}
+          {{ areAllCollapsed ? 'Desplegar Todos' : 'Contraer Todos' }}
         </button>
       </div>
     </div>
 
     <div v-if="loading" class="empty-state">
-      <p>🔍 Cargando estructura de cursos y grupos...</p>
+      <p>Cargando estructura de cursos y grupos...</p>
     </div>
 
     <div v-else-if="filteredGroups.length === 0" class="empty-state">
@@ -73,14 +76,14 @@
       <div v-for="grp in filteredGroups" :key="grp.nombre_grupo" class="group-card mb-4">
         <div class="group-card-header clickable-header" @click="toggleGroupCollapse(grp.nombre_grupo)">
           <div class="group-title">
-            <span class="collapse-icon">{{ isGroupCollapsed(grp.nombre_grupo) ? '▶' : '▼' }}</span>
-            <span class="group-icon font-weight-bold">🏫 Grupo {{ grp.nombre_grupo }}</span>
+            <span class="collapse-icon">{{ isGroupCollapsed(grp.nombre_grupo) ? '>' : 'v' }}</span>
+            <span class="group-name-label">Grupo {{ grp.nombre_grupo }}</span>
           </div>
 
           <div class="group-stats-badges">
-            <span class="badge-stat badge-total">🎓 Total Matriculados: {{ grp.total_matriculados }}</span>
-            <span class="badge-stat badge-yes">✅ Inscritos: {{ grp.total_inscritos }}</span>
-            <span class="badge-stat badge-no">❌ Sin Registrar: {{ grp.total_sin_inscribir }}</span>
+            <span class="badge-stat badge-total">Total Matriculados: {{ grp.total_matriculados }}</span>
+            <span class="badge-stat badge-yes">Inscritos: {{ grp.total_inscritos }}</span>
+            <span class="badge-stat badge-no">Sin Registrar: {{ grp.total_sin_inscribir }}</span>
           </div>
         </div>
 
@@ -96,34 +99,35 @@
               <div 
                 v-for="st in getFilteredStudents(grp.estudiantes)" 
                 :key="'c-card-' + st.documento" 
-                class="data-card-item"
+                class="data-card-item clickable-row"
+                @click="$emit('select-student', st)"
               >
                 <div class="data-card-header">
-                  <span class="badge-doc-highlight">🪪 Doc: {{ st.documento }}</span>
+                  <span class="badge-doc-highlight">Doc: {{ st.documento }}</span>
                   <span :class="st.esta_inscrito ? 'badge-status-yes' : 'badge-status-no'">
                     {{ st.esta_inscrito ? 'SÍ (Inscrito)' : 'NO (Sin Registrar)' }}
                   </span>
                 </div>
                 <div class="data-card-body">
                   <div class="card-name">{{ st.nombre_completo }}</div>
-                  <div class="card-meta">Doc Identidad: <strong class="text-primary font-mono">🪪 {{ st.documento }}</strong></div>
+                  <div class="card-meta">Documento: <strong class="text-primary font-mono">{{ st.documento }}</strong></div>
                   <div class="card-meta">Estado Beneficio: <strong>{{ st.estado }}</strong></div>
                 </div>
                 <div class="data-card-actions mt-2">
                   <button v-if="!st.esta_inscrito" class="btn btn-primary btn-xs" @click.stop="manualActivate(st.documento)">
-                    ⚡ Registrar Cupo
+                    Registrar Cupo
                   </button>
                   <button class="btn btn-secondary btn-xs" @click.stop="openEditModal(st)">
-                    ✏️ Editar
+                    Editar
                   </button>
-                  <button class="btn btn-danger btn-xs" @click.stop="removeStudent(st.documento)">
-                    🗑️ Eliminar
+                  <button class="btn btn-danger btn-xs" @click.stop="confirmDelete(st.documento)">
+                    Eliminar
                   </button>
                 </div>
               </div>
             </div>
 
-            <!-- Vista Tabla Escritorio (Diseño Exacto de la Captura de Pantalla) -->
+            <!-- Vista Tabla Escritorio -->
             <div class="table-container desktop-only">
               <table class="table-custom">
                 <thead>
@@ -136,8 +140,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="st in getFilteredStudents(grp.estudiantes)" :key="st.documento">
-                    <td><span class="badge-doc-highlight">🪪 {{ st.documento }}</span></td>
+                  <tr v-for="st in getFilteredStudents(grp.estudiantes)" :key="st.documento" class="clickable-row" @click="$emit('select-student', st)">
+                    <td><span class="badge-doc-highlight">{{ st.documento }}</span></td>
                     <td><strong>{{ st.nombre_completo }}</strong></td>
                     <td><span class="badge-group-pill">{{ st.grupo }}</span></td>
                     <td>
@@ -152,28 +156,28 @@
                       </span>
                     </td>
                     <td>
-                      <div class="table-actions-cell">
+                      <div class="table-actions-cell" @click.stop>
                         <button 
                           class="btn-action-edit" 
-                          @click.stop="openEditModal(st)"
+                          @click="openEditModal(st)"
                           title="Editar datos del estudiante"
                         >
-                          ✏️ Editar
+                          Editar
                         </button>
                         <button 
                           v-if="!st.esta_inscrito && st.estado !== 'Activo'" 
                           class="btn-action-exception" 
-                          @click.stop="manualActivate(st.documento)"
+                          @click="manualActivate(st.documento)"
                           title="Activar cupo por excepción"
                         >
-                          ⚡ Activar por Excepción
+                          Activar por Excepción
                         </button>
                         <button 
                           class="btn-action-delete" 
-                          @click.stop="removeStudent(st.documento)"
+                          @click="confirmDelete(st.documento)"
                           title="Eliminar de la institución"
                         >
-                          🗑️ Eliminar
+                          Eliminar
                         </button>
                       </div>
                     </td>
@@ -182,8 +186,6 @@
               </table>
             </div>
 
-
-
           </div>
         </div>
       </div>
@@ -191,7 +193,7 @@
 
     <AlertBox :message="message" :isError="isError" />
 
-    <!-- Modales de Carga, Edición e Ingreso -->
+    <!-- Modales -->
     <AgregarEstudianteModal 
       :is-open="isAddModalOpen" 
       @close="isAddModalOpen = false" 
@@ -210,12 +212,33 @@
       @close="isEditModalOpen = false" 
       @refresh-students="onDataChanged" 
     />
+
+    <ConfirmModal
+      :is-open="showClearModal"
+      title="Limpiar Base de Datos"
+      message="Esta accion eliminara TODOS los estudiantes, inasistencias, comprobantes y justificaciones. Solo se permite si no hay asistencias en los ultimos 7 dias. Esta accion es irreversible."
+      confirm-text="Si, limpiar todo"
+      type="danger"
+      @confirm="clearDatabase"
+      @close="showClearModal = false"
+    />
+
+    <ConfirmModal
+      :is-open="showDeleteModal"
+      title="Eliminar Estudiante"
+      :message="'¿Estas seguro de eliminar permanentemente al estudiante con documento ' + deleteTarget + ' de la institucion?'"
+      confirm-text="Eliminar"
+      type="danger"
+      @confirm="removeStudent"
+      @close="showDeleteModal = false"
+    />
   </div>
 </template>
 
 <script>
-import { getAdminGroups, activateStudentManually, deleteInstitutionalStudent } from '../../services/api'
+import { getAdminGroups, activateStudentManually, deleteInstitutionalStudent, clearAllDatabase } from '../../services/api'
 import AlertBox from '../common/AlertBox.vue'
+import ConfirmModal from '../common/ConfirmModal.vue'
 import AgregarEstudianteModal from '../students/AgregarEstudianteModal.vue'
 import ImportarEstudiantesModal from '../students/ImportarEstudiantesModal.vue'
 import EditarEstudianteModal from '../students/EditarEstudianteModal.vue'
@@ -224,6 +247,7 @@ export default {
   name: 'CursosTab',
   components: {
     AlertBox,
+    ConfirmModal,
     AgregarEstudianteModal,
     ImportarEstudiantesModal,
     EditarEstudianteModal
@@ -240,7 +264,10 @@ export default {
       selectedStudentForEdit: null,
       loading: false,
       message: '',
-      isError: false
+      isError: false,
+      showClearModal: false,
+      showDeleteModal: false,
+      deleteTarget: null,
     }
   },
   computed: {
@@ -287,7 +314,6 @@ export default {
         this.message = err.message
         this.isError = true
       } finally {
-
         this.loading = false
       }
     },
@@ -295,10 +321,14 @@ export default {
       this.selectedStudentForEdit = st
       this.isEditModalOpen = true
     },
-    async removeStudent(doc) {
-      if (!confirm(`¿Estás seguro de eliminar permanentemente al estudiante con documento ${doc} de la institución?`)) {
-        return
-      }
+    confirmDelete(doc) {
+      this.deleteTarget = doc
+      this.showDeleteModal = true
+    },
+    async removeStudent() {
+      const doc = this.deleteTarget
+      this.showDeleteModal = false
+      this.deleteTarget = null
       try {
         const res = await deleteInstitutionalStudent(doc)
         this.message = res.message
@@ -320,10 +350,10 @@ export default {
         this.isError = true
       }
     },
-
-    async manualActivate(doc) {
+    async clearDatabase() {
+      this.showClearModal = false
       try {
-        const res = await activateStudentManually(doc)
+        const res = await clearAllDatabase()
         this.message = res.message
         this.isError = false
         this.onDataChanged()
@@ -332,7 +362,6 @@ export default {
         this.isError = true
       }
     },
-
     onDataChanged() {
       this.loadGroups()
       this.$emit('refresh-students')
@@ -349,7 +378,6 @@ export default {
   }
 }
 </script>
-
 
 <style scoped>
 .top-actions-bar {
@@ -392,6 +420,15 @@ export default {
   background-color: var(--bg-tertiary);
 }
 
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.clickable-row:hover {
+  background-color: var(--bg-tertiary);
+}
+
 .collapse-icon {
   font-size: 0.82rem;
   color: var(--primary);
@@ -401,9 +438,6 @@ export default {
 }
 
 .courses-filter-bar {
-
-
-
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -478,7 +512,6 @@ export default {
   font-family: monospace, sans-serif;
 }
 
-
 .group-card {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
@@ -498,8 +531,9 @@ export default {
   gap: 12px;
 }
 
-.group-title-info .group-icon {
+.group-name-label {
   font-size: 1.1rem;
+  font-weight: 700;
   color: var(--text-primary);
 }
 
@@ -581,7 +615,6 @@ export default {
   }
 }
 
-/* Estilos exactos de la Captura de Pantalla */
 .badge-group-pill {
   background-color: #f1f5f9;
   color: #334155;

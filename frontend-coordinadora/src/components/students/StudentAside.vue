@@ -25,7 +25,7 @@
         <div class="aside-body">
           <!-- General Information -->
           <div class="aside-section">
-            <h5>🛡️ Información Académica</h5>
+            <h5>Informacion Academica</h5>
             <div class="info-row">
               <span class="info-label">Documento Identidad:</span>
               <strong class="info-value text-primary font-mono">{{ student.documento }}</strong>
@@ -41,40 +41,9 @@
             </div>
           </div>
 
-          <!-- Attendance Stats (Calculated dynamically/mocked based on state) -->
-          <div class="aside-section">
-            <h5>📊 Estadísticas de Alimentación</h5>
-            <div class="info-row">
-              <span class="info-label">Almuerzos Consumidos:</span>
-              <strong class="info-value text-success">{{ getMealsCount(student.documento) }}</strong>
-            </div>
-            
-            <div class="inasistencia-risk mt-3">
-              <div class="risk-label">
-                <span>Inasistencias Consecutivas:</span>
-                <strong :class="getAbsenceClass(getAbsenceCount(student))">
-                  {{ getAbsenceCount(student) }} / 3
-                </strong>
-              </div>
-              <div class="progress-bar-container">
-                <div 
-                  class="progress-bar" 
-                  :style="{ width: (getAbsenceCount(student) / 3 * 100) + '%' }"
-                  :class="getAbsenceBarClass(getAbsenceCount(student))"
-                ></div>
-              </div>
-              <p v-if="getAbsenceCount(student) === 2" class="risk-warning-text">
-                ¡Riesgo alto de suspensión en la próxima falta!
-              </p>
-              <p v-if="getAbsenceCount(student) === 3" class="risk-warning-text text-danger">
-                El alumno se encuentra suspendido. Debe justificar sus faltas.
-              </p>
-            </div>
-          </div>
-
           <!-- Administrative Actions -->
           <div class="aside-section actions-section">
-            <h5>⚡ Acciones Administrativas</h5>
+            <h5>Acciones Administrativas</h5>
             
             <div class="action-buttons-stack">
               <!-- Approve (Pending only) -->
@@ -84,7 +53,7 @@
                 @click="approve(student.documento)" 
                 :disabled="loading"
               >
-                Aprobar Inscripción
+                Aprobar Inscripcion
               </button>
 
               <!-- Reject (Pending only) -->
@@ -94,7 +63,7 @@
                 @click="reject(student.documento)" 
                 :disabled="loading"
               >
-                Rechazar Inscripción
+                Rechazar Inscripcion
               </button>
 
               <!-- Reactivate/Reingresar (Suspended only) -->
@@ -110,7 +79,7 @@
               <!-- Delete (All states) -->
               <button 
                 class="btn btn-danger btn-block" 
-                @click="remove(student.documento)" 
+                @click="showDeleteModal = true" 
                 :disabled="loading"
               >
                 Eliminar Beneficiario
@@ -123,17 +92,29 @@
         </div>
       </div>
     </aside>
+
+    <ConfirmModal
+      :is-open="showDeleteModal"
+      title="Eliminar Beneficiario"
+      :message="'¿Estas seguro de que deseas eliminar permanentemente de la base de datos al estudiante con documento ' + (student ? student.documento : '') + '?'"
+      confirm-text="Eliminar"
+      type="danger"
+      @confirm="doDelete"
+      @close="showDeleteModal = false"
+    />
   </div>
 </template>
 
 <script>
 import { approveStudent, rejectStudent, deleteStudent, reactivateStudent } from '../../services/api'
 import AlertBox from '../common/AlertBox.vue'
+import ConfirmModal from '../common/ConfirmModal.vue'
 
 export default {
   name: 'StudentAside',
   components: {
-    AlertBox
+    AlertBox,
+    ConfirmModal
   },
   props: {
     student: {
@@ -145,7 +126,8 @@ export default {
     return {
       loading: false,
       message: '',
-      isError: false
+      isError: false,
+      showDeleteModal: false,
     }
   },
   watch: {
@@ -153,7 +135,18 @@ export default {
       this.clearMessages()
     }
   },
+  mounted() {
+    document.addEventListener('keydown', this.onEscape)
+  },
+  beforeUnmount() {
+    document.removeEventListener('keydown', this.onEscape)
+  },
   methods: {
+    onEscape(e) {
+      if (e.key === 'Escape' && this.student) {
+        this.$emit('close')
+      }
+    },
     clearMessages() {
       this.message = ''
       this.isError = false
@@ -166,26 +159,6 @@ export default {
         month: 'long',
         day: 'numeric'
       })
-    },
-    getMealsCount(doc) {
-      // Retorna una cantidad de almuerzos consistente basada en su documento
-      return (parseInt(doc) % 18) + 8
-    },
-    getAbsenceCount(std) {
-      if (std.estado === 'Suspendido') return 3
-      if (std.estado === 'Pendiente' || std.estado === 'Inactivo') return 0
-      // Alumnos activos: inasistencias consecutivas simuladas
-      return parseInt(std.documento) % 3 // Retorna 0, 1 o 2
-    },
-    getAbsenceClass(count) {
-      if (count === 3) return 'text-danger'
-      if (count === 2) return 'text-warning'
-      return 'text-success'
-    },
-    getAbsenceBarClass(count) {
-      if (count === 3) return 'bar-danger'
-      if (count === 2) return 'bar-warning'
-      return 'bar-success'
     },
     async approve(doc) {
       this.loading = true
@@ -243,11 +216,9 @@ export default {
         this.loading = false
       }
     },
-    async remove(doc) {
-      if (!confirm(`¿Estás seguro de que deseas eliminar permanentemente de la base de datos al estudiante con documento ${doc}?`)) {
-        return
-      }
-
+    async doDelete() {
+      this.showDeleteModal = false
+      const doc = this.student.documento
       this.loading = true
       this.clearMessages()
       try {
@@ -349,7 +320,6 @@ export default {
 }
 
 .btn-close {
-
   position: absolute;
   top: 15px;
   right: 15px;
@@ -392,7 +362,6 @@ export default {
   }
 }
 
-
 .aside-section {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
@@ -432,51 +401,6 @@ export default {
 .info-value {
   font-size: 0.9rem;
   color: var(--text-primary);
-}
-
-/* Risk bar */
-.inasistencia-risk {
-  margin-top: 15px;
-}
-
-.risk-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.9rem;
-  margin-bottom: 6px;
-}
-
-.progress-bar-container {
-  height: 8px;
-  background-color: var(--bg-tertiary);
-  border-radius: 4px;
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-}
-
-.progress-bar {
-  height: 100%;
-  border-radius: 4px;
-  transition: width var(--transition-normal);
-}
-
-.bar-success {
-  background-color: var(--success);
-}
-
-.bar-warning {
-  background-color: var(--warning);
-}
-
-.bar-danger {
-  background-color: var(--danger);
-}
-
-.risk-warning-text {
-  font-size: 0.78rem;
-  color: var(--warning);
-  margin-top: 6px;
-  font-weight: 600;
 }
 
 .action-buttons-stack {

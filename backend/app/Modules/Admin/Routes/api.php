@@ -23,3 +23,4 @@ Route::post('/estudiantes/actualizar', [AdminController::class, 'actualizarEstud
 Route::post('/estudiantes/eliminar-institucional', [AdminController::class, 'eliminarEstudianteInstitucional']);
 Route::post('/estudiantes/toggle-cupo', [AdminController::class, 'toggleCupo']);
 Route::post('/estudiantes/cambiar-estado', [AdminController::class, 'cambiarEstadoBeneficio']);
+Route::post('/estudiantes/limpiar-base', [AdminController::class, 'limpiarBaseDatos']);

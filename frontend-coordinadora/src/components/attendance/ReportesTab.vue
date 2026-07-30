@@ -26,6 +26,27 @@
           <span>Resumen Semanal</span>
         </button>
       </div>
+
+      <button class="btn btn-secondary btn-sm export-btn" @click="exportCSV" v-if="hasData">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Exportar CSV
+      </button>
+    </div>
+
+    <!-- Stats bar -->
+    <div v-if="hasData" class="stats-bar mb-3">
+      <div class="stat-pill">
+        <span class="stat-label">Total:</span>
+        <span class="stat-value">{{ currentData.length }}</span>
+      </div>
+      <div v-if="reportType === 'semanal' && weeklyReport.dateList.length" class="stat-pill stat-success">
+        <span class="stat-label">Promedio asistencia:</span>
+        <span class="stat-value">{{ averageAttendance }}</span>
+      </div>
     </div>
 
     <!-- Reporte Diario -->
@@ -40,11 +61,10 @@
       </div>
 
       <div v-else>
-        <!-- Vista DataCards Móvil -->
         <div class="data-cards-grid mobile-only">
-          <div v-for="row in dailyReport" :key="'rep-d-' + row.id" class="data-card-item">
+          <div v-for="row in dailyReport" :key="'rep-d-' + row.id" class="data-card-item clickable-row" @click="$emit('select-student', row)">
             <div class="data-card-header">
-              <span class="card-doc"><strong>Doc: {{ row.documento }}</strong></span>
+              <span class="card-doc"><strong>{{ row.documento }}</strong></span>
               <span class="badge-group">{{ row.grupo }}</span>
             </div>
             <div class="data-card-body">
@@ -54,7 +74,6 @@
           </div>
         </div>
 
-        <!-- Vista Tabla Escritorio -->
         <div class="table-container desktop-only">
           <table>
             <thead>
@@ -66,7 +85,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="row in dailyReport" :key="row.id">
+              <tr v-for="row in dailyReport" :key="row.id" class="clickable-row" @click="$emit('select-student', row)">
                 <td><strong>{{ row.documento }}</strong></td>
                 <td>{{ row.nombres }} {{ row.apellidos }}</td>
                 <td><span class="badge-group">{{ row.grupo }}</span></td>
@@ -85,11 +104,10 @@
       </div>
 
       <div v-else>
-        <!-- Vista DataCards Móvil -->
         <div class="data-cards-grid mobile-only">
-          <div v-for="row in weeklyReport.report" :key="'rep-w-' + row.documento" class="data-card-item">
+          <div v-for="row in weeklyReport.report" :key="'rep-w-' + row.documento" class="data-card-item clickable-row" @click="$emit('select-student', row)">
             <div class="data-card-header">
-              <span class="card-doc"><strong>Doc: {{ row.documento }}</strong></span>
+              <span class="card-doc"><strong>{{ row.documento }}</strong></span>
               <span class="badge-count-success">{{ row.total_asistencias }} / {{ weeklyReport.dateList.length }}</span>
             </div>
             <div class="data-card-body">
@@ -99,7 +117,6 @@
           </div>
         </div>
 
-        <!-- Vista Tabla Escritorio -->
         <div class="table-container desktop-only">
           <table>
             <thead>
@@ -111,7 +128,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="row in weeklyReport.report" :key="row.documento">
+              <tr v-for="row in weeklyReport.report" :key="row.documento" class="clickable-row" @click="$emit('select-student', row)">
                 <td><strong>{{ row.documento }}</strong></td>
                 <td>{{ row.nombres }} {{ row.apellidos }}</td>
                 <td><span class="badge-group">{{ row.grupo }}</span></td>
@@ -148,6 +165,22 @@ export default {
       isError: false
     }
   },
+  computed: {
+    hasData() {
+      if (this.reportType === 'diario') return this.dailyReport.length > 0
+      return this.weeklyReport.report.length > 0
+    },
+    currentData() {
+      if (this.reportType === 'diario') return this.dailyReport
+      return this.weeklyReport.report
+    },
+    averageAttendance() {
+      if (!this.weeklyReport.report.length || !this.weeklyReport.dateList.length) return '0%'
+      const total = this.weeklyReport.report.reduce((sum, r) => sum + r.total_asistencias, 0)
+      const max = this.weeklyReport.report.length * this.weeklyReport.dateList.length
+      return Math.round((total / max) * 100) + '%'
+    }
+  },
   mounted() {
     this.loadDailyReport()
     this.loadWeeklyReport()
@@ -176,6 +209,30 @@ export default {
         this.message = err.message
         this.isError = true
       }
+    },
+    exportCSV() {
+      const data = this.currentData
+      if (!data.length) return
+
+      let headers, rows
+      if (this.reportType === 'diario') {
+        headers = ['Documento', 'Nombres', 'Apellidos', 'Grupo', 'Hora']
+        rows = data.map(r => [r.documento, r.nombres, r.apellidos, r.grupo, r.hora])
+      } else {
+        headers = ['Documento', 'Nombres', 'Apellidos', 'Grupo', 'Asistencias', 'DiasTotales']
+        rows = data.map(r => [r.documento, r.nombres, r.apellidos, r.grupo, r.total_asistencias, this.weeklyReport.dateList.length])
+      }
+
+      const csv = [headers, ...rows].map(row => row.map(c => `"${c}"`).join(',')).join('\n')
+      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `reporte_${this.reportType}_${this.dailyDate}.csv`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
     }
   }
 }
@@ -184,6 +241,10 @@ export default {
 <style scoped>
 .report-header-nav {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .report-pill-selector {
@@ -210,6 +271,43 @@ export default {
   background-color: var(--bg-secondary);
   color: var(--primary);
   box-shadow: var(--shadow-sm);
+}
+
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stats-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  padding: 6px 14px;
+  border-radius: var(--border-radius-pill);
+  font-size: 0.85rem;
+}
+
+.stat-pill.stat-success {
+  background: var(--success-light);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.stat-label {
+  font-weight: 600;
+}
+
+.stat-value {
+  font-weight: 800;
 }
 
 .date-input {
@@ -244,6 +342,15 @@ export default {
   display: block;
 }
 
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.clickable-row:hover {
+  background-color: var(--bg-tertiary);
+}
+
 .card-name {
   font-size: 1rem;
   font-weight: 700;
@@ -263,5 +370,3 @@ export default {
   }
 }
 </style>
-
-

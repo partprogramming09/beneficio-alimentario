@@ -92,17 +92,29 @@
     </div>
 
     <AlertBox :message="message" :isError="isError" />
+
+    <ConfirmModal
+      :is-open="showDeleteModal"
+      title="Eliminar Estudiante"
+      :message="'¿Estas seguro de que deseas eliminar permanentemente de la base de datos al estudiante con documento ' + deleteTarget + '?'"
+      confirm-text="Eliminar"
+      type="danger"
+      @confirm="removeStudent"
+      @close="showDeleteModal = false"
+    />
   </div>
 </template>
 
 <script>
 import { deleteStudent } from '../../services/api'
 import AlertBox from '../common/AlertBox.vue'
+import ConfirmModal from '../common/ConfirmModal.vue'
 
 export default {
   name: 'EstudiantesTab',
   components: {
-    AlertBox
+    AlertBox,
+    ConfirmModal
   },
   props: {
     students: {
@@ -116,7 +128,9 @@ export default {
       selectedGroupFilter: 'ALL',
       loading: false,
       message: '',
-      isError: false
+      isError: false,
+      showDeleteModal: false,
+      deleteTarget: null,
     }
   },
 
@@ -152,9 +166,13 @@ export default {
       this.isError = false
     },
     async remove(doc) {
-      if (!confirm(`¿Estás seguro de que deseas eliminar permanentemente de la base de datos al estudiante con documento ${doc}?`)) {
-        return
-      }
+      this.deleteTarget = doc
+      this.showDeleteModal = true
+    },
+    async removeStudent() {
+      const doc = this.deleteTarget
+      this.showDeleteModal = false
+      this.deleteTarget = null
 
       this.loading = true
       this.clearMessages()

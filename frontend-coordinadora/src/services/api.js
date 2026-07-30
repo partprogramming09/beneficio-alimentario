@@ -106,3 +106,8 @@ export async function cambiarEstadoBeneficio(documento, estado) {
   const response = await apiClient.post('/api/admin/estudiantes/cambiar-estado', { documento, estado });
   return response.data;
 }
+
+export async function clearAllDatabase() {
+  const response = await apiClient.post('/api/admin/estudiantes/limpiar-base');
+  return response.data;
+}
