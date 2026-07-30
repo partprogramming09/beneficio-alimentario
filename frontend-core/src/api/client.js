@@ -34,7 +34,7 @@ const FRIENDLY_MESSAGES = {
 
 const apiClient = axios.create({
   baseURL: apiURL,
-  withCredentials: true,
+  withCredentials: false,
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
