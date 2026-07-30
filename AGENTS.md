@@ -71,6 +71,12 @@ beneficio-alimentario/
 ## 📝 5. Historial de Mantenimiento (Changelog)
 
 - **2026-07-30:**
+  - Resolución integral de conflictos de registro e integridad transaccional mediante el flujo SDD.
+  - Modularización del monolito `AdminService.php` en 3 servicios especializados: `StudentManagementService`, `AttendanceReportService` y `AttendanceSimulationService`.
+  - Implementación de cascada transaccional (`DB::transaction` con desactivación segura de FK) en la actualización de documentos (`updateStudent`), garantizando la preservación del 100% del historial de asistencias, comprobantes y excusas.
+  - Corrección de `toggleCupo` para usar el estado `Inactivo` bloqueando el autoregistro no autorizado del estudiante sin borrar su historial histórico.
+  - Implementación de `formatNames()` para el manejo seguro de nombres y apellidos compuestos.
+  - Cobertura de pruebas unitarias/integración de 9/9 (63 aserciones) en `DiningHallTest.php` pasadas al 100%.
   - Creación del archivo `AGENTS.md` del espacio de trabajo.
   - Corrección de la zona horaria predeterminada del backend a `America/Bogota` (UTC-5).
   - Cálculo agnóstico del Domingo de Pascua en `ColombianCalendarService.php` para eliminar cualquier dependencia de la extensión `easter_date`.

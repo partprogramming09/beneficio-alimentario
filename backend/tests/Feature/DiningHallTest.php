@@ -255,4 +255,80 @@ class DiningHallTest extends TestCase
             'documento' => '9903'
         ]);
     }
+
+    /**
+     * Test SDD: Cascada Transaccional de actualización de Documento preservando asistencias
+     */
+    public function test_update_student_document_cascades_history(): void
+    {
+        Estudiante::create([
+            'documento' => '1001',
+            'nombres' => 'Juan',
+            'apellidos' => 'Pérez',
+            'grupo' => '10-A',
+            'estado' => 'Activo'
+        ]);
+
+        Asistencia::create([
+            'documento' => '1001',
+            'fecha' => '2026-07-20',
+            'hora' => '12:00:00'
+        ]);
+
+        Comprobante::create([
+            'documento' => '1001',
+            'fecha' => '2026-07-20',
+            'hora' => '12:00:00',
+            'codigo' => 'ALM-TEST-1001'
+        ]);
+
+        // Actualizar documento de 1001 a 2001 (ej. corrección de TI a CC)
+        $response = $this->postJson('/api/admin/estudiantes/actualizar', [
+            'documento_original' => '1001',
+            'documento' => '2001',
+            'nombre_completo' => 'Juan Carlos Pérez',
+            'grupo' => '10-A'
+        ]);
+
+        $response->assertStatus(200);
+
+        // Verificar que institucion_estudiantes y estudiantes tienen el nuevo documento
+        $this->assertDatabaseHas('institucion_estudiantes', ['documento' => '2001', 'nombre_completo' => 'Juan Carlos Pérez']);
+        $this->assertDatabaseHas('estudiantes', ['documento' => '2001', 'nombres' => 'Juan Carlos', 'apellidos' => 'Pérez']);
+
+        // Verificar que la asistencia y el comprobante histórico se actualizaron al nuevo documento
+        $this->assertDatabaseHas('asistencias', ['documento' => '2001']);
+        $this->assertDatabaseHas('comprobantes', ['documento' => '2001']);
+
+        // Verificar que el viejo documento ya no exista
+        $this->assertDatabaseMissing('institucion_estudiantes', ['documento' => '1001']);
+        $this->assertDatabaseMissing('estudiantes', ['documento' => '1001']);
+    }
+
+    /**
+     * Test SDD: Desactivación por ToggleCupo marca Inactivo e impide autoregistro voluntario
+     */
+    public function test_toggle_cupo_sets_inactivo_and_blocks_autoregistration(): void
+    {
+        Estudiante::create([
+            'documento' => '1001',
+            'nombres' => 'Juan',
+            'apellidos' => 'Pérez',
+            'grupo' => '10-A',
+            'estado' => 'Activo'
+        ]);
+
+        // 1. Coordinadora alterna cupo (Desactiva)
+        $response = $this->postJson('/api/admin/estudiantes/toggle-cupo', ['documento' => '1001']);
+        $response->assertStatus(200)
+                 ->assertJsonPath('estado', 'Inactivo')
+                 ->assertJsonPath('tiene_cupo', false);
+
+        $this->assertDatabaseHas('estudiantes', ['documento' => '1001', 'estado' => 'Inactivo']);
+
+        // 2. El estudiante intenta ingresar al portal a validar registro
+        $responseValidar = $this->postJson('/api/estudiantes/validar', ['documento' => '1001']);
+        $responseValidar->assertStatus(400)
+                        ->assertJsonPath('error', 'Tu beneficio figura en estado inactivo. Consulta con la coordinadora si requieres solicitar una reactivación.');
+    }
 }

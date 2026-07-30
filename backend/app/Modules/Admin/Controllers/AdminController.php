@@ -3,17 +3,26 @@
 namespace App\Modules\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Admin\Services\AdminService;
+use App\Modules\Admin\Services\StudentManagementService;
+use App\Modules\Admin\Services\AttendanceReportService;
+use App\Modules\Admin\Services\AttendanceSimulationService;
 use Illuminate\Http\Request;
 use Exception;
 
 class AdminController extends Controller
 {
-    protected $adminService;
+    protected $studentService;
+    protected $reportService;
+    protected $simulationService;
 
-    public function __construct(AdminService $adminService)
-    {
-        $this->adminService = $adminService;
+    public function __construct(
+        StudentManagementService $studentService,
+        AttendanceReportService $reportService,
+        AttendanceSimulationService $simulationService
+    ) {
+        $this->studentService = $studentService;
+        $this->reportService = $reportService;
+        $this->simulationService = $simulationService;
     }
 
     /**
@@ -22,7 +31,7 @@ class AdminController extends Controller
     public function estudiantes()
     {
         try {
-            $estudiantes = $this->adminService->getStudents();
+            $estudiantes = $this->studentService->getStudents();
             return response()->json($estudiantes);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -35,7 +44,7 @@ class AdminController extends Controller
     public function justificaciones()
     {
         try {
-            $justificaciones = $this->adminService->getJustifications();
+            $justificaciones = $this->studentService->getJustifications();
             return response()->json($justificaciones);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -52,7 +61,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $resultado = $this->adminService->approveStudent($request->input('documento'));
+            $resultado = $this->studentService->approveStudent($request->input('documento'));
             return response()->json($resultado);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -60,7 +69,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Rechaza una inscripción (elimina la solicitud pendiente).
+     * Rechaza una inscripción.
      */
     public function rechazar(Request $request)
     {
@@ -69,7 +78,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $resultado = $this->adminService->rejectStudent($request->input('documento'));
+            $resultado = $this->studentService->rejectStudent($request->input('documento'));
             return response()->json($resultado);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -86,7 +95,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $resultado = $this->adminService->deleteStudent($request->input('documento'));
+            $resultado = $this->studentService->deleteStudent($request->input('documento'));
             return response()->json($resultado);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -103,7 +112,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $resultado = $this->adminService->reactivateStudent($request->input('documento'));
+            $resultado = $this->studentService->reactivateStudent($request->input('documento'));
             return response()->json($resultado);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -122,7 +131,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $justificacion = $this->adminService->submitJustification($request->all());
+            $justificacion = $this->studentService->submitJustification($request->all());
             return response()->json([
                 'message' => 'Justificación enviada con éxito. La coordinadora revisará tu caso.',
                 'justificacion' => $justificacion,
@@ -142,7 +151,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $reporte = $this->adminService->getDailyReport($request->input('fecha'));
+            $reporte = $this->reportService->getDailyReport($request->input('fecha'));
             return response()->json($reporte);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -155,7 +164,7 @@ class AdminController extends Controller
     public function asistenciaSemanal()
     {
         try {
-            $reporte = $this->adminService->getWeeklyReport();
+            $reporte = $this->reportService->getWeeklyReport();
             return response()->json($reporte);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -173,7 +182,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $resultado = $this->adminService->simulateDay(
+            $resultado = $this->simulationService->simulateDay(
                 $request->input('fecha'),
                 $request->input('asistentes')
             );
@@ -196,7 +205,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $resultado = $this->adminService->createSingleStudent($request->all());
+            $resultado = $this->studentService->createSingleStudent($request->all());
             return response()->json($resultado, 201);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -213,7 +222,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $resultado = $this->adminService->importBulkStudents($request->input('estudiantes'));
+            $resultado = $this->studentService->importBulkStudents($request->input('estudiantes'));
             return response()->json($resultado, 200);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -226,7 +235,7 @@ class AdminController extends Controller
     public function grupos()
     {
         try {
-            $grupos = $this->adminService->getGroupedCourses();
+            $grupos = $this->reportService->getGroupedCourses();
             return response()->json($grupos);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -243,7 +252,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $resultado = $this->adminService->activateStudentManually($request->input('documento'));
+            $resultado = $this->studentService->activateStudentManually($request->input('documento'));
             return response()->json($resultado, 200);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -263,7 +272,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $resultado = $this->adminService->updateStudent($request->all());
+            $resultado = $this->studentService->updateStudent($request->all());
             return response()->json($resultado, 200);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -280,7 +289,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $resultado = $this->adminService->deleteInstitutionalStudent($request->input('documento'));
+            $resultado = $this->studentService->deleteInstitutionalStudent($request->input('documento'));
             return response()->json($resultado, 200);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -297,7 +306,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $resultado = $this->adminService->toggleCupo($request->input('documento'));
+            $resultado = $this->studentService->toggleCupo($request->input('documento'));
             return response()->json($resultado, 200);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -315,7 +324,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $resultado = $this->adminService->cambiarEstadoBeneficio(
+            $resultado = $this->studentService->cambiarEstadoBeneficio(
                 $request->input('documento'),
                 $request->input('estado')
             );
@@ -325,7 +334,3 @@ class AdminController extends Controller
         }
     }
 }
-
-
-
-
