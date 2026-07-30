@@ -51,7 +51,7 @@ apiClient.interceptors.response.use(
 
     if (!friendlyMessage) {
       if (!error.response) {
-        friendlyMessage = 'No se pudo conectar con el servidor backend (http://localhost:8000). Asegúrate de que el servidor backend esté en ejecución.';
+        friendlyMessage = `No se pudo conectar con el servidor backend (${apiURL}). Asegúrate de que el servicio esté en ejecución e intenta de nuevo.`;
       } else {
         friendlyMessage = 'Ocurrió un error inesperado. Intenta de nuevo.';
       }
