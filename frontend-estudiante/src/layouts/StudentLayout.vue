@@ -10,11 +10,8 @@
         </div>
         <div class="header-content">
           <div class="logo-title" @click="$emit('go-home')">
-            <div class="school-emblem-container">
-              <div class="school-emblem">
-                <span class="emblem-symbol">📖</span>
-                <span class="emblem-initials">E.V.E.</span>
-              </div>
+            <div class="school-emblem-wrapper">
+              <img :src="escudoImg" alt="Escudo I.E. Enrique Vélez Escobar" class="header-shield-img" />
             </div>
             <div>
               <h1 class="school-title">I.E. Enrique Vélez Escobar</h1>
@@ -45,10 +42,13 @@
 </template>
 
 <script>
+import escudoImg from '../../../frontend-core/src/assets/escudo.png'
+
 export default {
   name: 'StudentLayout',
   data() {
     return {
+      escudoImg,
       isDark: false
     }
   },
@@ -139,49 +139,30 @@ export default {
   cursor: pointer;
 }
 
-.school-emblem-container {
+.school-emblem-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px;
-  background: linear-gradient(135deg, rgba(15, 76, 129, 0.15), rgba(211, 47, 47, 0.15));
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
+  background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
+  padding: 5px;
   box-shadow: var(--shadow-sm);
-  transition: border-color var(--transition-normal);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
 }
 
-.school-emblem {
-  position: relative;
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #0f4c81, #d32f2f);
-  border: 3px solid #ffffff;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  color: #ffffff;
-  transition: transform var(--transition-normal);
+.school-emblem-wrapper:hover {
+  transform: scale(1.06);
+  border-color: var(--primary);
 }
 
-.school-emblem:hover {
-  transform: rotate(5deg) scale(1.05);
-}
-
-.emblem-symbol {
-  font-size: 1.25rem;
-  line-height: 1;
-  margin-top: 2px;
-}
-
-.emblem-initials {
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  margin-top: 1px;
+.header-shield-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
 }
 
 .school-title {

@@ -11,7 +11,15 @@
     </div>
     
     <div v-else>
-      <h3>Crear Perfil de Beneficiario</h3>
+      <h3 class="tab-heading">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="8.5" cy="7" r="4"></circle>
+          <line x1="20" y1="8" x2="20" y2="14"></line>
+          <line x1="17" y1="11" x2="23" y2="11"></line>
+        </svg>
+        Crear Perfil de Beneficiario
+      </h3>
       <p class="description">Ingresa tu número de documento para validar que estás matriculado e iniciar el registro.</p>
       
       <div v-if="!isValidated" class="form-group inline-form">

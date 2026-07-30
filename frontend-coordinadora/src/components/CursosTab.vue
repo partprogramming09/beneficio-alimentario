@@ -9,10 +9,10 @@
 
       <div class="actions-buttons-group">
         <button class="btn btn-primary btn-sm" @click="isAddModalOpen = true">
-          Agregar Estudiante
+          ➕ Agregar Estudiante
         </button>
         <button class="btn btn-secondary btn-sm" @click="isImportModalOpen = true">
-          Importar Excel / CSV
+          📁 Importar Excel / CSV
         </button>
       </div>
     </div>
@@ -22,7 +22,7 @@
       <div class="filter-item">
         <label for="select-grupo">Filtrar por Curso/Grupo:</label>
         <select id="select-grupo" v-model="selectedGroupFilter" class="select-input">
-          <option value="ALL">Todos los Cursos ({{ groups.length }} Grupos)</option>
+          <option value="ALL">🏫 Todos los Cursos ({{ groups.length }} Grupos)</option>
           <option v-for="g in groups" :key="g.nombre_grupo" :value="g.nombre_grupo">
             Grupo {{ g.nombre_grupo }} ({{ g.total_matriculados }} alumnos)
           </option>
@@ -36,32 +36,32 @@
             :class="['pill-btn', { active: statusFilter === 'ALL' }]"
             @click="statusFilter = 'ALL'"
           >
-            Todos
+            👥 Todos
           </button>
           <button 
             :class="['pill-btn', { active: statusFilter === 'SI' }]"
             @click="statusFilter = 'SI'"
           >
-            Inscritos (SÍ)
+            ✅ Inscritos (SÍ)
           </button>
           <button 
             :class="['pill-btn', { active: statusFilter === 'NO' }]"
             @click="statusFilter = 'NO'"
           >
-            Sin Registrar (NO)
+            ❌ Sin Registrar (NO)
           </button>
         </div>
       </div>
 
       <div class="filter-item">
         <button class="btn btn-secondary btn-sm" @click="toggleAllGroups">
-          {{ areAllCollapsed ? 'Desplegar Todos' : 'Contraer Todos' }}
+          {{ areAllCollapsed ? '📂 Desplegar Todos' : '📁 Contraer Todos' }}
         </button>
       </div>
     </div>
 
     <div v-if="loading" class="empty-state">
-      <p>Cargando estructura de cursos y grupos...</p>
+      <p>🔍 Cargando estructura de cursos y grupos...</p>
     </div>
 
     <div v-else-if="filteredGroups.length === 0" class="empty-state">
@@ -74,7 +74,13 @@
         <div class="group-card-header clickable-header" @click="toggleGroupCollapse(grp.nombre_grupo)">
           <div class="group-title">
             <span class="collapse-icon">{{ isGroupCollapsed(grp.nombre_grupo) ? '▶' : '▼' }}</span>
-            <span class="group-icon font-weight-bold">Grupo {{ grp.nombre_grupo }}</span>
+            <span class="group-icon font-weight-bold">
+              <svg class="inline-line-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+              </svg>
+              Grupo {{ grp.nombre_grupo }}
+            </span>
           </div>
 
           <div class="group-stats-badges">
@@ -100,34 +106,21 @@
               >
                 <div class="data-card-header">
                   <span class="badge-doc-highlight">Doc: {{ st.documento }}</span>
-                  <span 
-                    class="badge-status" 
-                    :class="'badge-' + (st.estado ? st.estado.toLowerCase().replace(' ', '-') : 'sin-registrar')"
-                  >
-                    {{ getEstadoLabel(st) }}
+                  <span :class="st.esta_inscrito ? 'badge-status-yes' : 'badge-status-no'">
+                    {{ st.esta_inscrito ? 'SÍ (Inscrito)' : 'NO (Sin Registrar)' }}
                   </span>
                 </div>
                 <div class="data-card-body">
                   <div class="card-name">{{ st.nombre_completo }}</div>
                   <div class="card-meta">Doc Identidad: <strong class="text-primary font-mono">{{ st.documento }}</strong></div>
-                  <div class="card-meta text-muted small mt-1">
-                    <span v-if="!st.esta_inscrito">🟡 Habilitado para autoregistro</span>
-                    <span v-else-if="st.estado === 'Activo'">🟢 Registrado voluntariamente</span>
-                    <span v-else-if="st.estado === 'Suspendido'">🔴 Suspendido por inasistencia</span>
-                    <span v-else>⚪ {{ st.estado }}</span>
-                  </div>
+                  <div class="card-meta">Estado Beneficio: <strong>{{ st.estado }}</strong></div>
                 </div>
-                <div class="data-card-actions mt-3">
+                <div class="data-card-actions mt-2">
+                  <button v-if="!st.esta_inscrito" class="btn btn-primary btn-xs" @click.stop="manualActivate(st.documento)">
+                    Registrar Cupo
+                  </button>
                   <button class="btn btn-secondary btn-xs" @click.stop="openEditModal(st)">
                     ✏️ Editar
-                  </button>
-                  <button 
-                    v-if="!st.esta_inscrito || st.estado !== 'Activo'"
-                    class="btn btn-warning btn-xs" 
-                    @click.stop="confirmManualActivate(st)"
-                    title="Activar de forma directa en caso de excepción médica o problema técnico"
-                  >
-                    ⚡ Activar por Excepción
                   </button>
                   <button class="btn btn-danger btn-xs" @click.stop="removeStudent(st.documento)">
                     🗑️ Eliminar
@@ -141,42 +134,45 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Documento</th>
-                    <th>Nombre Completo</th>
+                    <th>Documento (TI / CC)</th>
+                    <th>Estudiante</th>
                     <th>Grupo</th>
-                    <th>Estado de Registro Alumno</th>
+                    <th>¿Inscrito en Beneficio?</th>
+                    <th>Estado en Beneficio</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="st in getFilteredStudents(grp.estudiantes)" :key="st.documento">
-                    <td><span class="badge-doc-highlight">{{ st.documento }}</span></td>
+                    <td><span class="badge-doc-highlight">🪪 {{ st.documento }}</span></td>
                     <td><strong>{{ st.nombre_completo }}</strong></td>
                     <td><span class="badge-group">{{ st.grupo }}</span></td>
                     <td>
-                      <span 
-                        class="badge-status" 
-                        :class="'badge-' + (st.estado ? st.estado.toLowerCase().replace(' ', '-').replace('/', '-') : 'sin-registrar')"
-                      >
-                        {{ getEstadoLabel(st) }}
+                      <span :class="st.esta_inscrito ? 'badge-status-yes' : 'badge-status-no'">
+                        {{ st.esta_inscrito ? 'SÍ (Inscrito)' : 'NO (Sin Registrar)' }}
+                      </span>
+                    </td>
+                    <td>
+                      <span :class="['badge-status', 'badge-' + st.estado.toLowerCase().replace(' ', '-')]">
+                        {{ st.estado }}
                       </span>
                     </td>
                     <td>
                       <div class="table-actions-cell">
                         <button 
-                          class="btn btn-secondary btn-xs" 
-                          @click.stop="openEditModal(st)"
-                          title="Editar datos de matrícula"
+                          v-if="!st.esta_inscrito" 
+                          class="btn btn-primary btn-xs" 
+                          @click.stop="manualActivate(st.documento)"
+                          title="Registrar cupo de beneficio para el estudiante"
                         >
-                          ✏️ Editar
+                          ⚡ Registrar Cupo
                         </button>
                         <button 
-                          v-if="!st.esta_inscrito || st.estado !== 'Activo'"
-                          class="btn btn-warning btn-xs" 
-                          @click.stop="confirmManualActivate(st)"
-                          title="Activar por excepción en caso de falla técnica o caso especial"
+                          class="btn btn-secondary btn-xs" 
+                          @click.stop="openEditModal(st)"
+                          title="Editar datos del estudiante"
                         >
-                          ⚡ Activar por Excepción
+                          ✏️ Editar
                         </button>
                         <button 
                           class="btn btn-danger btn-xs" 
@@ -224,7 +220,7 @@
 </template>
 
 <script>
-import { getAdminGroups, activateStudentManually, deleteInstitutionalStudent, toggleCupo, cambiarEstadoBeneficio } from '../services/api'
+import { getAdminGroups, activateStudentManually, deleteInstitutionalStudent } from '../services/api'
 import AlertBox from './AlertBox.vue'
 import AgregarEstudianteModal from './AgregarEstudianteModal.vue'
 import ImportarEstudiantesModal from './ImportarEstudiantesModal.vue'
@@ -331,26 +327,16 @@ export default {
       }
     },
 
-    async confirmManualActivate(st) {
-      if (confirm(`¿Deseas activar manualmente por excepción a ${st.nombre_completo} (Doc: ${st.documento})?\n\nNota: Esto registrará al estudiante en el beneficio alimentario sin que deba ingresar al portal.`)) {
-        await this.manualActivate(st.documento)
+    async manualActivate(doc) {
+      try {
+        const res = await activateStudentManually(doc)
+        this.message = res.message
+        this.isError = false
+        this.onDataChanged()
+      } catch (err) {
+        this.message = err.message
+        this.isError = true
       }
-    },
-
-    getEstadoLabel(st) {
-      if (!st.esta_inscrito || st.estado === 'Sin Registrar') {
-        return '🟡 Sin Registrar'
-      }
-      if (st.estado === 'Activo') {
-        return '🟢 Activo / Registrado'
-      }
-      if (st.estado === 'Suspendido') {
-        return '🔴 Suspendido'
-      }
-      if (st.estado === 'Inactivo') {
-        return '⚪ Inactivo'
-      }
-      return st.estado
     },
 
     onDataChanged() {
@@ -586,153 +572,6 @@ export default {
 
 .card-meta {
   font-size: 0.85rem;
-}
-
-/* Toggle Switch */
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 44px;
-  height: 24px;
-  cursor: pointer;
-}
-
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.3s;
-  border-radius: 24px;
-}
-
-.toggle-slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.3s;
-  border-radius: 50%;
-}
-
-.toggle-switch input:checked + .toggle-slider {
-  background-color: #22c55e;
-}
-
-.toggle-switch input:checked + .toggle-slider:before {
-  transform: translateX(20px);
-}
-
-/* Badges de Estado del Beneficio */
-.badge-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-}
-
-.badge-sin-registrar {
-  background-color: #fef3c7;
-  color: #d97706;
-  border: 1px solid #fde68a;
-}
-
-.badge-activo {
-  background-color: #dcfce7;
-  color: #15803d;
-  border: 1px solid #bbf7d0;
-}
-
-.badge-suspendido {
-  background-color: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fca5a5;
-}
-
-.badge-inactivo {
-  background-color: #f3f4f6;
-  color: #4b5563;
-  border: 1px solid #e5e7eb;
-}
-
-.badge-pendiente {
-  background-color: #ffedd5;
-  color: #c2410c;
-  border: 1px solid #fed7aa;
-}
-
-/* Estado Select */
-.estado-select {
-  padding: 4px 8px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-}
-
-.estado-select:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.estado-activo {
-  border-color: #22c55e;
-  color: #22c55e;
-}
-
-.estado-pendiente {
-  border-color: #f59e0b;
-  color: #f59e0b;
-}
-
-.estado-suspendido {
-  border-color: #ef4444;
-  color: #ef4444;
-}
-
-.estado-inactivo {
-  border-color: #6b7280;
-  color: #6b7280;
-}
-
-.estado-sin-registrar {
-  border-color: #9ca3af;
-  color: #9ca3af;
-}
-
-/* Card rows para móvil */
-.card-row-toggle,
-.card-row-select {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.card-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {

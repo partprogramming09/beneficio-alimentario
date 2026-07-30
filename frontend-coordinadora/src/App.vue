@@ -317,4 +317,10 @@ tr:last-child td {
 .text-secondary { color: var(--text-secondary); }
 .border-danger { border-color: var(--danger) !important; }
 .description { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 15px; }
+
+/* Line Icons Helpers */
+.tab-line-icon, .inline-line-icon {
+  flex-shrink: 0;
+  stroke: currentColor;
+}
 </style>

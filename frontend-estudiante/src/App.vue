@@ -222,4 +222,16 @@ export default {
 .text-danger { color: var(--danger) !important; }
 .text-secondary { color: var(--text-secondary); }
 .border-danger { border-color: var(--danger) !important; }
+
+/* Line Icons & Tab Heading Helpers */
+.tab-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tab-line-icon, .inline-line-icon {
+  flex-shrink: 0;
+  stroke: currentColor;
+}
 </style>
