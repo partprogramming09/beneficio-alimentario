@@ -457,6 +457,70 @@ class AdminService
     }
 
     /**
+     * Activa o desactiva el cupo de beneficio de un estudiante.
+     */
+    public function toggleCupo(string $documento): array
+    {
+        $institucion = InstitucionEstudiante::find($documento);
+        if (!$institucion) {
+            throw new Exception("El estudiante no se encuentra en la lista institucional.");
+        }
+
+        $existente = Estudiante::find($documento);
+
+        if ($existente) {
+            $existente->delete();
+            return [
+                'message' => "Cupo de beneficio removido para {$institucion->nombre_completo}.",
+                'tiene_cupo' => false,
+                'estado' => 'Sin Registrar',
+            ];
+        } else {
+            $parts = explode(' ', trim($institucion->nombre_completo), 2);
+            $nombres = $parts[0] ?? $institucion->nombre_completo;
+            $apellidos = $parts[1] ?? '';
+
+            $estudiante = Estudiante::create([
+                'documento' => $documento,
+                'nombres' => $nombres,
+                'apellidos' => $apellidos,
+                'grupo' => $institucion->grupo,
+                'estado' => 'Pendiente',
+            ]);
+
+            return [
+                'message' => "Cupo de beneficio asignado a {$institucion->nombre_completo}.",
+                'tiene_cupo' => true,
+                'estado' => $estudiante->estado,
+            ];
+        }
+    }
+
+    /**
+     * Cambia el estado del beneficio de un estudiante.
+     */
+    public function cambiarEstadoBeneficio(string $documento, string $nuevoEstado): array
+    {
+        $estudiante = Estudiante::find($documento);
+        if (!$estudiante) {
+            throw new Exception("El estudiante no tiene cupo de beneficio asignado.");
+        }
+
+        $estadosValidos = ['Pendiente', 'Activo', 'Suspendido', 'Inactivo'];
+        if (!in_array($nuevoEstado, $estadosValidos)) {
+            throw new Exception("Estado no válido. Use: Pendiente, Activo, Suspendido o Inactivo.");
+        }
+
+        $estudiante->estado = $nuevoEstado;
+        $estudiante->save();
+
+        return [
+            'message' => "Estado cambiado a '{$nuevoEstado}' para {$estudiante->nombres} {$estudiante->apellidos}.",
+            'estado' => $nuevoEstado,
+        ];
+    }
+
+    /**
      * Edita los datos de un estudiante matriculado (documento, nombre completo, grupo).
      */
     public function updateStudent(array $data): array
@@ -553,11 +617,11 @@ class AdminService
             }
 
             $beneficiario = $beneficiarios->get($est->documento);
-            $estaInscrito = (bool) $beneficiario;
+            $estaInscrito = $beneficiario && $beneficiario->estado === 'Activo';
             $estado = $beneficiario ? $beneficiario->estado : 'Sin Registrar';
 
             $grupos[$grp]['total_matriculados']++;
-            if ($estaInscrito && $estado === 'Activo') {
+            if ($estaInscrito) {
                 $grupos[$grp]['total_inscritos']++;
             } else {
                 $grupos[$grp]['total_sin_inscribir']++;

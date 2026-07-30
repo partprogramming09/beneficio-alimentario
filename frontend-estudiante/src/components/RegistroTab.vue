@@ -24,7 +24,7 @@
           @keyup.enter="validateStudent"
         />
         <button class="btn btn-primary" @click="validateStudent" :disabled="loading">
-          {{ loading ? 'Validando...' : 'Verificar Matrícula' }}
+          {{ loading ? 'Verificando...' : 'Verificar Registro' }}
         </button>
       </div>
 
@@ -104,6 +104,15 @@ export default {
 
       try {
         const data = await validateStudent(this.registration.documento)
+
+        if (data.registrado) {
+          this.message = data.message || '¡Ya estás registrado en el sistema! Cargando tu ticket de asistencia diario...'
+          this.isError = false
+          setTimeout(() => {
+            this.$emit('session-started', { documento: data.documento, nombre: data.nombre_completo })
+          }, 1200)
+          return
+        }
 
         this.isValidated = true
         this.validatedName = data.nombre_completo

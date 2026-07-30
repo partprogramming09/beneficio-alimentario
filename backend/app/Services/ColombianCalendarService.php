@@ -73,9 +73,7 @@ class ColombianCalendarService
         }
 
         // 3. Festivos basados en la fecha de Pascua / Semana Santa
-        $easterTimestamp = easter_date($year);
-        $easterDate = new DateTime();
-        $easterDate->setTimestamp($easterTimestamp);
+        $easterDate = self::getEasterDate($year);
 
         // Jueves Santo (-3 días)
         $juevesSanto = clone $easterDate;
@@ -103,6 +101,38 @@ class ColombianCalendarService
         $holidays[] = self::moveToMonday($sagradoCorazon->format('Y-m-d'));
 
         return array_values(array_unique($holidays));
+    }
+
+    /**
+     * Calcula la fecha del Domingo de Pascua de forma agnóstica sin requerir la extensión PHP 'calendar'.
+     */
+    private static function getEasterDate(int $year): DateTime
+    {
+        if (function_exists('easter_date')) {
+            $dt = new DateTime();
+            $dt->setTimestamp(\easter_date($year));
+            return $dt;
+        }
+
+        $a = $year % 19;
+        $b = (int) ($year / 100);
+        $c = $year % 100;
+        $d = (int) ($b / 4);
+        $e = $b % 4;
+        $f = (int) (($b + 8) / 25);
+        $g = (int) (($b - $f + 1) / 3);
+        $h = (19 * $a + $b - $d - $g + 15) % 30;
+        $i = (int) ($c / 4);
+        $k = $c % 4;
+        $l = (32 + 2 * $e + 2 * $i - $h - $k) % 7;
+        $m = (int) (($a + 11 * $h + 22 * $l) / 451);
+        $month = (int) (($h + $l - 7 * $m + 114) / 31);
+        $day = (($h + $l - 7 * $m + 114) % 31) + 1;
+
+        $dt = new DateTime();
+        $dt->setDate($year, $month, $day);
+        $dt->setTime(0, 0, 0);
+        return $dt;
     }
 
     /**

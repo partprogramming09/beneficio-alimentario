@@ -286,6 +286,44 @@ class AdminController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
+    /**
+     * Activa o desactiva el cupo de beneficio de un estudiante.
+     */
+    public function toggleCupo(Request $request)
+    {
+        $request->validate([
+            'documento' => 'required|string',
+        ]);
+
+        try {
+            $resultado = $this->adminService->toggleCupo($request->input('documento'));
+            return response()->json($resultado, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    /**
+     * Cambia el estado del beneficio de un estudiante.
+     */
+    public function cambiarEstadoBeneficio(Request $request)
+    {
+        $request->validate([
+            'documento' => 'required|string',
+            'estado' => 'required|string|in:Pendiente,Activo,Suspendido,Inactivo',
+        ]);
+
+        try {
+            $resultado = $this->adminService->cambiarEstadoBeneficio(
+                $request->input('documento'),
+                $request->input('estado')
+            );
+            return response()->json($resultado, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
 }
 
 

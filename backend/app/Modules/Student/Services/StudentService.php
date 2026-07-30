@@ -34,10 +34,23 @@ class StudentService
         $existente = Estudiante::find($documento);
 
         if ($existente) {
-            throw new Exception("Este estudiante ya cuenta con un perfil registrado en el sistema. Estado: {$existente->estado}.");
+            if ($existente->estado === 'Activo') {
+                return [
+                    'registrado' => true,
+                    'documento' => $existente->documento,
+                    'nombre_completo' => trim("{$existente->nombres} {$existente->apellidos}"),
+                    'grupo' => $existente->grupo,
+                    'message' => '¡Ya cuentas con un perfil activo en el comedor! Cargando tu ticket de asistencia diario...',
+                ];
+            } elseif ($existente->estado === 'Suspendido') {
+                throw new Exception("Tu cupo en el comedor se encuentra suspendido por inasistencias. Por favor, presenta una justificación ante la coordinadora.");
+            } elseif ($existente->estado === 'Inactivo') {
+                throw new Exception("Tu beneficio figura en estado inactivo. Consulta con la coordinadora si requieres solicitar una reactivación.");
+            }
         }
 
         return [
+            'registrado' => false,
             'documento' => $institucion->documento,
             'nombre_completo' => $institucion->nombre_completo,
             'grupo' => $institucion->grupo,
@@ -54,13 +67,15 @@ class StudentService
         // Validar matrícula y existencia previa
         $valido = $this->validateStudent($documento);
 
-        $estudiante = Estudiante::create([
-            'documento' => $documento,
-            'nombres' => $data['nombres'],
-            'apellidos' => $data['apellidos'],
-            'grupo' => $valido['grupo'],
-            'estado' => 'Activo', // Se crea directamente en estado Activo
-        ]);
+        $estudiante = Estudiante::updateOrCreate(
+            ['documento' => $documento],
+            [
+                'nombres' => $data['nombres'],
+                'apellidos' => $data['apellidos'],
+                'grupo' => $valido['grupo'],
+                'estado' => 'Activo', // Se crea o actualiza en estado Activo al registrarse voluntariamente
+            ]
+        );
 
         // Disparar Webhook
         $this->webhookService->trigger('student.registered', [

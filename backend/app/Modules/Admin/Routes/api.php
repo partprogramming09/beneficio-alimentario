@@ -18,6 +18,8 @@ Route::get('/grupos', [AdminController::class, 'grupos']);
 Route::post('/estudiantes/activar-manual', [AdminController::class, 'activarManual']);
 Route::post('/estudiantes/actualizar', [AdminController::class, 'actualizarEstudiante']);
 Route::post('/estudiantes/eliminar-institucional', [AdminController::class, 'eliminarEstudianteInstitucional']);
+Route::post('/estudiantes/toggle-cupo', [AdminController::class, 'toggleCupo']);
+Route::post('/estudiantes/cambiar-estado', [AdminController::class, 'cambiarEstadoBeneficio']);
 
 
 

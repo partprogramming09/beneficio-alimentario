@@ -82,6 +82,15 @@ export async function deleteInstitutionalStudent(documento) {
   return response.data;
 }
 
+export async function toggleCupo(documento) {
+  const response = await apiClient.post('/api/admin/estudiantes/toggle-cupo', { documento });
+  return response.data;
+}
+
+export async function cambiarEstadoBeneficio(documento, estado) {
+  const response = await apiClient.post('/api/admin/estudiantes/cambiar-estado', { documento, estado });
+  return response.data;
+}
 
 
 

@@ -23,7 +23,7 @@
           :class="['pill-btn', { active: activeTab === 'registro' }]" 
           @click="activeTab = 'registro'"
         >
-          <span>📝</span> Solicitar Inscripción
+          <span>📝</span> Verificar Registro
         </button>
 
         <button 
