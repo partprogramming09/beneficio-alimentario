@@ -36,7 +36,9 @@ CMD ["sh", "-c", "\
     echo DB_PASSWORD=$DB_PASSWORD >> .env && \
     echo SESSION_DRIVER=cookie >> .env && \
     echo CACHE_STORE=file >> .env && \
-    echo QUEUE_CONNECTION=sync >> .env; \
+    echo QUEUE_CONNECTION=sync >> .env && \
+    echo MYSQL_ATTR_SSL_CA=/etc/ssl/certs/ca-certificates.crt >> .env && \
+    echo MYSQL_ATTR_SSL_VERIFY_SERVER_CERT=false >> .env; \
   fi && \
   php artisan key:generate --force && \
   php artisan config:clear && \

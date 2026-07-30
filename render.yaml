@@ -28,6 +28,10 @@ services:
         value: file
       - key: QUEUE_CONNECTION
         value: sync
+      - key: MYSQL_ATTR_SSL_CA
+        value: /etc/ssl/certs/ca-certificates.crt
+      - key: MYSQL_ATTR_SSL_VERIFY_SERVER_CERT
+        value: "false"
     healthCheckPath: /
     autoDeploy: true
 
