@@ -6,13 +6,13 @@
           :class="['report-pill-btn', { active: reportType === 'diario' }]"
           @click="reportType = 'diario'"
         >
-          📅 Asistencia Diaria
+          Asistencia Diaria
         </button>
         <button 
           :class="['report-pill-btn', { active: reportType === 'semanal' }]"
           @click="reportType = 'semanal'"
         >
-          📊 Resumen Semanal
+          Resumen Semanal
         </button>
       </div>
     </div>
@@ -49,9 +49,9 @@
             <thead>
               <tr>
                 <th>Documento</th>
-                <th>Estudiante</th>
+                <th>Nombre</th>
                 <th>Grupo</th>
-                <th>Hora Registro</th>
+                <th>Hora</th>
               </tr>
             </thead>
             <tbody>
@@ -94,9 +94,9 @@
             <thead>
               <tr>
                 <th>Documento</th>
-                <th>Estudiante</th>
+                <th>Nombre</th>
                 <th>Grupo</th>
-                <th>Almuerzos Recibidos</th>
+                <th>Almuerzos</th>
               </tr>
             </thead>
             <tbody>

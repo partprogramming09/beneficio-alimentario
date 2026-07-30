@@ -12,30 +12,32 @@ RUN apk add --no-cache \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY backend/opcache.ini $PHP_INI_DIR/conf.d/opcache.ini
+COPY opcache.ini $PHP_INI_DIR/conf.d/opcache.ini
 
 WORKDIR /var/www/html
 
-COPY backend/ .
+COPY . .
 
 RUN composer install --no-dev --no-interaction --no-scripts
 
 EXPOSE 8000
 
 CMD ["sh", "-c", "\
-  echo APP_KEY= > .env && \
-  echo APP_ENV=production >> .env && \
-  echo APP_DEBUG=false >> .env && \
-  echo APP_URL=$APP_URL >> .env && \
-  echo DB_CONNECTION=mysql >> .env && \
-  echo DB_HOST=$DB_HOST >> .env && \
-  echo DB_PORT=$DB_PORT >> .env && \
-  echo DB_DATABASE=$DB_DATABASE >> .env && \
-  echo DB_USERNAME=$DB_USERNAME >> .env && \
-  echo DB_PASSWORD=$DB_PASSWORD >> .env && \
-  echo SESSION_DRIVER=cookie >> .env && \
-  echo CACHE_STORE=file >> .env && \
-  echo QUEUE_CONNECTION=sync >> .env && \
+  if [ ! -f .env ]; then \
+    echo APP_KEY= > .env && \
+    echo APP_ENV=local >> .env && \
+    echo APP_DEBUG=true >> .env && \
+    echo APP_URL=http://localhost:8000 >> .env && \
+    echo DB_CONNECTION=mysql >> .env && \
+    echo DB_HOST=$DB_HOST >> .env && \
+    echo DB_PORT=$DB_PORT >> .env && \
+    echo DB_DATABASE=$DB_NAME >> .env && \
+    echo DB_USERNAME=$DB_USER >> .env && \
+    echo DB_PASSWORD=$DB_PASSWORD >> .env && \
+    echo SESSION_DRIVER=cookie >> .env && \
+    echo CACHE_STORE=file >> .env && \
+    echo QUEUE_CONNECTION=sync >> .env; \
+  fi && \
   php artisan key:generate --force && \
   php artisan config:clear && \
   php artisan migrate --force; \

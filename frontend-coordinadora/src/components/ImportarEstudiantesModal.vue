@@ -2,7 +2,7 @@
   <div v-if="isOpen" class="modal-backdrop" @click.self="$emit('close')">
     <div class="modal-card wide-modal">
       <div class="modal-header">
-        <h4>📁 Carga Masiva de Estudiantes (Excel / CSV)</h4>
+        <h4>Carga Masiva de Estudiantes (Excel / CSV)</h4>
         <button class="btn-close" @click="$emit('close')">&times;</button>
       </div>
 
@@ -10,7 +10,7 @@
         <!-- Banner de Instrucciones y Advertencias -->
         <div class="instructions-box mb-3">
           <div class="instructions-header">
-            <span class="info-icon">ℹ️</span>
+            <span class="info-icon"></span>
             <strong>Instrucciones y Formato Aceptado:</strong>
           </div>
           <p class="small text-muted mb-2">
@@ -24,7 +24,7 @@
           </div>
           <div class="download-template-action mt-3">
             <button class="btn btn-secondary btn-xs" @click="downloadTemplate">
-              📥 Descargar Plantilla de Ejemplo (.csv)
+              Descargar Plantilla de Ejemplo (.csv)
             </button>
           </div>
         </div>
@@ -39,7 +39,7 @@
             @change="handleFileSelect"
           />
           <div class="drop-zone-content" @click="$refs.fileInput.click()">
-            <span class="drop-icon">📄</span>
+            <span class="drop-icon"></span>
             <p v-if="!fileName">Arrastra y suelta aquí tu archivo de Excel (.csv) o haz clic para seleccionar</p>
             <p v-else class="file-name-highlight">✓ Archivo Seleccionado: <strong>{{ fileName }}</strong></p>
           </div>
@@ -48,7 +48,7 @@
         <!-- Vista Previa de Registros Detectados -->
         <div v-if="parsedData.length > 0" class="preview-section mt-4">
           <div class="preview-header">
-            <h5>🔍 Vista Previa: {{ parsedData.length }} Estudiantes Detectados</h5>
+            <h5>Vista Previa: {{ parsedData.length }} Estudiantes Detectados</h5>
             <span class="valid-count">Registros Listos: {{ validCount }}</span>
           </div>
 
@@ -97,7 +97,7 @@
             @click="confirmImport" 
             :disabled="loading || validCount === 0"
           >
-            {{ loading ? 'Importando...' : `⚡ Confirmar e Importar (${validCount} Alumnos)` }}
+            {{ loading ? 'Importando...' : `Confirmar e Importar (${validCount} Alumnos)` }}
           </button>
         </div>
       </div>

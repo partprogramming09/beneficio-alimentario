@@ -13,7 +13,7 @@
           </div>
           <div class="header-info">
             <h4>{{ student.nombres }} {{ student.apellidos }}</h4>
-            <div class="header-doc-badge mb-1">🪪 Doc: <strong>{{ student.documento }}</strong></div>
+            <div class="header-doc-badge mb-1">Doc: <strong>{{ student.documento }}</strong></div>
             <span :class="['badge-status', 'badge-' + student.estado.toLowerCase()]">
               {{ student.estado }}
             </span>
@@ -28,7 +28,7 @@
             <h5>🛡️ Información Académica</h5>
             <div class="info-row">
               <span class="info-label">Documento Identidad:</span>
-              <strong class="info-value text-primary font-mono">🪪 {{ student.documento }}</strong>
+              <strong class="info-value text-primary font-mono">{{ student.documento }}</strong>
             </div>
 
             <div class="info-row">
@@ -64,10 +64,10 @@
                 ></div>
               </div>
               <p v-if="getAbsenceCount(student) === 2" class="risk-warning-text">
-                ⚠️ ¡Riesgo alto de suspensión en la próxima falta!
+                ¡Riesgo alto de suspensión en la próxima falta!
               </p>
               <p v-if="getAbsenceCount(student) === 3" class="risk-warning-text text-danger">
-                🛑 El alumno se encuentra suspendido. Debe justificar sus faltas.
+                El alumno se encuentra suspendido. Debe justificar sus faltas.
               </p>
             </div>
           </div>

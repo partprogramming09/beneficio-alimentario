@@ -6,16 +6,16 @@
         <h4 class="card-title-sm">⚠️ Alumnos Suspendidos</h4>
 
         <div v-if="suspendedStudents.length === 0" class="empty-state">
-          <p>🌟 No hay alumnos suspendidos actualmente.</p>
+          <p>No hay alumnos suspendidos actualmente.</p>
         </div>
 
         <div v-else class="table-container">
           <table>
             <thead>
               <tr>
-                <th>Doc</th>
+                <th>Documento</th>
                 <th>Nombre</th>
-                <th>Acción</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>

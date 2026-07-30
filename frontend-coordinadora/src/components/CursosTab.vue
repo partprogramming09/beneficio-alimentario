@@ -9,10 +9,10 @@
 
       <div class="actions-buttons-group">
         <button class="btn btn-primary btn-sm" @click="isAddModalOpen = true">
-          ➕ Agregar Estudiante
+          Agregar Estudiante
         </button>
         <button class="btn btn-secondary btn-sm" @click="isImportModalOpen = true">
-          📁 Importar Excel / CSV
+          Importar Excel / CSV
         </button>
       </div>
     </div>
@@ -22,7 +22,7 @@
       <div class="filter-item">
         <label for="select-grupo">Filtrar por Curso/Grupo:</label>
         <select id="select-grupo" v-model="selectedGroupFilter" class="select-input">
-          <option value="ALL">🏫 Todos los Cursos ({{ groups.length }} Grupos)</option>
+          <option value="ALL">Todos los Cursos ({{ groups.length }} Grupos)</option>
           <option v-for="g in groups" :key="g.nombre_grupo" :value="g.nombre_grupo">
             Grupo {{ g.nombre_grupo }} ({{ g.total_matriculados }} alumnos)
           </option>
@@ -36,32 +36,32 @@
             :class="['pill-btn', { active: statusFilter === 'ALL' }]"
             @click="statusFilter = 'ALL'"
           >
-            👥 Todos
+            Todos
           </button>
           <button 
             :class="['pill-btn', { active: statusFilter === 'SI' }]"
             @click="statusFilter = 'SI'"
           >
-            ✅ Inscritos (SÍ)
+            Inscritos (SÍ)
           </button>
           <button 
             :class="['pill-btn', { active: statusFilter === 'NO' }]"
             @click="statusFilter = 'NO'"
           >
-            ❌ Sin Registrar (NO)
+            Sin Registrar (NO)
           </button>
         </div>
       </div>
 
       <div class="filter-item">
         <button class="btn btn-secondary btn-sm" @click="toggleAllGroups">
-          {{ areAllCollapsed ? '📂 Desplegar Todos' : '📁 Contraer Todos' }}
+          {{ areAllCollapsed ? 'Desplegar Todos' : 'Contraer Todos' }}
         </button>
       </div>
     </div>
 
     <div v-if="loading" class="empty-state">
-      <p>🔍 Cargando estructura de cursos y grupos...</p>
+      <p>Cargando estructura de cursos y grupos...</p>
     </div>
 
     <div v-else-if="filteredGroups.length === 0" class="empty-state">
@@ -74,13 +74,13 @@
         <div class="group-card-header clickable-header" @click="toggleGroupCollapse(grp.nombre_grupo)">
           <div class="group-title">
             <span class="collapse-icon">{{ isGroupCollapsed(grp.nombre_grupo) ? '▶' : '▼' }}</span>
-            <span class="group-icon font-weight-bold">🏫 Grupo {{ grp.nombre_grupo }}</span>
+            <span class="group-icon font-weight-bold">Grupo {{ grp.nombre_grupo }}</span>
           </div>
 
           <div class="group-stats-badges">
-            <span class="badge-stat badge-total">🎓 Total Matriculados: {{ grp.total_matriculados }}</span>
-            <span class="badge-stat badge-yes">✅ Inscritos: {{ grp.total_inscritos }}</span>
-            <span class="badge-stat badge-no">❌ Sin Registrar: {{ grp.total_sin_inscribir }}</span>
+            <span class="badge-stat badge-total">Total Matriculados: {{ grp.total_matriculados }}</span>
+            <span class="badge-stat badge-yes">Inscritos: {{ grp.total_inscritos }}</span>
+            <span class="badge-stat badge-no">Sin Registrar: {{ grp.total_sin_inscribir }}</span>
           </div>
         </div>
 
@@ -99,25 +99,25 @@
                 class="data-card-item"
               >
                 <div class="data-card-header">
-                  <span class="badge-doc-highlight">🪪 Doc: {{ st.documento }}</span>
+                  <span class="badge-doc-highlight">Doc: {{ st.documento }}</span>
                   <span :class="st.esta_inscrito ? 'badge-status-yes' : 'badge-status-no'">
                     {{ st.esta_inscrito ? 'SÍ (Inscrito)' : 'NO (Sin Registrar)' }}
                   </span>
                 </div>
                 <div class="data-card-body">
                   <div class="card-name">{{ st.nombre_completo }}</div>
-                  <div class="card-meta">Doc Identidad: <strong class="text-primary font-mono">🪪 {{ st.documento }}</strong></div>
+                  <div class="card-meta">Doc Identidad: <strong class="text-primary font-mono">{{ st.documento }}</strong></div>
                   <div class="card-meta">Estado Beneficio: <strong>{{ st.estado }}</strong></div>
                 </div>
                 <div class="data-card-actions mt-2">
                   <button v-if="!st.esta_inscrito" class="btn btn-primary btn-xs" @click.stop="manualActivate(st.documento)">
-                    ⚡ Registrar Cupo
+                    Registrar Cupo
                   </button>
                   <button class="btn btn-secondary btn-xs" @click.stop="openEditModal(st)">
-                    ✏️ Editar
+                    Editar
                   </button>
                   <button class="btn btn-danger btn-xs" @click.stop="removeStudent(st.documento)">
-                    🗑️ Eliminar
+                    Eliminar
                   </button>
                 </div>
               </div>
@@ -128,17 +128,17 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Documento (TI / CC)</th>
-                    <th>Estudiante</th>
+                    <th>Documento</th>
+                    <th>Nombre</th>
                     <th>Grupo</th>
-                    <th>¿Inscrito en Beneficio?</th>
-                    <th>Estado en Beneficio</th>
+                    <th>Inscrito</th>
+                    <th>Estado Ben.</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="st in getFilteredStudents(grp.estudiantes)" :key="st.documento">
-                    <td><span class="badge-doc-highlight">🪪 {{ st.documento }}</span></td>
+                    <td><span class="badge-doc-highlight">{{ st.documento }}</span></td>
                     <td><strong>{{ st.nombre_completo }}</strong></td>
                     <td><span class="badge-group">{{ st.grupo }}</span></td>
                     <td>

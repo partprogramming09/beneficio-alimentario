@@ -9,6 +9,7 @@ services:
           - "8000:8000"
         volumes:
           - ./backend:/var/www/html
+          - ./backend/.env.docker:/var/www/html/.env
           - /var/www/html/vendor
         environment:
           - DB_HOST=mysql
@@ -16,8 +17,10 @@ services:
           - DB_PASSWORD=root
           - DB_NAME=beneficio_alimentario
           - DB_PORT=3306
+          - MYSQL_ATTR_SSL_CA=
         depends_on:
-          - mysql
+          mysql:
+            condition: service_healthy
 
       # Servicio 2: Portal del Estudiante (Vite/Vue 3)
       frontend-estudiante:
@@ -49,16 +52,22 @@ services:
         depends_on:
           - backend
 
-      # Servicio 3: Base de Datos MySQL
+      # Servicio 4: Base de Datos MySQL
       mysql:
         image: mysql:8.0
         ports:
-          - "3306:3306"
+          - "3307:3306"
+        command: --default-authentication-plugin=mysql_native_password
         environment:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: beneficio_alimentario
         volumes:
           - mysql_data:/var/lib/mysql
+        healthcheck:
+          test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+          interval: 5s
+          timeout: 5s
+          retries: 10
 
 volumes:
   mysql_data:

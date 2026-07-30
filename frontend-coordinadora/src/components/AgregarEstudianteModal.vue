@@ -2,7 +2,7 @@
   <div v-if="isOpen" class="modal-backdrop" @click.self="$emit('close')">
     <div class="modal-card">
       <div class="modal-header">
-        <h4>➕ Agregar Estudiante Individual</h4>
+        <h4>Agregar Estudiante Individual</h4>
         <button class="btn-close" @click="$emit('close')">&times;</button>
       </div>
 
@@ -57,7 +57,7 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="$emit('close')">Cancelar</button>
             <button type="submit" class="btn btn-primary" :disabled="loading">
-              {{ loading ? 'Guardando...' : '✓ Guardar y Activar' }}
+              {{ loading ? 'Guardando...' : 'Guardar y Activar' }}
             </button>
           </div>
         </form>

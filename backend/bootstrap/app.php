@@ -24,20 +24,20 @@ return Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*'),
         );
 
-        $exceptions->serializeUsing(function (\Throwable $e) {
+        $exceptions->renderable(function (\Throwable $e) {
             $isProduction = app()->environment('production');
 
             if ($e instanceof ValidationException) {
                 $first = collect($e->errors())->first();
-                return [
+                return response()->json([
                     'error' => is_array($first) ? reset($first) : $first,
-                ];
+                ], 422);
             }
 
             if ($e instanceof QueryException) {
-                return [
+                return response()->json([
                     'error' => 'Error al consultar la base de datos. Intenta de nuevo.',
-                ];
+                ], 500);
             }
 
             $message = $e->getMessage();
@@ -50,19 +50,19 @@ return Application::configure(basePath: dirname(__DIR__))
                     str_contains($message, 'driver') ||
                     str_contains($message, 'Class "') ||
                     preg_match('/^[A-Z_]+Exception/', class_basename($e))) {
-                    return [
+                    return response()->json([
                         'error' => 'Ocurrió un error inesperado. Intenta de nuevo.',
-                    ];
+                    ], 500);
                 }
-                return [
+                return response()->json([
                     'error' => $message ?: 'Ocurrió un error inesperado. Intenta de nuevo.',
-                ];
+                ], 500);
             }
 
-            return [
+            return response()->json([
                 'error' => $message,
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-            ];
+            ], 500);
         });
     })->create();
