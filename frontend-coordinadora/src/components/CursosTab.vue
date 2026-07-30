@@ -74,19 +74,13 @@
         <div class="group-card-header clickable-header" @click="toggleGroupCollapse(grp.nombre_grupo)">
           <div class="group-title">
             <span class="collapse-icon">{{ isGroupCollapsed(grp.nombre_grupo) ? '▶' : '▼' }}</span>
-            <span class="group-icon font-weight-bold">
-              <svg class="inline-line-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-              </svg>
-              Grupo {{ grp.nombre_grupo }}
-            </span>
+            <span class="group-icon font-weight-bold">🏫 Grupo {{ grp.nombre_grupo }}</span>
           </div>
 
           <div class="group-stats-badges">
-            <span class="badge-stat badge-total">Total Matriculados: {{ grp.total_matriculados }}</span>
-            <span class="badge-stat badge-yes">Inscritos: {{ grp.total_inscritos }}</span>
-            <span class="badge-stat badge-no">Sin Registrar: {{ grp.total_sin_inscribir }}</span>
+            <span class="badge-stat badge-total">🎓 Total Matriculados: {{ grp.total_matriculados }}</span>
+            <span class="badge-stat badge-yes">✅ Inscritos: {{ grp.total_inscritos }}</span>
+            <span class="badge-stat badge-no">❌ Sin Registrar: {{ grp.total_sin_inscribir }}</span>
           </div>
         </div>
 
@@ -105,19 +99,19 @@
                 class="data-card-item"
               >
                 <div class="data-card-header">
-                  <span class="badge-doc-highlight">Doc: {{ st.documento }}</span>
+                  <span class="badge-doc-highlight">🪪 Doc: {{ st.documento }}</span>
                   <span :class="st.esta_inscrito ? 'badge-status-yes' : 'badge-status-no'">
                     {{ st.esta_inscrito ? 'SÍ (Inscrito)' : 'NO (Sin Registrar)' }}
                   </span>
                 </div>
                 <div class="data-card-body">
                   <div class="card-name">{{ st.nombre_completo }}</div>
-                  <div class="card-meta">Doc Identidad: <strong class="text-primary font-mono">{{ st.documento }}</strong></div>
+                  <div class="card-meta">Doc Identidad: <strong class="text-primary font-mono">🪪 {{ st.documento }}</strong></div>
                   <div class="card-meta">Estado Beneficio: <strong>{{ st.estado }}</strong></div>
                 </div>
                 <div class="data-card-actions mt-2">
                   <button v-if="!st.esta_inscrito" class="btn btn-primary btn-xs" @click.stop="manualActivate(st.documento)">
-                    Registrar Cupo
+                    ⚡ Registrar Cupo
                   </button>
                   <button class="btn btn-secondary btn-xs" @click.stop="openEditModal(st)">
                     ✏️ Editar
