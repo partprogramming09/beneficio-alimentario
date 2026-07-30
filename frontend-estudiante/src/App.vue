@@ -9,8 +9,8 @@
 
 <script>
 import StudentLayout from './layouts/StudentLayout.vue';
-import LandingPage from './pages/LandingPage.vue';
-import PortalPage from './pages/PortalPage.vue';
+import LandingPage from './views/LandingView.vue';
+import PortalPage from './views/PortalView.vue';
 
 export default {
   name: 'App',

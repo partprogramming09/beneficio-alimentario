@@ -1,7 +1,5 @@
 import { apiClient } from '@shared/core';
 
-// Student Portal Endpoints
-
 export async function validateStudent(documento) {
   const response = await apiClient.post('/api/estudiantes/validar', { documento });
   return response.data;
@@ -22,8 +20,19 @@ export async function getReceipt(documento) {
   return response.data;
 }
 
-export async function submitJustification(justificationData) {
-  const response = await apiClient.post('/api/justificaciones', justificationData);
+export async function submitJustification(justificationData, archivo = null) {
+  const formData = new FormData();
+  formData.append('documento', justificationData.documento);
+  formData.append('fecha_inasistencia', justificationData.fecha_inasistencia);
+  formData.append('motivo', justificationData.motivo);
+
+  if (archivo) {
+    formData.append('archivo', archivo);
+  }
+
+  const response = await apiClient.post('/api/justificaciones', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
   return response.data;
 }
 

@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/estudiantes', [AdminController::class, 'estudiantes']);
 Route::get('/justificaciones', [AdminController::class, 'justificaciones']);
+Route::get('/justificaciones/{id}/descarga', [AdminController::class, 'descargarAdjunto']);
+Route::post('/justificaciones/{id}/aprobar', [AdminController::class, 'aprobarJustificacion']);
+Route::post('/justificaciones/{id}/rechazar', [AdminController::class, 'rechazarJustificacion']);
 Route::post('/estudiantes/aprobar', [AdminController::class, 'aprobar']);
 Route::post('/estudiantes/rechazar', [AdminController::class, 'rechazar']);
 Route::post('/estudiantes/eliminar', [AdminController::class, 'eliminar']);
@@ -20,7 +23,3 @@ Route::post('/estudiantes/actualizar', [AdminController::class, 'actualizarEstud
 Route::post('/estudiantes/eliminar-institucional', [AdminController::class, 'eliminarEstudianteInstitucional']);
 Route::post('/estudiantes/toggle-cupo', [AdminController::class, 'toggleCupo']);
 Route::post('/estudiantes/cambiar-estado', [AdminController::class, 'cambiarEstadoBeneficio']);
-
-
-
-

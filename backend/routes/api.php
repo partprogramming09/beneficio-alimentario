@@ -26,5 +26,5 @@ Route::prefix('admin')->group(base_path('app/Modules/Admin/Routes/api.php'));
 // Módulo de Webhooks y Receptor
 Route::group([], base_path('app/Modules/Webhook/Routes/api.php'));
 
-// Justificación de Inasistencias (acceso de estudiantes)
+// Justificación de Inasistencias (acceso de estudiantes, multipart para archivos)
 Route::post('/justificaciones', [AdminController::class, 'justificar']);

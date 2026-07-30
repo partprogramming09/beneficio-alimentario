@@ -50,36 +50,6 @@ class StudentManagementService
     }
 
     /**
-     * Lista todas las justificaciones con datos del estudiante.
-     */
-    public function getJustifications()
-    {
-        return DB::table('justificaciones')
-            ->join('estudiantes', 'justificaciones.documento', '=', 'estudiantes.documento')
-            ->select(
-                'justificaciones.*',
-                'estudiantes.nombres',
-                'estudiantes.apellidos',
-                'estudiantes.grupo',
-                'estudiantes.estado as estado_estudiante'
-            )
-            ->orderBy('justificaciones.creado_en', 'desc')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'documento' => $item->documento,
-                    'nombres' => $item->nombres,
-                    'apellidos' => $item->apellidos,
-                    'grupo' => $item->grupo,
-                    'fecha_inasistencia' => $item->fecha_inasistencia,
-                    'motivo' => $item->motivo,
-                    'estado' => $item->estado_estudiante,
-                ];
-            });
-    }
-
-    /**
      * Aprueba la solicitud de inscripción de un estudiante.
      */
     public function approveStudent(string $documento): array
@@ -204,26 +174,6 @@ class StudentManagementService
             'message' => "Estudiante {$estudiante->nombres} reactivado con éxito en el sistema.",
             'estudiante' => $estudiante,
         ];
-    }
-
-    /**
-     * Registra una justificación de inasistencia para un estudiante.
-     */
-    public function submitJustification(array $data): Justificacion
-    {
-        $documento = $data['documento'];
-        $estudiante = Estudiante::find($documento);
-
-        if (!$estudiante) {
-            throw new Exception("El estudiante no se encuentra registrado en el sistema.");
-        }
-
-        return Justificacion::create([
-            'documento' => $documento,
-            'fecha_inasistencia' => $data['fecha_inasistencia'],
-            'motivo' => $data['motivo'],
-            'estado' => 'Pendiente',
-        ]);
     }
 
     /**

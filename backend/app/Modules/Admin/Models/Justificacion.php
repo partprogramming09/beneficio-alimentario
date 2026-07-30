@@ -15,7 +15,19 @@ class Justificacion extends Model
         'fecha_inasistencia',
         'motivo',
         'estado',
+        'archivo_adjunto',
     ];
+
+    public function getArchivoUrl(): ?string
+    {
+        if (!$this->archivo_adjunto) {
+            return null;
+        }
+
+        $path = storage_path("app/private/excusas/{$this->archivo_adjunto}");
+
+        return file_exists($path) ? asset("storage/excusas/{$this->archivo_adjunto}") : null;
+    }
 
     /**
      * Relación con el estudiante beneficiario

@@ -1,7 +1,5 @@
 import { apiClient } from '@shared/core';
 
-// Coordinator Panel Endpoints
-
 export async function getAdminStudents() {
   const response = await apiClient.get('/api/admin/estudiantes');
   return response.data;
@@ -9,6 +7,23 @@ export async function getAdminStudents() {
 
 export async function getAdminJustifications() {
   const response = await apiClient.get('/api/admin/justificaciones');
+  return response.data;
+}
+
+export async function downloadJustificationFile(id) {
+  const response = await apiClient.get(`/api/admin/justificaciones/${id}/descarga`, {
+    responseType: 'blob',
+  });
+  return response;
+}
+
+export async function approveJustification(id) {
+  const response = await apiClient.post(`/api/admin/justificaciones/${id}/aprobar`);
+  return response.data;
+}
+
+export async function rejectJustification(id) {
+  const response = await apiClient.post(`/api/admin/justificaciones/${id}/rechazar`);
   return response.data;
 }
 
@@ -91,7 +106,3 @@ export async function cambiarEstadoBeneficio(documento, estado) {
   const response = await apiClient.post('/api/admin/estudiantes/cambiar-estado', { documento, estado });
   return response.data;
 }
-
-
-
-

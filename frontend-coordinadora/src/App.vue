@@ -6,7 +6,7 @@
 
 <script>
 import AdminLayout from './layouts/AdminLayout.vue';
-import DashboardPage from './pages/DashboardPage.vue';
+import DashboardPage from './views/DashboardView.vue';
 
 export default {
   name: 'App',
