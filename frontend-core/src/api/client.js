@@ -1,6 +1,14 @@
 import axios from 'axios';
 
-let apiURL = import.meta.env?.VITE_API_URL || 'http://localhost:8000';
+let apiURL = import.meta.env?.VITE_API_URL;
+
+if (!apiURL) {
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    apiURL = 'https://beneficio-alimentario.onrender.com';
+  } else {
+    apiURL = 'http://localhost:8000';
+  }
+}
 
 if (typeof window !== 'undefined' && window.location.hostname.endsWith('use.devtunnels.ms')) {
   const hostname = window.location.hostname;

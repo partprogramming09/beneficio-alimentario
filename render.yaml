@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: beneficio-alimentario-api
+    name: beneficio-alimentario
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     envVars:
@@ -9,7 +9,7 @@ services:
       - key: APP_DEBUG
         value: "false"
       - key: APP_URL
-        value: https://beneficio-alimentario-api.onrender.com
+        value: https://beneficio-alimentario.onrender.com
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
@@ -42,7 +42,7 @@ services:
     buildCommand: npm install -g pnpm && pnpm install && pnpm --filter frontend-estudiante build
     envVars:
       - key: VITE_API_URL
-        value: https://beneficio-alimentario-api.onrender.com
+        value: https://beneficio-alimentario.onrender.com
     routes:
       - type: rewrite
         source: /*
@@ -55,7 +55,7 @@ services:
     buildCommand: npm install -g pnpm && pnpm install && pnpm --filter frontend-coordinadora build
     envVars:
       - key: VITE_API_URL
-        value: https://beneficio-alimentario-api.onrender.com
+        value: https://beneficio-alimentario.onrender.com
     routes:
       - type: rewrite
         source: /*
