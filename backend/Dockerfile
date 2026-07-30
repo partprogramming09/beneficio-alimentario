@@ -12,11 +12,11 @@ RUN apk add --no-cache \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY opcache.ini $PHP_INI_DIR/conf.d/opcache.ini
+COPY backend/opcache.ini $PHP_INI_DIR/conf.d/opcache.ini
 
 WORKDIR /var/www/html
 
-COPY . .
+COPY backend/ .
 
 RUN composer install --no-dev --no-interaction --no-scripts
 
