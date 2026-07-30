@@ -150,7 +150,6 @@ import ReactivacionesTab from '../components/ReactivacionesTab.vue'
 import SimuladorTab from '../components/SimuladorTab.vue'
 import CursosTab from '../components/CursosTab.vue'
 import StudentAside from '../components/StudentAside.vue'
-import escudoImg from '../../../frontend-core/src/assets/escudo.png'
 
 export default {
   name: 'DashboardPage',
@@ -171,7 +170,7 @@ export default {
   },
   data() {
     return {
-      escudoImg,
+      escudoImg: '/escudo.png',
       activeSubTab: 'pendientes',
       isSidebarOpenMobile: false,
 

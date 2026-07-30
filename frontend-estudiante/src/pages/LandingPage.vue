@@ -174,13 +174,11 @@
 </template>
 
 <script>
-import escudoImg from '../../../frontend-core/src/assets/escudo.png'
-
 export default {
   name: 'LandingPage',
   data() {
     return {
-      escudoImg
+      escudoImg: '/escudo.png'
     }
   }
 }

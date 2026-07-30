@@ -42,13 +42,11 @@
 </template>
 
 <script>
-import escudoImg from '../../../frontend-core/src/assets/escudo.png'
-
 export default {
   name: 'StudentLayout',
   data() {
     return {
-      escudoImg,
+      escudoImg: '/escudo.png',
       isDark: false
     }
   },
