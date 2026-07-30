@@ -68,6 +68,40 @@ beneficio-alimentario/
 
 ---
 
+## 🚀 6. Reglas Críticas de Deploy en Render
+
+### Nombres de Servicios (NO cambiar sin verificar)
+| Servicio | Nombre en Render | URL |
+|----------|-----------------|-----|
+| Backend API | `beneficio-alimentario` | `https://beneficio-alimentario.onrender.com` |
+| Frontend Estudiantes | `portal-estudiante` | `https://portal-estudiante.onrender.com` |
+| Frontend Coordinadora | `portal-coordinadora` | `https://portal-coordinadora.onrender.com` |
+
+### CORS (`backend/config/cors.php`)
+Los `allowed_origins` DEBEN coincidir EXACTAMENTE con las URLs de los frontends:
+- `https://portal-coordinadora.onrender.com`
+- `https://portal-estudiante.onrender.com`
+- `http://localhost:5173` / `http://localhost:5174`
+
+### Dockerfile — Generación de `.env`
+El `backend/Dockerfile` SIEMPRE genera el `.env` desde las env vars de Render al iniciar.
+NUNCA depender del `.env` del repositorio para producción.
+
+### VITE_API_URL (Frontends estáticos)
+- Render inyecta `VITE_API_URL` al hacer **build** del frontend.
+- Esta variable se configura en el **dashboard de Render** → Environment del servicio.
+- Si el build usa una URL incorrecta, el JavaScript compilado la tiene hardcodeada.
+- **NUNCA** usar `beneficio-alimentario-api.onrender.com` (URL fantasma, no existe).
+- **SIEMPRE** usar `https://beneficio-alimentario.onrender.com`.
+
+### Render.yaml vs Dashboard
+- `render.yaml` define servicios con nombres `beneficio-*`.
+- Los servicios reales en el dashboard se llaman `portal-*`.
+- Render **IGNORA** el `render.yaml` para servicios que ya existen con otros nombres.
+- Para actualizar env vars de `portal-*`, ir al **dashboard de Render manualmente**.
+
+---
+
 ## 📝 5. Historial de Mantenimiento (Changelog)
 
 - **2026-07-30:**
@@ -85,3 +119,7 @@ beneficio-alimentario/
   - Cálculo agnóstico del Domingo de Pascua en `ColombianCalendarService.php` para eliminar cualquier dependencia de la extensión `easter_date`.
   - Rediseño de Cursos y Grupos en `frontend-coordinadora` a panel visual de supervisión sin alteración indebida de cuentas.
   - Implementación del flujo amigable `Verificar Registro` en `frontend-estudiante` con autologin a Ticket Diario para alumnos activos.
+  - Corrección de Dockerfile para SIEMPRE generar `.env` desde env vars de Render (eliminado `if [ ! -f .env ]`).
+  - Corrección de `healthCheckPath` de `/` a `/up` en render.yaml.
+  - Resolución de error CORS: orígenes en `cors.php` alineados con URLs reales de Render (`portal-*`).
+  - Documentación de reglas críticas de deployment en AGENTS.md.
