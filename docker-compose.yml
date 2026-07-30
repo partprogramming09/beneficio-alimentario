@@ -13,9 +13,9 @@ services:
           - /var/www/html/vendor
         environment:
           - DB_HOST=mysql
-          - DB_USER=root
+          - DB_USERNAME=root
           - DB_PASSWORD=root
-          - DB_NAME=beneficio_alimentario
+          - DB_DATABASE=beneficio_alimentario
           - DB_PORT=3306
           - MYSQL_ATTR_SSL_CA=
         depends_on:

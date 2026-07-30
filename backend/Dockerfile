@@ -31,8 +31,8 @@ CMD ["sh", "-c", "\
     echo DB_CONNECTION=mysql >> .env && \
     echo DB_HOST=$DB_HOST >> .env && \
     echo DB_PORT=$DB_PORT >> .env && \
-    echo DB_DATABASE=$DB_NAME >> .env && \
-    echo DB_USERNAME=$DB_USER >> .env && \
+    echo DB_DATABASE=$DB_DATABASE >> .env && \
+    echo DB_USERNAME=$DB_USERNAME >> .env && \
     echo DB_PASSWORD=$DB_PASSWORD >> .env && \
     echo SESSION_DRIVER=cookie >> .env && \
     echo CACHE_STORE=file >> .env && \
