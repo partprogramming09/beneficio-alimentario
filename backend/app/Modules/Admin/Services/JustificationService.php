@@ -4,6 +4,7 @@ namespace App\Modules\Admin\Services;
 
 use App\Modules\Admin\Models\Justificacion;
 use App\Modules\Student\Models\Estudiante;
+use App\Modules\Student\Models\InstitucionEstudiante;
 use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,22 @@ class JustificationService
         $estudiante = Estudiante::find($documento);
 
         if (!$estudiante) {
-            throw new Exception("El estudiante no se encuentra registrado en el sistema.");
+            $institucion = InstitucionEstudiante::find($documento);
+            if (!$institucion) {
+                throw new Exception("El documento {$documento} no se encuentra matriculado en la institución.");
+            }
+
+            $partes = array_values(array_filter(explode(' ', trim($institucion->nombre_completo))));
+            $nombres = $partes[0] ?? $institucion->nombre_completo;
+            $apellidos = count($partes) > 1 ? implode(' ', array_slice($partes, 1)) : '';
+
+            $estudiante = Estudiante::create([
+                'documento' => $documento,
+                'nombres' => $nombres,
+                'apellidos' => $apellidos,
+                'grupo' => $institucion->grupo,
+                'estado' => 'Activo',
+            ]);
         }
 
         $archivoPath = null;

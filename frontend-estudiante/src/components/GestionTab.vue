@@ -11,60 +11,75 @@
     </h3>
     
     <div class="grid-2 mt-3">
-      <!-- Justifications Form -->
-      <div class="card sub-card">
+      <!-- Justifications Form (Independiente) -->
+      <form class="card sub-card" @submit.prevent="submitJustification">
         <h4>Justificar Inasistencia</h4>
         <p class="description">Carga tu justificación para evitar ser suspendido del beneficio por faltas.</p>
         
         <div class="form-group">
           <label>Documento de Identidad:</label>
-          <input type="text" v-model="justification.documento" placeholder="Ingresa tu documento" />
+          <input type="text" v-model="justification.documento" placeholder="Ingresa tu documento" required />
         </div>
         <div class="form-group">
           <label>Fecha de la Inasistencia:</label>
-          <input type="date" v-model="justification.fecha_inasistencia" />
+          <input type="date" v-model="justification.fecha_inasistencia" required />
         </div>
         <div class="form-group">
           <label>Motivo / Justificación:</label>
-          <textarea v-model="justification.motivo" placeholder="Ej: Cita médica, calamidad familiar, etc." rows="3"></textarea>
+          <textarea v-model="justification.motivo" placeholder="Ej: Cita médica, calamidad familiar, etc." rows="3" required></textarea>
         </div>
-        <button class="btn btn-primary btn-block" @click="submitJustification" :disabled="loading">
+        <button type="submit" class="btn btn-primary btn-block" :disabled="loading">
           {{ loading ? 'Enviando...' : 'Enviar Justificación' }}
         </button>
-      </div>
+      </form>
 
-      <!-- Renunciation Panel -->
-      <div class="card sub-card border-danger">
+      <!-- Renunciation Panel (Independiente) -->
+      <form class="card sub-card border-danger" @submit.prevent="confirmRenounce">
         <h4 class="text-danger">Renuncia Voluntaria</h4>
         <p class="description">¿Ya no necesitas el beneficio? Renuncia voluntariamente para liberar el cupo a otro compañero.</p>
         
         <div class="form-group">
           <label>Documento de Identidad:</label>
-          <input type="text" v-model="renounceDoc" placeholder="Ingresa tu documento" />
+          <input type="text" v-model="renounceDoc" placeholder="Ingresa tu documento" required />
         </div>
         
         <div class="alert alert-warning">
-          ⚠️ <strong>Atención:</strong> Esta acción es irreversible. Tendrás que solicitar el beneficio nuevamente si deseas reingresar.
+          <strong>Atención:</strong> Esta acción es irreversible. Tendrás que solicitar el beneficio nuevamente si deseas reingresar.
         </div>
         
-        <button class="btn btn-danger btn-block" @click="confirmRenounce" :disabled="loading">
+        <button type="submit" class="btn btn-danger btn-block" :disabled="loading">
           {{ loading ? 'Procesando...' : 'Renunciar al Beneficio' }}
         </button>
-      </div>
+      </form>
     </div>
 
     <AlertBox :message="message" :isError="isError" />
+
+    <ConfirmModal
+      :is-open="showRenounceModal"
+      title="Renuncia Voluntaria"
+      message="¿Estás seguro de que deseas renunciar de forma definitiva al beneficio de almuerzo? Esta acción es irreversible. Tendrás que solicitar el beneficio nuevamente si deseas reingresar."
+      confirm-text="Sí, renunciar"
+      type="danger"
+      @confirm="doRenounce"
+      @close="showRenounceModal = false"
+    />
   </div>
 </template>
 
 <script>
 import { submitJustification, confirmRenounce } from '../services/api'
-import AlertBox from './AlertBox.vue'
+import AlertBox from './common/AlertBox.vue'
+import ConfirmModal from './common/ConfirmModal.vue'
 
 export default {
   name: 'GestionTab',
   components: {
-    AlertBox
+    AlertBox,
+    ConfirmModal
+  },
+  props: {
+    studentDoc: { type: String, default: '' }
   },
   data() {
     return {
@@ -76,7 +91,22 @@ export default {
       renounceDoc: '',
       loading: false,
       message: '',
-      isError: false
+      isError: false,
+      showRenounceModal: false,
+    }
+  },
+  mounted() {
+    if (this.studentDoc) {
+      this.justification.documento = this.studentDoc
+      this.renounceDoc = this.studentDoc
+    }
+  },
+  watch: {
+    studentDoc(newVal) {
+      if (newVal) {
+        this.justification.documento = newVal
+        this.renounceDoc = newVal
+      }
     }
   },
   methods: {
@@ -97,10 +127,9 @@ export default {
 
       try {
         const data = await submitJustification(this.justification)
-
         this.message = data.message
         this.isError = false
-        this.justification = { documento: '', fecha_inasistencia: '', motivo: '' }
+        this.justification = { documento: this.studentDoc || '', fecha_inasistencia: '', motivo: '' }
       } catch (err) {
         this.message = err.message
         this.isError = true
@@ -108,23 +137,22 @@ export default {
         this.loading = false
       }
     },
-    async confirmRenounce() {
+    confirmRenounce() {
       if (!this.renounceDoc.trim()) {
         this.message = 'Por favor, ingresa tu documento.'
         this.isError = true
         return
       }
-
-      if (!confirm('¿Estás seguro de que deseas renunciar de forma definitiva al beneficio de almuerzo?')) {
-        return
-      }
+      this.showRenounceModal = true
+    },
+    async doRenounce() {
+      this.showRenounceModal = false
 
       this.loading = true
       this.clearMessages()
 
       try {
         const data = await confirmRenounce(this.renounceDoc)
-
         this.message = data.message
         this.isError = false
         this.renounceDoc = ''

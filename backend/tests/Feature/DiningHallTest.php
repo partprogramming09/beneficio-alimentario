@@ -331,4 +331,136 @@ class DiningHallTest extends TestCase
         $responseValidar->assertStatus(400)
                         ->assertJsonPath('error', 'Tu beneficio figura en estado inactivo. Consulta con la coordinadora si requieres solicitar una reactivación.');
     }
+
+    /**
+     * Test SDD: Justificación enviada por un estudiante matriculado oficialmente auto-crea perfil y registra la excusa
+     */
+    public function test_justification_for_unregistered_institutional_student(): void
+    {
+        // 1. 1003 está en institucion_estudiantes pero aún no en 'estudiantes'
+        $this->assertDatabaseMissing('estudiantes', ['documento' => '1003']);
+
+        // 2. El estudiante envía justificación
+        $response = $this->postJson('/api/justificaciones', [
+            'documento' => '1003',
+            'fecha_inasistencia' => '2026-07-28',
+            'motivo' => 'Calamidad doméstica justificada.'
+        ]);
+
+        $response->assertStatus(201)
+                 ->assertJsonPath('justificacion.documento', '1003')
+                 ->assertJsonPath('justificacion.estado', 'Pendiente');
+
+        // 3. Verificar que el perfil de estudiante fue auto-creado en 'estudiantes'
+        $this->assertDatabaseHas('estudiantes', [
+            'documento' => '1003',
+            'nombres' => 'Carlos',
+            'apellidos' => 'Ruiz',
+            'grupo' => '10-B'
+        ]);
+
+        // 4. Verificar que la justificación existe en la BD
+        $this->assertDatabaseHas('justificaciones', [
+            'documento' => '1003',
+            'estado' => 'Pendiente'
+        ]);
+    }
+
+    /**
+     * Test SDD: Actualizar estudiante permite cambiar estado a Suspendido e Inactivo
+     */
+    public function test_update_student_changes_status(): void
+    {
+        Estudiante::create([
+            'documento' => '1001',
+            'nombres' => 'Juan',
+            'apellidos' => 'Pérez',
+            'grupo' => '10-A',
+            'estado' => 'Activo'
+        ]);
+
+        // Cambiar a Suspendido
+        $response = $this->postJson('/api/admin/estudiantes/actualizar', [
+            'documento_original' => '1001',
+            'documento' => '1001',
+            'nombre_completo' => 'Juan Pérez',
+            'grupo' => '10-A',
+            'estado' => 'Suspendido'
+        ]);
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('estudiantes', ['documento' => '1001', 'estado' => 'Suspendido']);
+
+        // Cambiar a Inactivo
+        $response = $this->postJson('/api/admin/estudiantes/actualizar', [
+            'documento_original' => '1001',
+            'documento' => '1001',
+            'nombre_completo' => 'Juan Pérez',
+            'grupo' => '10-A',
+            'estado' => 'Inactivo'
+        ]);
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('estudiantes', ['documento' => '1001', 'estado' => 'Inactivo']);
+    }
+
+    /**
+     * Test SDD: Actualizar estudiante existente auto-sincroniza entrada institucional y permite cambio de estado
+     */
+    public function test_update_student_creates_missing_institutional_record(): void
+    {
+        InstitucionEstudiante::create([
+            'documento' => '8888',
+            'nombre_completo' => 'Pedro Picapiedra',
+            'grupo' => '10-A'
+        ]);
+
+        Estudiante::create([
+            'documento' => '8888',
+            'nombres' => 'Pedro',
+            'apellidos' => 'Picapiedra',
+            'grupo' => '10-A',
+            'estado' => 'Activo'
+        ]);
+
+        $response = $this->postJson('/api/admin/estudiantes/actualizar', [
+            'documento_original' => '8888',
+            'documento' => '8888',
+            'nombre_completo' => 'Pedro Picapiedra',
+            'grupo' => '10-A',
+            'estado' => 'Suspendido'
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('institucion_estudiantes', ['documento' => '8888', 'nombre_completo' => 'Pedro Picapiedra']);
+        $this->assertDatabaseHas('estudiantes', ['documento' => '8888', 'estado' => 'Suspendido']);
+    }
+
+    /**
+     * Test SDD: Actualizar estudiante con documento nuevo no existente (ej. 1001163) auto-crea el registro y guarda el estado
+     */
+    public function test_update_student_with_completely_new_document_auto_creates_record(): void
+    {
+        $response = $this->postJson('/api/admin/estudiantes/actualizar', [
+            'documento_original' => '1001163',
+            'documento' => '1001163',
+            'nombre_completo' => 'Estudiante Nuevo Test',
+            'grupo' => '11-B',
+            'estado' => 'Activo'
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('institucion_estudiantes', [
+            'documento' => '1001163',
+            'nombre_completo' => 'Estudiante Nuevo Test',
+            'grupo' => '11-B'
+        ]);
+
+        $this->assertDatabaseHas('estudiantes', [
+            'documento' => '1001163',
+            'estado' => 'Activo'
+        ]);
+    }
 }

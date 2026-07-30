@@ -225,6 +225,7 @@ class AdminController extends Controller
             'documento' => 'required|string',
             'nombre_completo' => 'required|string|max:100',
             'grupo' => 'required|string|max:20',
+            'estado' => 'nullable|string|in:Activo,Suspendido,Inactivo,Sin Registrar,Pendiente',
         ]);
         try {
             return response()->json($this->studentService->updateStudent($request->all()));

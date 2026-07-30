@@ -38,6 +38,16 @@
             />
           </div>
 
+          <div class="form-group">
+            <label for="edit-est">Estado del Beneficio Comedor (*)</label>
+            <select id="edit-est" v-model="form.estado" class="form-control select-custom">
+              <option value="Activo">✅ Activo (Inscrito / Beneficio Activo)</option>
+              <option value="Suspendido">⛔ Suspendido (3 Inasistencias)</option>
+              <option value="Inactivo">🚫 Inactivo (Desactivado / Renuncia)</option>
+              <option value="Sin Registrar">⚪ Sin Registrar (Sin Cupo Asignado)</option>
+            </select>
+          </div>
+
           <AlertBox :message="message" :isError="isError" class="mt-2" />
 
           <div class="modal-footer">
@@ -77,7 +87,8 @@ export default {
         documento_original: '',
         documento: '',
         nombre_completo: '',
-        grupo: ''
+        grupo: '',
+        estado: 'Activo'
       },
       loading: false,
       message: '',
@@ -89,11 +100,14 @@ export default {
       immediate: true,
       handler(newVal) {
         if (newVal) {
+          const rawName = newVal.nombre_completo || (newVal.nombres ? `${newVal.nombres} ${newVal.apellidos || ''}` : '');
+          const doc = (newVal.documento || newVal.documento_identidad || '').toString().trim();
           this.form = {
-            documento_original: newVal.documento,
-            documento: newVal.documento,
-            nombre_completo: newVal.nombre_completo,
-            grupo: newVal.grupo
+            documento_original: doc,
+            documento: doc,
+            nombre_completo: rawName.trim(),
+            grupo: (newVal.grupo || '').toString().trim(),
+            estado: newVal.estado || (newVal.esta_inscrito ? 'Activo' : 'Sin Registrar')
           }
           this.clearMessages()
         }
@@ -116,7 +130,14 @@ export default {
       this.clearMessages()
 
       try {
-        const res = await updateStudent(this.form)
+        const payload = {
+          documento_original: (this.form.documento_original || this.form.documento).toString().trim(),
+          documento: this.form.documento.toString().trim(),
+          nombre_completo: this.form.nombre_completo.trim(),
+          grupo: this.form.grupo.trim(),
+          estado: this.form.estado
+        }
+        const res = await updateStudent(payload)
         this.message = res.message
         this.isError = false
         this.$emit('refresh-students')
@@ -190,6 +211,16 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.select-custom {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 0.95rem;
 }
 
 .modal-footer {

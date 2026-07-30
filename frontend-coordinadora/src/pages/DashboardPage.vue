@@ -58,9 +58,6 @@
             <svg v-else-if="tab.id === 'excusas'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
             </svg>
-            <svg v-else-if="tab.id === 'simulador'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-            </svg>
           </span>
           <span class="nav-label">{{ tab.label }}</span>
           <span v-if="tab.id === 'pendientes' && pendingCount > 0" class="badge-count">{{ pendingCount }}</span>
@@ -176,12 +173,11 @@ export default {
 
       tabs: [
         { id: 'pendientes', label: 'Inscritos Hoy' },
-        { id: 'listado', label: 'Estudiantes' },
-        { id: 'cursos', label: 'Cursos y Grupos' },
+        { id: 'listado', label: 'Gestión de Estudiantes' },
+        { id: 'cursos', label: 'Matrícula Cursos & Grupos' },
         { id: 'asistencia', label: 'Registrar Almuerzo' },
-        { id: 'reportes', label: 'Reportes Asistencia' },
-        { id: 'excusas', label: 'Reactivaciones' },
-        { id: 'simulador', label: 'Simulador Reglas' }
+        { id: 'reportes', label: 'Reporte Semanal Acumulado' },
+        { id: 'excusas', label: 'Excusas & Reactivaciones' }
       ],
       allStudents: [],
       selectedStudent: null,
@@ -201,13 +197,16 @@ export default {
         case 'asistencia': return 'AsistenciaTab'
         case 'reportes': return 'ReportesTab'
         case 'excusas': return 'ReactivacionesTab'
-        case 'simulador': return 'SimuladorTab'
         default: return 'AprobacionesTab'
       }
     },
     pendingStudents() {
       const hoyStr = new Date().toISOString().split('T')[0];
-      return this.allStudents.filter(s => s.creado_en && s.creado_en.startsWith(hoyStr))
+      return this.allStudents.filter(s => 
+        s.creado_en && 
+        s.creado_en.startsWith(hoyStr) && 
+        (s.estado === 'Activo' || s.estado === 'Pendiente')
+      )
     },
     pendingCount() {
       return this.pendingStudents.length
@@ -229,7 +228,7 @@ export default {
     activeSubTab(newTab) {
       this.clearMessages()
       this.selectedStudent = null
-      if (newTab === 'pendientes' || newTab === 'listado' || newTab === 'simulador' || newTab === 'excusas') {
+      if (newTab === 'pendientes' || newTab === 'listado' || newTab === 'excusas') {
         this.loadStudents()
       }
     }
@@ -272,7 +271,6 @@ export default {
         case 'asistencia': return '🍽️'
         case 'reportes': return '📊'
         case 'excusas': return '🛡️'
-        case 'simulador': return '⚡'
         default: return '📄'
       }
     },
@@ -284,7 +282,6 @@ export default {
         case 'asistencia': return 'Registro de Asistencia'
         case 'reportes': return 'Reportes e Historial'
         case 'excusas': return 'Reactivaciones y Justificaciones'
-        case 'simulador': return 'Simulador de Reglas'
         default: return 'Panel de Gestión'
       }
     },

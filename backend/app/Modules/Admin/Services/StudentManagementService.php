@@ -355,23 +355,78 @@ class StudentManagementService
     }
 
     /**
-     * Edita los datos de un estudiante matriculado con actualización transaccional en cascada.
+     * Registra una justificación de inasistencia para un estudiante matriculado.
+     */
+    public function submitJustification(array $data): Justificacion
+    {
+        $documento = trim($data['documento']);
+        $institucion = InstitucionEstudiante::find($documento);
+        $estudiante = Estudiante::find($documento);
+
+        if (!$institucion && !$estudiante) {
+            throw new Exception("El documento {$documento} no se encuentra registrado en el sistema de la institución.");
+        }
+
+        if (!$estudiante) {
+            $parsed = $this->formatNames($institucion ? $institucion->nombre_completo : $documento);
+            $estudiante = Estudiante::create([
+                'documento' => $documento,
+                'nombres' => $parsed['nombres'],
+                'apellidos' => $parsed['apellidos'],
+                'grupo' => $institucion ? $institucion->grupo : 'Sin Grupo',
+                'estado' => 'Suspendido',
+            ]);
+        }
+
+        return Justificacion::create([
+            'documento' => $documento,
+            'fecha_inasistencia' => $data['fecha_inasistencia'],
+            'motivo' => $data['motivo'],
+            'estado' => 'Pendiente',
+        ]);
+    }
+
+    /**
+     * Edita los datos de un estudiante matriculado con actualización transaccional en cascada y cambio de estado opcional.
      */
     public function updateStudent(array $data): array
     {
-        $docOriginal = trim($data['documento_original']);
-        $docNuevo = trim($data['documento']);
-        $nombreCompleto = trim($data['nombre_completo']);
-        $grupo = trim($data['grupo']);
+        $docOriginal = trim((string)($data['documento_original'] ?? $data['documento'] ?? ''));
+        $docNuevo = trim((string)($data['documento'] ?? ''));
+        $nombreCompleto = trim($data['nombre_completo'] ?? '');
+        $grupo = trim($data['grupo'] ?? '');
+        $nuevoEstado = isset($data['estado']) ? trim($data['estado']) : null;
 
-        $institucion = InstitucionEstudiante::find($docOriginal);
-        if (!$institucion) {
-            throw new Exception("Estudiante no encontrado en la lista de la institución.");
+        $institucion = InstitucionEstudiante::where('documento', $docOriginal)->first();
+        $estudiante = Estudiante::where('documento', $docOriginal)->first();
+
+        if (!$institucion && !$estudiante && $docOriginal !== $docNuevo && !empty($docNuevo)) {
+            $institucion = InstitucionEstudiante::where('documento', $docNuevo)->first();
+            $estudiante = Estudiante::where('documento', $docNuevo)->first();
+        }
+
+        if (!$institucion && !$estudiante) {
+            $targetDoc = !empty($docNuevo) ? $docNuevo : $docOriginal;
+            $institucion = InstitucionEstudiante::create([
+                'documento' => $targetDoc,
+                'nombre_completo' => $nombreCompleto,
+                'grupo' => $grupo,
+            ]);
+            $docOriginal = $targetDoc;
+        }
+
+        if (!$institucion && $estudiante) {
+            $nombreCompletoEst = trim("{$estudiante->nombres} {$estudiante->apellidos}");
+            $institucion = InstitucionEstudiante::create([
+                'documento' => $docOriginal,
+                'nombre_completo' => !empty($nombreCompletoEst) ? $nombreCompletoEst : $nombreCompleto,
+                'grupo' => $estudiante->grupo ?: $grupo,
+            ]);
         }
 
         $parsedNames = $this->formatNames($nombreCompleto);
 
-        DB::transaction(function () use ($docOriginal, $docNuevo, $nombreCompleto, $grupo, $parsedNames, $institucion) {
+        DB::transaction(function () use ($docOriginal, $docNuevo, $nombreCompleto, $grupo, $nuevoEstado, $parsedNames, $institucion) {
             if ($docOriginal !== $docNuevo) {
                 $driver = DB::getDriverName();
                 if ($driver === 'sqlite') {
@@ -417,6 +472,35 @@ class StudentManagementService
                         'apellidos' => $parsedNames['apellidos'],
                         'grupo' => $grupo,
                     ]);
+                }
+            }
+
+            // Procesar cambio manual de estado si fue especificado en el modal de la coordinadora
+            if ($nuevoEstado) {
+                $targetDoc = ($docOriginal !== $docNuevo) ? $docNuevo : $docOriginal;
+                $estTarget = Estudiante::find($targetDoc);
+
+                if ($nuevoEstado === 'Sin Registrar') {
+                    if ($estTarget) {
+                        $hasHistory = DB::table('asistencias')->where('documento', $targetDoc)->exists();
+                        if ($hasHistory) {
+                            $estTarget->update(['estado' => 'Inactivo']);
+                        } else {
+                            $estTarget->delete();
+                        }
+                    }
+                } elseif (in_array($nuevoEstado, ['Activo', 'Suspendido', 'Inactivo', 'Pendiente'])) {
+                    if ($estTarget) {
+                        $estTarget->update(['estado' => $nuevoEstado]);
+                    } else {
+                        Estudiante::create([
+                            'documento' => $targetDoc,
+                            'nombres' => $parsedNames['nombres'],
+                            'apellidos' => $parsedNames['apellidos'],
+                            'grupo' => $grupo,
+                            'estado' => $nuevoEstado,
+                        ]);
+                    }
                 }
             }
         });

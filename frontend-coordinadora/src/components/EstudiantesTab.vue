@@ -47,11 +47,11 @@
             </div>
           </div>
           <div class="data-card-actions">
-            <button class="btn btn-secondary btn-xs" @click.stop="$emit('select-student', student)">
-              Ver Ficha
+            <button class="btn btn-secondary btn-xs" @click.stop="openEdit(student)">
+              ✏️ Editar
             </button>
             <button class="btn btn-danger btn-xs" @click.stop="remove(student.documento)" :disabled="loading">
-              Eliminar
+              🗑️ Eliminar
             </button>
           </div>
         </div>
@@ -80,9 +80,14 @@
                 </span>
               </td>
               <td>
-                <button class="btn btn-danger btn-sm" @click.stop="remove(student.documento)" :disabled="loading">
-                  Eliminar
-                </button>
+                <div class="table-actions-cell" style="display: flex; gap: 6px;">
+                  <button class="btn btn-secondary btn-sm" @click.stop="openEdit(student)">
+                    ✏️ Editar
+                  </button>
+                  <button class="btn btn-danger btn-sm" @click.stop="remove(student.documento)" :disabled="loading">
+                    🗑️ Eliminar
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -92,17 +97,26 @@
     </div>
 
     <AlertBox :message="message" :isError="isError" />
+
+    <EditarEstudianteModal 
+      :is-open="isEditModalOpen" 
+      :student="selectedStudentForEdit" 
+      @close="isEditModalOpen = false" 
+      @refresh-students="$emit('refresh-students')" 
+    />
   </div>
 </template>
 
 <script>
 import { deleteStudent } from '../services/api'
 import AlertBox from './AlertBox.vue'
+import EditarEstudianteModal from './EditarEstudianteModal.vue'
 
 export default {
   name: 'EstudiantesTab',
   components: {
-    AlertBox
+    AlertBox,
+    EditarEstudianteModal
   },
   props: {
     students: {
@@ -116,7 +130,9 @@ export default {
       selectedGroupFilter: 'ALL',
       loading: false,
       message: '',
-      isError: false
+      isError: false,
+      isEditModalOpen: false,
+      selectedStudentForEdit: null
     }
   },
 
@@ -150,6 +166,10 @@ export default {
     clearMessages() {
       this.message = ''
       this.isError = false
+    },
+    openEdit(student) {
+      this.selectedStudentForEdit = student
+      this.isEditModalOpen = true
     },
     async remove(doc) {
       if (!confirm(`¿Estás seguro de que deseas eliminar permanentemente de la base de datos al estudiante con documento ${doc}?`)) {

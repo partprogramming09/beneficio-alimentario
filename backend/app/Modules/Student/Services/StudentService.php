@@ -101,17 +101,31 @@ class StudentService
      */
     public function renounceBenefit(string $documento): array
     {
+        $institucion = InstitucionEstudiante::find($documento);
         $estudiante = Estudiante::find($documento);
 
-        if (!$estudiante) {
-            throw new Exception("Estudiante no encontrado.");
+        if (!$institucion && !$estudiante) {
+            throw new Exception("El documento {$documento} no se encuentra registrado en el sistema de la institución.");
         }
 
-        if ($estudiante->estado === 'Inactivo') {
-            throw new Exception("El estudiante ya se encuentra en estado inactivo.");
-        }
+        if ($estudiante) {
+            if ($estudiante->estado === 'Inactivo') {
+                throw new Exception("El estudiante ya se encuentra en estado inactivo.");
+            }
+            $estudiante->update(['estado' => 'Inactivo']);
+        } else {
+            $partes = array_values(array_filter(explode(' ', trim($institucion->nombre_completo))));
+            $nombres = $partes[0] ?? $institucion->nombre_completo;
+            $apellidos = count($partes) > 1 ? implode(' ', array_slice($partes, 1)) : '';
 
-        $estudiante->update(['estado' => 'Inactivo']);
+            $estudiante = Estudiante::create([
+                'documento' => $documento,
+                'nombres' => $nombres,
+                'apellidos' => $apellidos,
+                'grupo' => $institucion->grupo,
+                'estado' => 'Inactivo',
+            ]);
+        }
 
         // Disparar Webhook
         $this->webhookService->trigger('student.renounced', [
