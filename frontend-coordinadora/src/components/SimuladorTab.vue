@@ -2,7 +2,7 @@
   <div class="tab-content">
     <div class="card sub-card simulation-box">
       <div class="sim-header">
-        <h4 class="card-title-sm">⚡ Simular Día Escolar de Comedor</h4>
+        <h4 class="card-title-sm">Simular Día Escolar de Comedor</h4>
       </div>
       
       <div class="form-group inline-form mt-2">
@@ -30,7 +30,7 @@
         @click="runSimulation" 
         :disabled="loading || activeStudents.length === 0"
       >
-        {{ loading ? 'Simulando...' : '⚡ Ejecutar Simulación del Día' }}
+        {{ loading ? 'Simulando...' : 'Ejecutar Simulación del Día' }}
       </button>
     </div>
 

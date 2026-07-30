@@ -3,10 +3,10 @@
     <div class="grid-2">
       <!-- Suspended Students List -->
       <div class="card sub-card">
-        <h4 class="card-title-sm">⚠️ Alumnos Suspendidos</h4>
+        <h4 class="card-title-sm">Alumnos Suspendidos</h4>
 
         <div v-if="suspendedStudents.length === 0" class="empty-state">
-          <p>🌟 No hay alumnos suspendidos actualmente.</p>
+          <p>No hay alumnos suspendidos actualmente.</p>
         </div>
 
         <div v-else class="table-container">
@@ -35,7 +35,7 @@
 
       <!-- Justifications List -->
       <div class="card sub-card">
-        <h4 class="card-title-sm">📄 Excusas Recibidas</h4>
+        <h4 class="card-title-sm">Excusas Recibidas</h4>
 
         <div v-if="justifications.length === 0" class="empty-state">
           <p>No se han recibido justificaciones.</p>

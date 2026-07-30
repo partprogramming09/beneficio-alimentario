@@ -6,14 +6,14 @@
         <input 
           type="text" 
           v-model="searchQuery" 
-          placeholder="🔍 Buscar por nombre o documento..."
+          placeholder="Buscar por nombre o documento..."
           class="search-input"
         />
       </div>
 
       <div class="group-select-wrapper">
         <select v-model="selectedGroupFilter" class="select-group-input">
-          <option value="ALL">🏫 Todos los Grupos ({{ availableGroups.length }})</option>
+          <option value="ALL">Todos los Grupos ({{ availableGroups.length }})</option>
           <option v-for="grp in availableGroups" :key="grp" :value="grp">
             Grupo {{ grp }}
           </option>
@@ -35,7 +35,7 @@
           @click="$emit('select-student', student)"
         >
           <div class="data-card-header">
-            <span class="badge-doc-highlight">🪪 Doc: {{ student.documento }}</span>
+            <span class="badge-doc-highlight">Doc: {{ student.documento }}</span>
             <span :class="['badge-status', 'badge-' + student.estado.toLowerCase()]">
               {{ student.estado }}
             </span>

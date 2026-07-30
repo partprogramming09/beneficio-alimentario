@@ -1,6 +1,12 @@
 <template>
   <div class="tab-content">
-    <h3>Mi Ticket de Asistencia Diario 📄</h3>
+    <h3 class="tab-heading">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+        <path d="M6 12h.01M10 12h4M18 12h.01"></path>
+      </svg>
+      Mi Ticket de Asistencia Diario
+    </h3>
     
     <!-- Vista cuando no está identificado -->
     <div v-if="!studentDoc">

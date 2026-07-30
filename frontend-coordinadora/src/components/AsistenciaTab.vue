@@ -12,7 +12,7 @@
           ref="docInput"
         />
         <button class="btn btn-primary" @click="markAttendance" :disabled="loading">
-          {{ loading ? 'Registrando...' : '⚡ Marcar Asistencia' }}
+          {{ loading ? 'Registrando...' : 'Marcar Asistencia' }}
         </button>
       </div>
     </div>

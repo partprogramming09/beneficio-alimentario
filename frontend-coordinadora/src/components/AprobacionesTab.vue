@@ -1,7 +1,7 @@
 <template>
   <div class="tab-content">
     <div v-if="students.length === 0" class="empty-state">
-      <p>✨ No se han registrado nuevos estudiantes el día de hoy.</p>
+      <p>No se han registrado nuevos estudiantes el día de hoy.</p>
     </div>
 
     <div v-else>

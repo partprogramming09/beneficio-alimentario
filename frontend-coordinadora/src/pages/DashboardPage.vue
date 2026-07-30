@@ -10,7 +10,9 @@
     <!-- Left Sidebar (Crimson Modern Theme - Colapsable en Móvil) -->
     <aside :class="['sidebar', { 'sidebar-open-mobile': isSidebarOpenMobile }]">
       <div class="sidebar-brand">
-        <div class="brand-shield">🛡️</div>
+        <div class="brand-shield-wrapper">
+          <img src="/escudo.png" alt="Escudo I.E. Enrique Vélez Escobar" class="brand-shield-img" />
+        </div>
         <div class="brand-text">
           <h4>I.E. Enrique Vélez Escobar</h4>
           <span class="brand-subtitle">Gestión Comedor</span>
@@ -26,7 +28,40 @@
           :class="['nav-item', { active: activeSubTab === tab.id }]"
           @click="selectTabMobile(tab.id)"
         >
-          <span class="nav-icon">{{ getTabIcon(tab.id) }}</span>
+          <span class="nav-icon">
+            <svg v-if="tab.id === 'pendientes'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <polyline points="17 11 19 13 23 9"></polyline>
+            </svg>
+            <svg v-else-if="tab.id === 'listado'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <svg v-else-if="tab.id === 'cursos'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <svg v-else-if="tab.id === 'asistencia'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <svg v-else-if="tab.id === 'reportes'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <svg v-else-if="tab.id === 'excusas'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <svg v-else-if="tab.id === 'simulador'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+          </span>
           <span class="nav-label">{{ tab.label }}</span>
           <span v-if="tab.id === 'pendientes' && pendingCount > 0" class="badge-count">{{ pendingCount }}</span>
           <span v-else-if="tab.id === 'excusas' && suspendedStudents.length > 0" class="badge-count warning-badge">{{ suspendedStudents.length }}</span>
@@ -315,9 +350,24 @@ export default {
   position: relative;
 }
 
-.brand-shield {
-  font-size: 1.8rem;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+.brand-shield-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.brand-shield-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .brand-text h4 {
