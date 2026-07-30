@@ -15,7 +15,7 @@
         >
           <div class="data-card-header">
             <span class="card-doc"><strong>Doc: {{ student.documento }}</strong></span>
-            <span :class="['badge-status', 'badge-' + student.estado.toLowerCase()]">{{ student.estado }}</span>
+            <span :class="['badge-status', getStatusClass(student.estado)]">{{ student.estado }}</span>
           </div>
           <div class="data-card-body">
             <div class="card-name">{{ student.nombres }} {{ student.apellidos }}</div>
@@ -46,7 +46,7 @@
               <td><span class="badge-group">{{ student.grupo }}</span></td>
               <td>{{ student.creado_en }}</td>
               <td>
-                <span :class="['badge-status', 'badge-' + student.estado.toLowerCase()]">{{ student.estado }}</span>
+                <span :class="['badge-status', getStatusClass(student.estado)]">{{ student.estado }}</span>
               </td>
             </tr>
           </tbody>
@@ -60,6 +60,7 @@
 
 <script>
 import AlertBox from '../common/AlertBox.vue'
+import { getStatusClass } from '../../utils/statusHelper'
 
 export default {
   name: 'InscritosHoyTab',
@@ -77,6 +78,9 @@ export default {
       message: '',
       isError: false
     }
+  },
+  methods: {
+    getStatusClass
   }
 }
 </script>

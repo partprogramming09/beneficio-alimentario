@@ -169,8 +169,8 @@ class DiningHallTest extends TestCase
         $response = $this->postJson('/api/admin/estudiantes/reingresar', ['documento' => '1002']);
         $response->assertStatus(200);
 
-        // Comprobar que el estudiante volvió a estado Activo
-        $this->assertEquals('Activo', Estudiante::find('1002')->estado);
+        // Comprobar que al reactivar el estado pasa a Sin Registrar (se libera perfil voluntario)
+        $this->assertNull(Estudiante::find('1002'));
 
         // Comprobar que su justificación fue aprobada
         $this->assertDatabaseHas('justificaciones', [

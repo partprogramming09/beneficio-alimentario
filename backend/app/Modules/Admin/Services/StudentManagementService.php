@@ -156,23 +156,47 @@ class StudentManagementService
             throw new Exception("El estudiante no se encuentra en estado suspendido o inactivo.");
         }
 
-        $estudiante->update(['estado' => 'Activo']);
+        $nombreCompleto = "{$estudiante->nombres} {$estudiante->apellidos}";
+        $grupo = $estudiante->grupo;
 
-        Justificacion::where('documento', $documento)
-            ->where('estado', 'Pendiente')
-            ->update(['estado' => 'Aprobado']);
+        DB::transaction(function () use ($documento, $estudiante) {
+            // Aprobar todas las excusas pendientes del estudiante
+            Justificacion::where('documento', $documento)
+                ->where('estado', 'Pendiente')
+                ->update(['estado' => 'Aprobado']);
+
+            // Desactivar FK checks para preservar el historial de asistencias y excusas
+            $driver = DB::connection()->getDriverName();
+            if ($driver === 'sqlite') {
+                DB::statement('PRAGMA foreign_keys = OFF;');
+            } elseif ($driver === 'mysql') {
+                DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            }
+
+            try {
+                // Eliminar del perfil de auto-registro voluntario para que vuelva al estado por defecto 'Sin Registrar'
+                $estudiante->delete();
+            } finally {
+                if ($driver === 'sqlite') {
+                    DB::statement('PRAGMA foreign_keys = ON;');
+                } elseif ($driver === 'mysql') {
+                    DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+                }
+            }
+        });
 
         $this->webhookService->trigger('student.approved', [
-            'documento' => $estudiante->documento,
-            'nombre_completo' => "{$estudiante->nombres} {$estudiante->apellidos}",
-            'grupo' => $estudiante->grupo,
-            'estado' => $estudiante->estado,
+            'documento' => $documento,
+            'nombre_completo' => $nombreCompleto,
+            'grupo' => $grupo,
+            'estado' => 'Sin Registrar',
             'reactivado' => true,
         ]);
 
         return [
-            'message' => "Estudiante {$estudiante->nombres} reactivado con éxito en el sistema.",
-            'estudiante' => $estudiante,
+            'message' => "Estudiante {$nombreCompleto} (Doc: {$documento}) reactivado con éxito. Su estado cambió a 'Sin Registrar' para realizar su autoregistro voluntario.",
+            'documento' => $documento,
+            'estado' => 'Sin Registrar',
         ];
     }
 

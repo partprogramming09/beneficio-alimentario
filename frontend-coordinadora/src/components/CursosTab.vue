@@ -110,9 +110,6 @@
                   <div class="card-meta">Estado Beneficio: <strong>{{ st.estado }}</strong></div>
                 </div>
                 <div class="data-card-actions mt-2">
-                  <button v-if="!st.esta_inscrito" class="btn btn-primary btn-xs" @click.stop="manualActivate(st.documento)">
-                    ⚡ Registrar Cupo
-                  </button>
                   <button class="btn btn-secondary btn-xs" @click.stop="openEditModal(st)">
                     ✏️ Editar
                   </button>
@@ -159,14 +156,6 @@
                           title="Editar datos del estudiante"
                         >
                           ✏️ Editar
-                        </button>
-                        <button 
-                          v-if="!st.esta_inscrito && st.estado !== 'Activo'" 
-                          class="btn-action-exception" 
-                          @click.stop="manualActivate(st.documento)"
-                          title="Activar cupo por excepción"
-                        >
-                          ⚡ Activar por Excepción
                         </button>
                         <button 
                           class="btn-action-delete" 

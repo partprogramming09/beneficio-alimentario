@@ -14,7 +14,7 @@
           <div class="header-info">
             <h4>{{ student.nombres }} {{ student.apellidos }}</h4>
             <div class="header-doc-badge mb-1">Doc: <strong>{{ student.documento }}</strong></div>
-            <span :class="['badge-status', 'badge-' + student.estado.toLowerCase()]">
+            <span :class="['badge-status', getStatusClass(student.estado)]">
               {{ student.estado }}
             </span>
           </div>
@@ -109,6 +109,7 @@
 import { approveStudent, rejectStudent, deleteStudent, reactivateStudent } from '../../services/api'
 import AlertBox from '../common/AlertBox.vue'
 import ConfirmModal from '../common/ConfirmModal.vue'
+import { getStatusClass } from '../../utils/statusHelper'
 
 export default {
   name: 'StudentAside',
@@ -142,6 +143,7 @@ export default {
     document.removeEventListener('keydown', this.onEscape)
   },
   methods: {
+    getStatusClass,
     onEscape(e) {
       if (e.key === 'Escape' && this.student) {
         this.$emit('close')

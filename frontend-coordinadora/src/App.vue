@@ -221,31 +221,59 @@ export default {
 }
 
 .badge-status {
-  padding: 4px 8px;
-  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--border-radius-pill);
   font-size: 0.8rem;
-  font-weight: bold;
+  font-weight: 700;
+  line-height: 1.2;
   text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
 }
 
-.badge-pendiente {
-  background-color: var(--warning-light);
-  color: var(--warning);
+.badge-status.badge-sin-registrar {
+  background-color: rgba(147, 51, 234, 0.12);
+  color: #9333ea;
+  border: 1px solid rgba(147, 51, 234, 0.25);
 }
 
-.badge-activo {
+.badge-status.badge-activo {
   background-color: var(--success-light);
   color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
-.badge-suspendido {
+.badge-status.badge-suspendido {
   background-color: var(--danger-light);
   color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
-.badge-inactivo {
-  background-color: var(--bg-tertiary);
-  color: var(--text-secondary);
+.badge-status.badge-inactivo {
+  background-color: rgba(107, 114, 128, 0.12);
+  color: #6b7280;
+  border: 1px solid rgba(107, 114, 128, 0.25);
+}
+
+.badge-status.badge-retirado {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.badge-status.badge-pendiente {
+  background-color: var(--warning-light);
+  color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+/* Optimización GPU para animaciones */
+.sidebar, .student-aside, .modal-card {
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 /* Tables style */
