@@ -17,8 +17,8 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'https://beneficio-estudiante.onrender.com',
-        'https://beneficio-coordinadora.onrender.com',
+        'https://portal-coordinadora.onrender.com',
+        'https://portal-estudiante.onrender.com',
         'http://localhost:5173',
         'http://localhost:5174',
     ],
