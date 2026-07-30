@@ -71,6 +71,9 @@ beneficio-alimentario/
 ## 📝 5. Historial de Mantenimiento (Changelog)
 
 - **2026-07-30:**
+  - Optimización de assets de la imagen del escudo institucional (`/escudo.png`) garantizando su renderizado sin errores en `frontend-estudiante` y `frontend-coordinadora`.
+  - Elaboración y ejecución del plan SDD de modernización UI/UX (`SPEC_UI_MODERNIZATION.md`, `DESIGN_PLAN_UI_ESTHETICS.md`, `TASK_LIST_UI_EXECUTION.md`).
+  - Verificación de Builds de producción de Vite en ambos frontends compitiendo en <1.5s de forma limpia.
   - Resolución integral de conflictos de registro e integridad transaccional mediante el flujo SDD.
   - Modularización del monolito `AdminService.php` en 3 servicios especializados: `StudentManagementService`, `AttendanceReportService` y `AttendanceSimulationService`.
   - Implementación de cascada transaccional (`DB::transaction` con desactivación segura de FK) en la actualización de documentos (`updateStudent`), garantizando la preservación del 100% del historial de asistencias, comprobantes y excusas.
