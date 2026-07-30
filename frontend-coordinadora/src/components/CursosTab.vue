@@ -123,16 +123,15 @@
               </div>
             </div>
 
-            <!-- Vista Tabla Escritorio -->
+            <!-- Vista Tabla Escritorio (Diseño Exacto de la Captura de Pantalla) -->
             <div class="table-container desktop-only">
-              <table>
+              <table class="table-custom">
                 <thead>
                   <tr>
                     <th>Documento (TI / CC)</th>
                     <th>Estudiante</th>
                     <th>Grupo</th>
-                    <th>¿Inscrito en Beneficio?</th>
-                    <th>Estado en Beneficio</th>
+                    <th>Estado de Registro</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -140,36 +139,37 @@
                   <tr v-for="st in getFilteredStudents(grp.estudiantes)" :key="st.documento">
                     <td><span class="badge-doc-highlight">🪪 {{ st.documento }}</span></td>
                     <td><strong>{{ st.nombre_completo }}</strong></td>
-                    <td><span class="badge-group">{{ st.grupo }}</span></td>
+                    <td><span class="badge-group-pill">{{ st.grupo }}</span></td>
                     <td>
-                      <span :class="st.esta_inscrito ? 'badge-status-yes' : 'badge-status-no'">
-                        {{ st.esta_inscrito ? 'SÍ (Inscrito)' : 'NO (Sin Registrar)' }}
+                      <span v-if="st.esta_inscrito || st.estado === 'Activo'" class="badge-status-pill badge-activo">
+                        <span class="dot green-dot"></span> ACTIVO / REGISTRADO
                       </span>
-                    </td>
-                    <td>
-                      <span :class="['badge-status', 'badge-' + st.estado.toLowerCase().replace(' ', '-')]">
-                        {{ st.estado }}
+                      <span v-else-if="st.estado === 'Suspendido'" class="badge-status-pill badge-suspendido">
+                        <span class="dot red-dot"></span> SUSPENDIDO
+                      </span>
+                      <span v-else class="badge-status-pill badge-sin-registrar">
+                        <span class="dot yellow-dot"></span> SIN REGISTRAR
                       </span>
                     </td>
                     <td>
                       <div class="table-actions-cell">
                         <button 
-                          v-if="!st.esta_inscrito" 
-                          class="btn btn-primary btn-xs" 
-                          @click.stop="manualActivate(st.documento)"
-                          title="Registrar cupo de beneficio para el estudiante"
-                        >
-                          ⚡ Registrar Cupo
-                        </button>
-                        <button 
-                          class="btn btn-secondary btn-xs" 
+                          class="btn-action-edit" 
                           @click.stop="openEditModal(st)"
                           title="Editar datos del estudiante"
                         >
                           ✏️ Editar
                         </button>
                         <button 
-                          class="btn btn-danger btn-xs" 
+                          v-if="!st.esta_inscrito && st.estado !== 'Activo'" 
+                          class="btn-action-exception" 
+                          @click.stop="manualActivate(st.documento)"
+                          title="Activar cupo por excepción"
+                        >
+                          ⚡ Activar por Excepción
+                        </button>
+                        <button 
+                          class="btn-action-delete" 
                           @click.stop="removeStudent(st.documento)"
                           title="Eliminar de la institución"
                         >
@@ -579,5 +579,101 @@ export default {
     flex-direction: column;
     align-items: stretch;
   }
+}
+
+/* Estilos exactos de la Captura de Pantalla */
+.badge-group-pill {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 4px 12px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.badge-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.4px;
+}
+
+.badge-status-pill.badge-activo {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.badge-status-pill.badge-sin-registrar {
+  background-color: #fef9c3;
+  color: #a16207;
+  border: 1px solid #fde047;
+}
+
+.badge-status-pill.badge-suspendido {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.green-dot { background-color: #22c55e; box-shadow: 0 0 4px #22c55e; }
+.yellow-dot { background-color: #eab308; box-shadow: 0 0 4px #eab308; }
+.red-dot { background-color: #ef4444; box-shadow: 0 0 4px #ef4444; }
+
+.btn-action-edit {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-action-edit:hover {
+  background-color: #e2e8f0;
+}
+
+.btn-action-exception {
+  background-color: transparent;
+  color: #1e293b;
+  border: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-action-exception:hover {
+  color: #d97706;
+}
+
+.btn-action-delete {
+  background-color: #b91c1c;
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-action-delete:hover {
+  background-color: #991b1b;
 }
 </style>
